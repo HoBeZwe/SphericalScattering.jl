@@ -1,0 +1,13 @@
+name = "SphericalScattering"
+uuid = "1a9ea918-b599-4f1f-bd9a-d681e8bb5b3e"
+authors = ["Bernd Hofmann <Bernd.Hofmann@tum.de> and contributors"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
