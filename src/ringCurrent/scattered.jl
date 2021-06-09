@@ -134,24 +134,20 @@ function scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, poin
             n += 1                       # (for z0=0 the even expansion_coeff are 0)
             expansion_coeff = (2 * n + 1) / 2 * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                            
-            #Jka_Hka = besselj(n + 0.5, ka) / hankelh2(n + 0.5, ka) 
             Jka = besselj(n + 0.5, ka)
             Hka = hankelh2(n + 0.5, ka)
-            #n < 3 && @show Jka
-            #n < 3 && @show Hka
-            #n < 3 && @show Jka / Hka
+
             Hkr = hankelh2(n + 0.5, kr)  # Hankel function 2nd kind (without sqrt-term)
             HkR = hankelh2(n + 0.5, kR)  # Hankel function 2nd kind (without sqrt-term)
             Hkrt = hankelh2(n + 1.5, kr) # for derivative of Riccati-Hankel function 2nd kind
-            #n < 3 && @show Hkr
-            #n < 3 && @show HkR    
+  
             dHkr = (n + 1) * sqrt(R / r) * Hkr * HkR - k * sqrt(r * R) * HkR * Hkrt  # HkR * derivative of Riccati-Hankel function 2nd kind
                         
             ΔHr = expansion_coeff * Jka / Hka * Hkr * HkR * Pl(cosϑ, n)
             ΔHϑ = expansion_coeff / n / (n + 1) * Jka / Hka * dHkr * dnPl(cosϑ, n, 1)
      
             isodd(n) &&  (δHr = abs(ΔHr / Hr)) # relative change every second n (for z0=0 the even expansion_coeff are 0)
-            #n < 10 && @show dHkr
+
             Hr += ΔHr
             Hϑ += ΔHϑ
         end
@@ -162,8 +158,7 @@ function scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, poin
 
     Hr *= -im * I0 * excitation.radius * sinθ * sqrt(r / R) / r / r * π / 2 * μ / ε
     Hϑ *=  im * I0 * excitation.radius * sinϑ * sinθ / r / R * π / 2 * μ / ε
-    #@show Hr
-    #@show Hϑ
+
     return convertSpherical2Cartesian(SVector(Hr, Hϑ, 0.0), point_sph)
 end
 
