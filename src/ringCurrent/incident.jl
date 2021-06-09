@@ -1,21 +1,27 @@
 
 
 """
-    field(excitation::ElectricRingCurrent, quantity::ElectricField; parameter::Parameter=Parameter())
+    field(excitation::RingCurrent, quantity::ElectricField; parameter::Parameter=Parameter())
 
-Compute the electric field radiated by an electric ring current at some position and orientation
+Compute the electric field radiated by a magnetic/electric ring current at some position and with some orientation.
 """
-function field(excitation::ElectricRingCurrent, quantity::Field; parameter::Parameter=Parameter())
+function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
     F = zeros(SVector{3,Complex{Float64}}, length(quantity.locations))
+ 
+    # --- distinguish electric/magnetic current
+    fieldType = getFieldType(excitation, quantity)
 
+    # --- translate/rotate coordinates
     points = translate(quantity.locations, excitation.center)
     rotate!(points, -excitation.rotation)
 
+    # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
-        F[ind] = field(excitation, point, quantity, parameter=parameter)
+        F[ind] = field(excitation, point, fieldType, parameter=parameter)
     end
 
+    # --- rotate resulting field
     rotate!(F, excitation.rotation)
 
     return F
@@ -28,7 +34,7 @@ end
 
 Compute the electric field radiated by an electric ring current placed in origin at point (r, ϑ) 
 """
-function field(excitation::ElectricRingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
+function field(excitation::RingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -102,7 +108,7 @@ end
 
 Compute the magnetic field radiated by an electric ring current placed in origin at point (r, ϑ) 
 """
-function field(excitation::ElectricRingCurrent, point, quantity::MagneticField; parameter::Parameter=Parameter())
+function field(excitation::RingCurrent, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -186,7 +192,7 @@ end
 
 Compute the (electric) far-field radiated by an electric ring current placed in origin at point (r, ϑ) 
 """
-function field(excitation::ElectricRingCurrent, point, quantity::FarField; parameter::Parameter=Parameter())
+function field(excitation::RingCurrent, point, quantity::FarField; parameter::Parameter=Parameter())
     
     point_sph = cart2sph(point) # [r ϑ φ]
 

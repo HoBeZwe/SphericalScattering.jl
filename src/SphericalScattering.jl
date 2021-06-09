@@ -22,7 +22,7 @@ export FarField, ElectricField, MagneticField
 export Medium, Parameter
 
 # functions
-export electricRingCurrent
+export electricRingCurrent, magneticRingCurrent
 export PECSphere
 export field, scatteredfield
 

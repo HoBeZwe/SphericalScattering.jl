@@ -1,23 +1,29 @@
 
 
 """
-    field(excitation::ElectricRingCurrent, quantity::ElectricField; parameter::Parameter=Parameter())
+    field(excitation::ElectricRingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
 Compute the electric field radiated by an electric ring current at some position and orientation
 """
-function scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
     F = zeros(SVector{3,Complex{Float64}}, size(quantity.locations))
 
+    # --- distinguish electric/magnetic current
+    fieldType = getFieldType(excitation, quantity)
+
+    # --- translate/rotate coordinates
     points = quantity.locations #translate(quantity.locations, -excitation.center)
     #rotate!(points, -excitation.rotation)
 
+    # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
-        F[ind] = scatteredfield(sphere, excitation, point, quantity, parameter=parameter)
+        F[ind] = scatteredfield(sphere, excitation, point, fieldType, parameter=parameter)
     end
 
+    # --- rotate resulting field
     #rotate!(F, excitation.rotation)
 
     return F
@@ -32,7 +38,7 @@ Compute the electric field scattered by the PEC sphere, where the ring current i
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -97,7 +103,7 @@ Compute the magnetic field scattered by the PEC sphere, where the ring current i
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, point, quantity::MagneticField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -171,7 +177,7 @@ Compute the electric far-field scattered by the PEC sphere, where the ring curre
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, point, quantity::FarField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quantity::FarField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
     
