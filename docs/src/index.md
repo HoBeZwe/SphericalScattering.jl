@@ -1,14 +1,8 @@
-```@meta
-CurrentModule = SphericalScattering
-```
 
-# SphericalScattering
+# SphericalScattering.jl
 
-Documentation for [SphericalScattering](https://github.com/HoBeZwe/SphericalScattering.jl).
+This package provides semi-analytical solutions to the scattering of time harmonic electromagnetic fields from spherical objects. 
 
-```@index
-```
+!!! note
+    A time convention of e^jwt ist used.
 
-```@autodocs
-Modules = [SphericalScattering]
-```
