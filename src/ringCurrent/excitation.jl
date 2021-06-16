@@ -59,9 +59,13 @@ Exchange electric and magnetic field for a magnetic current.
 """
 function getFieldType(excitation::MagneticRingCurrent, quantity::Field)
    
+    embedding = Medium(excitation.embedding.μ, excitation.embedding.ε) # exchange μ and ε (duality relations)
+
     if typeof(quantity) == ElectricField
+        excitation = MagneticRingCurrent(embedding, excitation.wavenumber, excitation.amplitude, excitation.radius, excitation.center, excitation.rotation)
         return MagneticField(quantity.locations)
     else
+        excitation = MagneticRingCurrent(embedding, excitation.wavenumber, -excitation.amplitude, excitation.radius, excitation.center, excitation.rotation) # change sign (duality realations)
         return ElectricField(quantity.locations)
     end
 end

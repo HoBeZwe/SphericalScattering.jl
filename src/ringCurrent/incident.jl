@@ -176,7 +176,7 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
             end
         end
     catch
-        # print("did not converge: n=$n\n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (not verified yet)
+        # print("did not converge: n=$n\n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (verified yet)
     end
     
     Hr *= im * I0 * sqrt(R / r) / r * π / 2

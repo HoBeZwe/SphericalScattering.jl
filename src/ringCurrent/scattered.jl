@@ -86,7 +86,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
             Eϕ += ΔE 
         end
     catch
-        # print("did not converge: n=$n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (not verified)
+        # print("did not converge: n=$n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (verified)
     end
 
     Eϕ *= I0 * sqrt(μ / ε) * k / sqrt(R * r) * sinϑ * sinθ / 2 * π * excitation.radius
@@ -140,27 +140,25 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
             n += 1                       # (for z0=0 the even expansion_coeff are 0)
             expansion_coeff = (2 * n + 1) / 2 * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                            
-            Jka = besselj(n + 0.5, ka)
-            Hka = hankelh2(n + 0.5, ka)
+            Jka_Hka = besselj(n + 0.5, ka) / hankelh2(n + 0.5, ka)
 
             Hkr = hankelh2(n + 0.5, kr)  # Hankel function 2nd kind (without sqrt-term)
             HkR = hankelh2(n + 0.5, kR)  # Hankel function 2nd kind (without sqrt-term)
             Hkrt = hankelh2(n + 1.5, kr) # for derivative of Riccati-Hankel function 2nd kind
   
-            dHkr = (n + 1) * sqrt(R / r) * Hkr * HkR - k * sqrt(r * R) * HkR * Hkrt  # HkR * derivative of Riccati-Hankel function 2nd kind
+            dHkr = (n + 1) * sqrt(R / r) * Jka_Hka * Hkr * HkR - k * sqrt(r * R) * Jka_Hka * HkR * Hkrt  # HkR * derivative of Riccati-Hankel function 2nd kind
                         
-            ΔHr = expansion_coeff * Jka / Hka * Hkr * HkR * Pl(cosϑ, n)
-            ΔHϑ = expansion_coeff / n / (n + 1) * Jka / Hka * dHkr * dnPl(cosϑ, n, 1)
+            ΔHr = expansion_coeff * Jka_Hka * Hkr * HkR * Pl(cosϑ, n)
+            ΔHϑ = expansion_coeff / n / (n + 1) * dHkr * dnPl(cosϑ, n, 1)
      
             isodd(n) &&  (δHr = abs(ΔHr / Hr)) # relative change every second n (for z0=0 the even expansion_coeff are 0)
-
+            
             Hr += ΔHr
             Hϑ += ΔHϑ
         end
     catch
-        # print("did not converge: n=$n\n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (not verified yet)
+        # print("did not converge: n=$n\n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (verified)
     end
-    
 
     Hr *= -im * I0 * excitation.radius * sinθ * sqrt(r / R) / r / r * π / 2 * μ / ε
     Hϑ *=  im * I0 * excitation.radius * sinϑ * sinθ / r / R * π / 2 * μ / ε
@@ -219,7 +217,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
             Eϕ += ΔE 
         end
     catch
-        # print("did not converge: n=$n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (not verified)
+        # print("did not converge: n=$n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (verified)
     end
 
     Eϕ *= I0 * sqrt(μ / ε) * excitation.radius * sinθ * sinϑ * k * sqrt(π / 2 / k / R)
