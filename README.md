@@ -15,15 +15,15 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 
 
 ##### Available incident fields:
-- Plane wave
-- Field of electric/magnetic ring current
-- Field of electric/magnetic dipole
+- :hourglass_flowing_sand: Plane wave
+- :heavy_check_mark: Field of electric/magnetic ring current
+- :heavy_check_mark: Field of electric/magnetic dipole
 
 ##### Available scattering objects:
-- PEC sphere
-- PMC sphere
-- Dielectric sphere
-- Mulitlayer dielectric sphere
+- :heavy_check_mark: PEC sphere
+- :hourglass_flowing_sand: PMC sphere
+- :hourglass_flowing_sand: Dielectric sphere
+- :hourglass_flowing_sand: Mulitlayer dielectric sphere
 
 
 
