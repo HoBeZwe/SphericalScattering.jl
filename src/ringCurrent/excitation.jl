@@ -48,7 +48,7 @@ rotation    = SVector(0.0,0.0)
 Do nothing.
 """
 function getFieldType(excitation::ElectricRingCurrent, quantity::Field)
-    return quantity
+    return quantity, excitation
 end
 
 
@@ -62,11 +62,16 @@ function getFieldType(excitation::MagneticRingCurrent, quantity::Field)
     embedding = Medium(excitation.embedding.μ, excitation.embedding.ε) # exchange μ and ε (duality relations)
 
     if typeof(quantity) == ElectricField
-        excitation = MagneticRingCurrent(embedding, excitation.wavenumber, excitation.amplitude, excitation.radius, excitation.center, excitation.rotation)
-        return MagneticField(quantity.locations)
+        exc = MagneticRingCurrent(embedding, excitation.wavenumber, -excitation.amplitude, excitation.radius, excitation.center, excitation.rotation) # change sign (duality realations)
+        return MagneticField(quantity.locations), exc
+
+    elseif typeof(quantity) == MagneticField
+        exc = MagneticRingCurrent(embedding, excitation.wavenumber, excitation.amplitude, excitation.radius, excitation.center, excitation.rotation) 
+        return ElectricField(quantity.locations), exc
+
     else
-        excitation = MagneticRingCurrent(embedding, excitation.wavenumber, -excitation.amplitude, excitation.radius, excitation.center, excitation.rotation) # change sign (duality realations)
-        return ElectricField(quantity.locations)
+        exc = MagneticRingCurrent(embedding, excitation.wavenumber, -excitation.amplitude, excitation.radius, excitation.center, excitation.rotation) # change sign (duality realations)
+        return quantity, exc
     end
 end
 

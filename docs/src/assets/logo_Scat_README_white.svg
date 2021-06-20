@@ -15,7 +15,7 @@
    viewBox="0 0 489.22712 115.52625"
    version="1.1"
    id="svg8"
-   sodipodi:docname="logo_Scat_README.svg"
+   sodipodi:docname="logo_Scat_README_white.svg"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)">
   <defs
      id="defs2">
@@ -540,7 +540,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -551,7 +551,7 @@
      transform="translate(-3.4021602,-202.02526)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.22889185px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.49020854px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.22889185px;line-height:125%;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.49020854px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="188.68011"
        y="309.16428"
        id="text1033"><tspan
@@ -559,7 +559,7 @@
          id="tspan1031"
          x="188.68011"
          y="309.16428"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:47.0605545px;font-family:Calibri;-inkscape-font-specification:'Calibri, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.49020854px">SphericalScattering</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:47.0605545px;font-family:Calibri;-inkscape-font-specification:'Calibri, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;stroke-width:0.49020854px;fill:#ffffff;fill-opacity:1;">SphericalScattering</tspan></text>
     <g
        id="g6164"
        transform="matrix(0.73446416,0,0,0.73446416,83.698756,74.060135)">

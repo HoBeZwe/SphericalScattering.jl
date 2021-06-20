@@ -10,7 +10,7 @@ function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Pa
     F = zeros(SVector{3,Complex{Float64}}, length(quantity.locations))
  
     # --- distinguish electric/magnetic current
-    fieldType = getFieldType(excitation, quantity)
+    fieldType, exc = getFieldType(excitation, quantity)
 
     # --- translate/rotate coordinates
     points = translate(quantity.locations, excitation.center)
@@ -18,7 +18,7 @@ function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Pa
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
-        F[ind] = field(excitation, point, fieldType, parameter=parameter)
+        F[ind] = field(exc, point, fieldType, parameter=parameter)
     end
 
     # --- rotate resulting field

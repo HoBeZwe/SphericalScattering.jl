@@ -12,7 +12,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Fi
     F = zeros(SVector{3,Complex{Float64}}, size(quantity.locations))
 
     # --- distinguish electric/magnetic current
-    fieldType = getFieldType(excitation, quantity)
+    fieldType, exc = getFieldType(excitation, quantity)
 
     # --- translate/rotate coordinates
     points = quantity.locations #translate(quantity.locations, -excitation.center)
@@ -20,7 +20,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Fi
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
-        F[ind] = scatteredfield(sphere, excitation, point, fieldType, parameter=parameter)
+        F[ind] = scatteredfield(sphere, exc, point, fieldType, parameter=parameter)
     end
 
     # --- rotate resulting field
@@ -32,7 +32,7 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by the PEC sphere, where the ring current is placed along the z-axis.
 
@@ -73,14 +73,13 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
         while δE > eps || n < 10
             n += 1                      # (for z0=0 the even expansion_coeff are 0)
             expansion_coeff = (2 * n + 1) / 2 / n / (n + 1) * dnPl(cosθ, n, 1) # variable part of expansion coefficients
-                    
-            Jka = besselj(n + 0.5, ka)  # Bessel function 1st kind 
-            Hka = hankelh2(n + 0.5, ka) # Hankel function 2nd kind
+            
+            Jka_Hka = scatterCoeff(sphere, excitation, n, ka)
 
             HkR = hankelh2(n + 0.5, kR) # Hankel function 2nd kind
             Hkr = hankelh2(n + 0.5, kr) # Hankel function 2nd kind
                     
-            ΔE = expansion_coeff * Jka / Hka * HkR * Hkr * dnPl(cosϑ, n, 1)
+            ΔE = expansion_coeff * Jka_Hka * HkR * Hkr * dnPl(cosϑ, n, 1)
             isodd(n) &&  (δE = abs(ΔE / Eϕ)) # relative change every second n (for z0=0 the even expansion_coeff are 0)
             
             Eϕ += ΔE 
@@ -97,7 +96,7 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, quantity::MagneticField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::MagneticField; parameter::Parameter=Parameter())
 
 Compute the magnetic field scattered by the PEC sphere, where the ring current is placed along the z-axis.
 
@@ -111,9 +110,6 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
     θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
-
-    μ  = excitation.embedding.μ
-    ε  = excitation.embedding.ε
 
     eps = parameter.relativeAccuracy
     
@@ -140,7 +136,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
             n += 1                       # (for z0=0 the even expansion_coeff are 0)
             expansion_coeff = (2 * n + 1) / 2 * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                            
-            Jka_Hka = besselj(n + 0.5, ka) / hankelh2(n + 0.5, ka)
+            Jka_Hka = scatterCoeff(sphere, excitation, n, ka)
 
             Hkr = hankelh2(n + 0.5, kr)  # Hankel function 2nd kind (without sqrt-term)
             HkR = hankelh2(n + 0.5, kR)  # Hankel function 2nd kind (without sqrt-term)
@@ -160,8 +156,8 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
         # print("did not converge: n=$n\n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (verified)
     end
 
-    Hr *= -im * I0 * excitation.radius * sinθ * sqrt(r / R) / r / r * π / 2 * μ / ε
-    Hϑ *=  im * I0 * excitation.radius * sinϑ * sinθ / r / R * π / 2 * μ / ε
+    Hr *= -im * I0 * excitation.radius * sinθ * sqrt(r / R) / r / r * π / 2 #* μ / ε
+    Hϑ *=  im * I0 * excitation.radius * sinϑ * sinθ / r / R * π / 2 #* μ / ε
 
     return convertSpherical2Cartesian(SVector(Hr, Hϑ, 0.0), point_sph)
 end
@@ -175,7 +171,7 @@ Compute the electric far-field scattered by the PEC sphere, where the ring curre
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quantity::FarField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, point, quantity::FarField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
     
@@ -202,16 +198,15 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
     cosϑ = cos(point_sph[2])    
     
     try
-        while δE > eps || n < 100
+        while δE > eps || n < 10
             n += 1                      # (for z0=0 the even expansion_coeff are 0)
             expansion_coeff = (2 * n + 1) / 2 / n / (n + 1) * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                     
-            Jka = besselj(n + 0.5, ka)  # Bessel function 1st kind 
-            Hka = hankelh2(n + 0.5, ka) # Hankel function 2nd kind
+            Jka_Hka = scatterCoeff(sphere, excitation, n, ka)
 
             HkR = hankelh2(n + 0.5, kR) # Hankel function 2nd kind
                     
-            ΔE = expansion_coeff * Jka / Hka * HkR * im^(n+1) * dnPl(cosϑ, n, 1)
+            ΔE = expansion_coeff * Jka_Hka * HkR * im^(n+1) * dnPl(cosϑ, n, 1)
             isodd(n) &&  (δE = abs(ΔE / Eϕ)) # relative change every second n (for z0=0 the even expansion_coeff are 0)
 
             Eϕ += ΔE 
@@ -223,4 +218,89 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
     Eϕ *= I0 * sqrt(μ / ε) * excitation.radius * sinθ * sinϑ * k * sqrt(π / 2 / k / R)
 
     return SVector(-Eϕ*sin(point_sph[3]), Eϕ*cos(point_sph[3]), 0.0) # convert to Cartesian representation
+end
+
+
+
+"""
+    scatteredfield(sphere::PECSphere, excitation::MagneticRingCurrent, quantity::FarField; parameter::Parameter=Parameter())
+
+Compute the electric far-field scattered by the PEC sphere, where the ring current is placed along the z-axis.
+
+The point and the returned field are in Cartesian coordinates.
+"""
+function scatteredfield(sphere::PECSphere, excitation::MagneticRingCurrent, point, quantity::FarField; parameter::Parameter=Parameter())
+
+    point_sph = cart2sph(point) # [r ϑ φ]
+    
+    k  = excitation.wavenumber
+    I0 = excitation.amplitude
+    R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
+    θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
+
+    eps = parameter.relativeAccuracy
+    
+    Eϑ = complex(0.0) # initialize
+    δE = Inf
+    n  = 0
+     
+    kR = k * R
+    ka = k * sphere.radius
+    
+    sinθ = sin(θ)
+    cosθ = cos(θ)
+    sinϑ = sin(point_sph[2]) 
+    cosϑ = cos(point_sph[2])    
+    
+    try
+        while δE > eps || n < 10
+            n += 1                      # (for z0=0 the even expansion_coeff are 0)
+            expansion_coeff = (2 * n + 1) / 2 / n / (n + 1) * dnPl(cosθ, n, 1) # variable part of expansion coefficients
+                    
+            Jka_Hka = scatterCoeff(sphere, excitation, n, ka)
+
+            HkR = hankelh2(n + 0.5, kR) # Hankel function 2nd kind
+                    
+            ΔE = expansion_coeff * Jka_Hka * HkR * im^(n+1) * dnPl(cosϑ, n, 1)
+            isodd(n) &&  (δE = abs(ΔE / Eϑ)) # relative change every second n (for z0=0 the even expansion_coeff are 0)
+
+            Eϑ += ΔE 
+        end
+    catch
+        # print("did not converge: n=$n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (verified)
+    end
+
+    Eϑ *= I0 * excitation.radius * sinθ * sinϑ * k * sqrt(π / 2 / k / R)
+
+    return SVector(Eϑ*cos(point_sph[2])*cos(point_sph[3]), Eϑ*cos(point_sph[2])*sin(point_sph[3]), -Eϑ*sin(point_sph[2])) # convert to Cartesian representation
+end
+
+
+
+"""
+    scatterCoeff(sphere::PECSphere, excitation::ElectricRingCurrent, n::Int, ka)
+
+Compute scattering coefficient for electric ring current.
+"""
+function scatterCoeff(sphere::PECSphere, excitation::ElectricRingCurrent, n::Int, ka)
+
+    Jka = besselj(n + 0.5, ka)  # Bessel function 1st kind 
+    Hka = hankelh2(n + 0.5, ka) # Hankel function 2nd kind
+
+    return Jka / Hka
+end
+
+
+
+"""
+    scatterCoeff(sphere::PECSphere, excitation::MagneticRingCurrent, n::Int, ka)
+
+Compute scattering coefficient for magnetic ring current.
+"""
+function scatterCoeff(sphere::PECSphere, excitation::MagneticRingCurrent, n::Int, ka)
+
+    Jka = (n + 1) * besselj(n + 0.5, ka)   - ka * besselj(n + 1.5, ka)  # derivative spherical Bessel function 1st kind (without sqrt factor)
+    Hka = (n + 1) * hankelh2(n + 0.5, ka)  - ka * hankelh2(n + 1.5, ka) # derivative spherical Hankel function 2nd kind (without sqrt factor)
+
+    return Jka / Hka
 end
