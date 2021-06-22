@@ -23,6 +23,7 @@ export Medium, Parameter
 
 # functions
 export electricRingCurrent, magneticRingCurrent
+export HertzianDipole, FitzgeraldDipole
 export PECSphere
 export field, scatteredfield
 
@@ -37,4 +38,7 @@ include("ringCurrent/excitation.jl")
 include("ringCurrent/incident.jl")
 include("ringCurrent/scattered.jl")
 
+include("dipoles/excitation.jl")
+include("dipoles/incident.jl")
+include("dipoles/scattered.jl")
 end
