@@ -40,4 +40,5 @@ include("ringCurrent/scattered.jl")
 
 include("dipoles/excitation.jl")
 include("dipoles/incident.jl")
+include("dipoles/scattered.jl")
 end

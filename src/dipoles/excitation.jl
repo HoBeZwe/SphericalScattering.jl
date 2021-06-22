@@ -1,17 +1,17 @@
 
 abstract type Dipole end
 
-struct HertzianDipole{T} <: Dipole
+struct HertzianDipole{T,C} <: Dipole
     embedding::Medium{T}
     wavenumber::T
-    amplitude::T
+    amplitude::C
     center::SVector{3,T}
     orientation::SVector{3,T}
 end
 
-struct FitzgeraldDipole{T} <: Dipole
+struct FitzgeraldDipole{T,C} <: Dipole
     embedding::Medium{T}
-    wavenumber::T
+    wavenumber::C
     amplitude::T
     center::SVector{3,T}
     orientation::SVector{3,T}
