@@ -45,4 +45,5 @@ include("dipoles/scattered.jl")
 
 include("planeWave/excitation.jl")
 include("planeWave/incident.jl")
+include("planeWave/scattered.jl")
 end
