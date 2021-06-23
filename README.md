@@ -15,7 +15,7 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 
 
 ##### Available incident fields:
-- :hourglass_flowing_sand: Plane wave
+- :heavy_check_mark: Plane wave
 - :heavy_check_mark: Field of electric/magnetic ring current
 - :heavy_check_mark: Field of electric/magnetic dipole
 
