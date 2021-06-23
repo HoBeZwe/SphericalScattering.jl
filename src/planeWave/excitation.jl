@@ -1,5 +1,5 @@
 
-struct PlaneWave{T,C}
+struct PlaneWave{T,C} <: Excitation 
     embedding::Medium{T}
     wavenumber::C
     amplitude::C

@@ -17,6 +17,8 @@ using Requires
 
 # -------- exportet parts
 # types
+export Excitation
+export PlaneWave
 export ElectricRingCurrent, MagneticRingCurrent
 export FarField, ElectricField, MagneticField
 export Medium, Parameter

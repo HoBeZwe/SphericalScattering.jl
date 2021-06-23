@@ -1,5 +1,5 @@
 
-abstract type Dipole end
+abstract type Dipole <: Excitation end 
 
 struct HertzianDipole{T,C} <: Dipole
     embedding::Medium{T}
