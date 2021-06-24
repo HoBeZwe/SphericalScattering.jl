@@ -66,7 +66,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     s = sqrt(π / 2 / kr)
 
     try
-        while δE > eps || n < 10
+        while δE > eps 
             n += 1
 
             An, Bn = scatterCoeff(sphere, excitation, n, ka)
@@ -137,7 +137,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     s = sqrt(π / 2 / kr)
 
     try
-        while δH > eps || n < 10
+        while δH > eps
             n += 1
 
             An, Bn = scatterCoeff(sphere, excitation, n, ka)
