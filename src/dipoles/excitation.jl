@@ -11,8 +11,8 @@ end
 
 struct FitzgeraldDipole{T,C} <: Dipole
     embedding::Medium{T}
-    wavenumber::C
-    amplitude::T
+    wavenumber::T
+    amplitude::C
     center::SVector{3,T}
     orientation::SVector{3,T}
 end
