@@ -29,7 +29,7 @@ end
 
 
 """
-    field(excitation::HertzianDipole, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    field(excitation::Dipole, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field radiated by a Hertzian dipole at given position and orientation at point.
 
@@ -51,13 +51,13 @@ function field(excitation::Dipole, point, quantity::ElectricField; parameter::Pa
 
     # r < 0.9 && return SVector(NaN, NaN, NaN)
 
-    return Il / (4 * π) * sqrt(μ / ε) * exp(-im * k * r) * (k / r * cross(cross(n, p), n) + (1 / k / r^3 + im / r^2) * (3 * n * dot(n, p) - p))
+    return Il / (4 * π) * sqrt(μ / ε) * exp(-im * k * r) * (k / r * ((n × p) × n) + (1 / k / r^3 + im / r^2) * (3 * n * dot(n, p) - p))
 end
 
 
 
 """
-    field(excitation::HertzianDipole, point, quantity::MagneticField; parameter::Parameter=Parameter())
+    field(excitation::Dipole, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
 Compute the magnetic field radiated by a Hertzian dipole at given position and orientation at point.
 
@@ -75,9 +75,58 @@ function field(excitation::Dipole, point, quantity::MagneticField; parameter::Pa
     r = norm(d)
     n = d / r
 
-    return Il / (4 * π) * cross(n, p) * exp(-im * k * r) / r * (k + 1 / (im * r))
+    return Il / (4 * π) * (n × p) * exp(-im * k * r) / r * (k + 1 / (im * r))
 end
 
+
+
+"""
+    field(excitation::HertzianDipole, point, quantity::FarField; parameter::Parameter=Parameter())
+
+Compute the electric far field radiated by a Hertzian dipole at given position and orientation at point.
+
+The point and the returned field are in Cartesian coordinates.
+"""
+function field(excitation::HertzianDipole, point, quantity::FarField; parameter::Parameter=Parameter())
+
+    Il = excitation.amplitude
+    k  = excitation.wavenumber
+    ε  = excitation.embedding.ε
+    μ  = excitation.embedding.μ
+
+    r0 = excitation.center
+    p  = excitation.orientation
+
+    d = point - r0
+    r = norm(d)
+    n = d / r
+
+    return Il / (4 * π) * sqrt(μ / ε) * k * ((n × p) × n) 
+end
+
+
+
+"""
+    field(excitation::FitzgeraldDipole, point, quantity::FarField; parameter::Parameter=Parameter())
+
+Compute the electric far field radiated by a Fitzgerald dipole at given position and orientation at point.
+
+The point and the returned field are in Cartesian coordinates.
+"""
+function field(excitation::FitzgeraldDipole, point, quantity::FarField; parameter::Parameter=Parameter())
+
+    Il = excitation.amplitude
+    k  = excitation.wavenumber
+
+    r0 = excitation.center
+    p  = excitation.orientation
+
+    d = point - r0
+    r = norm(d)
+    n = d / r
+
+    return Il / (4 * π) * (n × p) * k 
+end
 
 
 
