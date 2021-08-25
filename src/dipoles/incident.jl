@@ -97,11 +97,10 @@ function field(excitation::HertzianDipole, point, quantity::FarField; parameter:
     r0 = excitation.center
     p  = excitation.orientation
 
-    d = point - r0
-    r = norm(d)
-    n = d / r
+    n = point / norm(point)
+    kd = k * r0 ⋅ point         # phase correction if dipole is not placed in origin
 
-    return Il / (4 * π) * sqrt(μ / ε) * k * ((n × p) × n) 
+    return Il / (4 * π) * sqrt(μ / ε) * k * ((n × p) × n) * exp(im*kd)
 end
 
 
@@ -121,11 +120,10 @@ function field(excitation::FitzgeraldDipole, point, quantity::FarField; paramete
     r0 = excitation.center
     p  = excitation.orientation
 
-    d = point - r0
-    r = norm(d)
-    n = d / r
+    n = point / norm(point)
+    kd = k * r0 ⋅ point         # phase correction if dipole is not placed in origin
 
-    return Il / (4 * π) * (n × p) * k 
+    return Il / (4 * π) * (n × p) * k * exp(im*kd)
 end
 
 
