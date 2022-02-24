@@ -27,7 +27,7 @@ export Medium, Parameter
 export electricRingCurrent, magneticRingCurrent
 export HertzianDipole, FitzgeraldDipole
 export planeWave
-export SphericalModeTE, SphericalModeTM
+export SphericalMode, SphericalModeTE, SphericalModeTM
 export PECSphere
 export field, scatteredfield
 

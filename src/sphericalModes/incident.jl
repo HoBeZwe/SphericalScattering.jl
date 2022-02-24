@@ -8,9 +8,12 @@ function field(excitation::SphericalMode, quantity::Field; parameter::Parameter=
 
     F = zeros(SVector{3,Complex{Float64}}, length(quantity.locations))
 
+    # --- distinguish electric/magnetic field
+    fieldType, exc = getFieldType(excitation, quantity)
+
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)
-        F[ind] = field(excitation, point, quantity, parameter=parameter)
+        F[ind] = field(exc, point, fieldType, parameter=parameter)
     end
 
     return F
@@ -21,9 +24,9 @@ end
 """
     field(excitation::SphericalModeTE, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
-Compute the electric field radiated by an electric ring current placed in origin at point (r, ϑ) 
+Compute the electric field of a TE spherical mode.
 """
-function field(excitation::SphericalModeTE, point, quantity::ElectricField; parameter::Parameter=Parameter())
+function field(excitation::SphericalModeTE, point, quantity::Field; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -48,9 +51,9 @@ function field(excitation::SphericalModeTE, point, quantity::ElectricField; para
     pf = prefac(m, n)
 
     # --- Hankel functions
-    if excitation.s == 1        # outward
+    if excitation.c == 1        # outward
         H = hankelh1(n+0.5, kr) * sqrt(π / 2 / kr)
-    elseif excitation.s == 2    # inward
+    elseif excitation.c == 2    # inward
         H = hankelh2(n+0.5, kr) * sqrt(π / 2 / kr)
     else
         error("Type can only be 1 or 2.")
@@ -58,14 +61,14 @@ function field(excitation::SphericalModeTE, point, quantity::ElectricField; para
 
     # --- factors Eϑ and Eϕ have in common
     mabs = abs(m)
-    aux = k * sqrt(sqrt(μ / ε)) * H * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
+    aux = excitation.amplitude * k * sqrt(sqrt(μ / ε)) * H * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
 
     # --- put things together
-    Eϑ = -aux * im * associatedLegendre(n, m, ϑ)
-    Eϕ = -aux * derivatieAssociatedLegendre(n, m, ϑ)
+    Eϑ = aux * im * associatedLegendre(n, m, ϑ)
+    Eϕ = aux * derivatieAssociatedLegendre(n, m, ϑ)
 
-    return SVector(Er, Eϑ, Eϕ)
-    #return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
+    #return SVector(Er, Eϑ, Eϕ)
+    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
 end
 
 
@@ -73,9 +76,9 @@ end
 """
     field(excitation::SphericalModeTE, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
-Compute the electric field radiated by an electric ring current placed in origin at point (r, ϑ) 
+Compute the electric field of a TM spherical mode. 
 """
-function field(excitation::SphericalModeTM, point, quantity::ElectricField; parameter::Parameter=Parameter())
+function field(excitation::SphericalModeTM, point, quantity::Field; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -100,10 +103,10 @@ function field(excitation::SphericalModeTM, point, quantity::ElectricField; para
     pf = prefac(m, n)
 
     # --- Hankel functions
-    if excitation.s == 1        # outward
+    if excitation.c == 1        # outward
         H  = hankelh1(n+0.5, kr)  
         dH = (n + 1) * H - kr * hankelh1(n+1.5, kr)
-    elseif excitation.s == 2    # inward
+    elseif excitation.c == 2    # inward
         H  = hankelh2(n+0.5, kr) 
         dH = (n + 1) * H - kr * hankelh2(n+1.5, kr)
     else
@@ -115,15 +118,15 @@ function field(excitation::SphericalModeTM, point, quantity::ElectricField; para
 
     # --- factors Er, Eϑ, and Eϕ have in common
     mabs = abs(m)
-    aux = sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) ) / r 
+    aux = excitation.amplitude * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) ) / r 
 
     # --- put things together
-    Er = aux * n * (n + 1) * H * (-1)^mabs * Plm(cos(ϑ), n, mabs)
-    Eϑ = -aux * dH * derivatieAssociatedLegendre(n, m, ϑ) 
+    Er =  aux * n * (n + 1) * H * (-1)^mabs * Plm(cos(ϑ), n, mabs)
+    Eϑ =  aux * dH * derivatieAssociatedLegendre(n, m, ϑ) 
     Eϕ = -aux * dH * im * associatedLegendre(n, m, ϑ)
 
-    return SVector(Er, Eϑ, Eϕ)
-    #return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
+    #return SVector(Er, Eϑ, Eϕ)
+    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
 end
 
 
@@ -143,6 +146,7 @@ function prefac(m::T, n::T) where T <: Integer
     # all other cases
     return aux * (-m / abs(m))^m
 end
+
 
 
 """
