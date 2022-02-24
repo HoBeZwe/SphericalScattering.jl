@@ -27,6 +27,7 @@ export Medium, Parameter
 export electricRingCurrent, magneticRingCurrent
 export HertzianDipole, FitzgeraldDipole
 export planeWave
+export SphericalModeTE, SphericalModeTM
 export PECSphere
 export field, scatteredfield
 
@@ -48,4 +49,8 @@ include("dipoles/scattered.jl")
 include("planeWave/excitation.jl")
 include("planeWave/incident.jl")
 include("planeWave/scattered.jl")
+
+include("sphericalModes/excitation.jl")
+include("sphericalModes/incident.jl")
+include("sphericalModes/scattered.jl")
 end
