@@ -26,7 +26,7 @@ end
 
 Compute the electric field of a TE spherical mode.
 """
-function field(excitation::SphericalModeTE, point, quantity::Field; parameter::Parameter=Parameter())
+function field(excitation::SphericalModeTE, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -64,8 +64,8 @@ function field(excitation::SphericalModeTE, point, quantity::Field; parameter::P
     aux = excitation.amplitude * k * sqrt(sqrt(μ / ε)) * H * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
 
     # --- put things together
-    Eϑ = aux * im * associatedLegendre(n, m, ϑ)
-    Eϕ = aux * derivatieAssociatedLegendre(n, m, ϑ)
+    Eϑ = conj(aux * im * associatedLegendre(n, m, ϑ))
+    Eϕ = conj(aux * derivatieAssociatedLegendre(n, m, ϑ))
 
     #return SVector(Er, Eϑ, Eϕ)
     return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
@@ -78,7 +78,7 @@ end
 
 Compute the electric field of a TM spherical mode. 
 """
-function field(excitation::SphericalModeTM, point, quantity::Field; parameter::Parameter=Parameter())
+function field(excitation::SphericalModeTM, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -121,9 +121,90 @@ function field(excitation::SphericalModeTM, point, quantity::Field; parameter::P
     aux = excitation.amplitude * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) ) / r 
 
     # --- put things together
-    Er =  aux * n * (n + 1) * H * (-1)^mabs * Plm(cos(ϑ), n, mabs)
-    Eϑ =  aux * dH * derivatieAssociatedLegendre(n, m, ϑ) 
-    Eϕ = -aux * dH * im * associatedLegendre(n, m, ϑ)
+    Er = conj( aux * n * (n + 1) * H * (-1)^mabs * Plm(cos(ϑ), n, mabs))
+    Eϑ = conj( aux * dH * derivatieAssociatedLegendre(n, m, ϑ) )
+    Eϕ = conj(-aux * dH * im * associatedLegendre(n, m, ϑ))
+
+    #return SVector(Er, Eϑ, Eϕ)
+    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
+end
+
+
+
+"""
+    field(excitation::SphericalModeTE, point, quantity::FarField; parameter::Parameter=Parameter())
+
+Compute the electric far-field of a TE spherical mode.
+"""
+function field(excitation::SphericalModeTE, point, quantity::FarField; parameter::Parameter=Parameter())
+
+    point_sph = cart2sph(point) # [r ϑ φ]
+
+    m  = excitation.m
+    n  = excitation.n
+    k  = excitation.wavenumber
+
+    μ  = excitation.embedding.μ
+    ε  = excitation.embedding.ε
+
+    ϑ = point_sph[2]
+    ϕ = point_sph[3]
+
+
+    Er = Complex{Float64}(0.0)
+    Eϑ = Complex{Float64}(0.0)
+    Eϕ = Complex{Float64}(0.0)
+
+    # --- common factor
+    pf = prefac(m, n)
+
+    # --- factors Eϑ and Eϕ have in common
+    mabs = abs(m)
+    aux = excitation.amplitude * im^(n+1) * k * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
+
+    # --- put things together
+    Eϑ = conj(aux * im * associatedLegendre(n, m, ϑ))
+    Eϕ = conj(aux * derivatieAssociatedLegendre(n, m, ϑ))
+
+    #return SVector(Er, Eϑ, Eϕ)
+    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
+end
+
+
+
+"""
+    field(excitation::SphericalModeTE, point, quantity::ElectricField; parameter::Parameter=Parameter())
+
+Compute the electric far-field of a TM spherical mode. 
+"""
+function field(excitation::SphericalModeTM, point, quantity::FarField; parameter::Parameter=Parameter())
+
+    point_sph = cart2sph(point) # [r ϑ φ]
+
+    m  = excitation.m
+    n  = excitation.n
+    k  = excitation.wavenumber
+
+    μ  = excitation.embedding.μ
+    ε  = excitation.embedding.ε
+
+    ϑ = point_sph[2]
+    ϕ = point_sph[3]
+
+    Er = Complex{Float64}(0.0)
+    Eϑ = Complex{Float64}(0.0)
+    Eϕ = Complex{Float64}(0.0)
+
+    # --- common factor
+    pf = prefac(m, n)
+
+    # --- factors Er, Eϑ, and Eϕ have in common
+    mabs = abs(m)
+    aux = excitation.amplitude * im^n * k * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )  
+
+    # --- put things together
+    Eϑ = conj(-aux * derivatieAssociatedLegendre(n, m, ϑ) )
+    Eϕ = conj( aux * im * associatedLegendre(n, m, ϑ))
 
     #return SVector(Er, Eϑ, Eϕ)
     return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation

@@ -53,7 +53,7 @@ orientation = SVector(0.0,0.0,1.0)
 
 Do nothing.
 """
-function getFieldType(excitation::SphericalMode, quantity::ElectricField)
+function getFieldType(excitation::SphericalMode, quantity::Field)
     return quantity, excitation
 end
 
