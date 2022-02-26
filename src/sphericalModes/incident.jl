@@ -160,7 +160,7 @@ function field(excitation::SphericalModeTE, point, quantity::FarField; parameter
 
     # --- factors Eϑ and Eϕ have in common
     mabs = abs(m)
-    aux = excitation.amplitude * im^(n+1) * k * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
+    aux = -excitation.amplitude * (im)^(n+1) * 1.0 * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
 
     # --- put things together
     Eϑ = conj(aux * im * associatedLegendre(n, m, ϑ))
@@ -200,7 +200,7 @@ function field(excitation::SphericalModeTM, point, quantity::FarField; parameter
 
     # --- factors Er, Eϑ, and Eϕ have in common
     mabs = abs(m)
-    aux = excitation.amplitude * im^n * k * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )  
+    aux = excitation.amplitude * (-im)^n * 1.0 * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )  
 
     # --- put things together
     Eϑ = conj(-aux * derivatieAssociatedLegendre(n, m, ϑ) )
@@ -241,38 +241,38 @@ The special values for ϑ ∈ {0, π/2, π} are treated properly.
 
 ϑ ∈ [0, π] assumed
 """
-function associatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <: Real}
-
-    cosϑ = cos(ϑ)
-    sinϑ = sin(ϑ)
-    mabs = abs(m)
-
-    # --- handle limit cases
-    if isapprox(ϑ, 0.0, atol=1e-6)
-
-        mabs == 1 && return F(m * n * (n + 1) / 2)
-        return F(0.0)
-    end
-
-    if isapprox(ϑ, π,   rtol=1e-6)
-    
-        mabs == 1 && return F(m * (-1)^(n + 1) * n * (n + 1) / 2)
-        return F(0.0)
-    end
-
-    return (-1)^mabs * m * Plm(cosϑ, n, mabs) / sinϑ
-end
-
 # function associatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <: Real}
 
 #     cosϑ = cos(ϑ)
 #     sinϑ = sin(ϑ)
 #     mabs = abs(m)
 
-#     mabs == 0 && return F(0.0)
+#     # --- handle limit cases
+#     if isapprox(ϑ, 0.0, atol=1e-6)
 
-#     return (-1)^mabs * m * sinϑ * Plm(cosϑ, n, mabs) + 0.5 * cosϑ * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs-1) + (-1)^(mabs+1) * Plm(cosϑ, n, mabs+1))
+#         mabs == 1 && return (-1)^mabs * F(m * n * (n + 1) / 2)
+#         return F(0.0)
+#     end
+
+#     if isapprox(ϑ, π,   rtol=1e-6)
+    
+#         mabs == 1 && return (-1)^mabs * F(m * (-1)^(n + 1) * n * (n + 1) / 2)
+#         return F(0.0)
+#     end
+
+#     return (-1)^mabs * m * Plm(cosϑ, n, mabs) / sinϑ
 # end
+
+function associatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <: Real}
+
+    cosϑ = cos(ϑ)
+    sinϑ = sin(ϑ)
+    mabs = abs(m)
+
+    mabs == 0 && return F(0.0)
+
+    return (-1)^mabs * m * sinϑ * Plm(cosϑ, n, mabs) + 0.5 * cosϑ * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs-1) + (-1)^(mabs+1) * Plm(cosϑ, n, mabs+1))
+end
 
 
 """
@@ -284,6 +284,6 @@ function derivatieAssociatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <
     cosϑ = cos(ϑ)
     mabs = abs(m)
 
-    mabs == 0 && return -Plm(cosϑ, n, 1) 
+    mabs == 0 && return Plm(cosϑ, n, 1) 
     return 0.5 * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs - 1) - (-1)^(mabs+1) * Plm(cosϑ, n, mabs + 1))
 end
