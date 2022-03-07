@@ -51,9 +51,9 @@ function field(excitation::SphericalModeTE, point, quantity::ElectricField; para
     pf = prefac(m, n)
 
     # --- Hankel functions
-    if excitation.c == 1        # outward
+    if excitation.c == 1        # inward
         H = hankelh1(n+0.5, kr) * sqrt(π / 2 / kr)
-    elseif excitation.c == 2    # inward
+    elseif excitation.c == 2    # outward
         H = hankelh2(n+0.5, kr) * sqrt(π / 2 / kr)
     else
         error("Type can only be 1 or 2.")
@@ -64,8 +64,8 @@ function field(excitation::SphericalModeTE, point, quantity::ElectricField; para
     aux = excitation.amplitude * k * sqrt(sqrt(μ / ε)) * H * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
 
     # --- put things together
-    Eϑ = conj(aux * im * associatedLegendre(n, m, ϑ))
-    Eϕ = conj(aux * derivatieAssociatedLegendre(n, m, ϑ))
+    Eϑ = aux * im * associatedLegendre(n, m, ϑ)
+    Eϕ = aux * derivatieAssociatedLegendre(n, m, ϑ)
 
     #return SVector(Er, Eϑ, Eϕ)
     return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
@@ -103,10 +103,10 @@ function field(excitation::SphericalModeTM, point, quantity::ElectricField; para
     pf = prefac(m, n)
 
     # --- Hankel functions
-    if excitation.c == 1        # outward
+    if excitation.c == 1        # inward
         H  = hankelh1(n+0.5, kr)  
         dH = (n + 1) * H - kr * hankelh1(n+1.5, kr)
-    elseif excitation.c == 2    # inward
+    elseif excitation.c == 2    # outward
         H  = hankelh2(n+0.5, kr) 
         dH = (n + 1) * H - kr * hankelh2(n+1.5, kr)
     else
@@ -121,9 +121,9 @@ function field(excitation::SphericalModeTM, point, quantity::ElectricField; para
     aux = excitation.amplitude * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) ) / r 
 
     # --- put things together
-    Er = conj( aux * n * (n + 1) * H * (-1)^mabs * Plm(cos(ϑ), n, mabs))
-    Eϑ = conj( aux * dH * derivatieAssociatedLegendre(n, m, ϑ) )
-    Eϕ = conj(-aux * dH * im * associatedLegendre(n, m, ϑ))
+    Er =  aux * n * (n + 1) * H * (-1)^mabs * Plm(cos(ϑ), n, mabs)
+    Eϑ =  aux * dH * derivatieAssociatedLegendre(n, m, ϑ) 
+    Eϕ = -aux * dH * im * associatedLegendre(n, m, ϑ)
 
     #return SVector(Er, Eϑ, Eϕ)
     return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
@@ -163,8 +163,8 @@ function field(excitation::SphericalModeTE, point, quantity::FarField; parameter
     aux = -excitation.amplitude * (im)^(n+1) * 1.0 * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
 
     # --- put things together
-    Eϑ = conj(aux * im * associatedLegendre(n, m, ϑ))
-    Eϕ = conj(aux * derivatieAssociatedLegendre(n, m, ϑ))
+    Eϑ = aux * im * associatedLegendre(n, m, ϑ)
+    Eϕ = aux * derivatieAssociatedLegendre(n, m, ϑ)
 
     #return SVector(Er, Eϑ, Eϕ)
     return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
@@ -203,8 +203,8 @@ function field(excitation::SphericalModeTM, point, quantity::FarField; parameter
     aux = excitation.amplitude * (-im)^n * 1.0 * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )  
 
     # --- put things together
-    Eϑ = conj(-aux * derivatieAssociatedLegendre(n, m, ϑ) )
-    Eϕ = conj( aux * im * associatedLegendre(n, m, ϑ))
+    Eϑ = -aux * derivatieAssociatedLegendre(n, m, ϑ) 
+    Eϕ =  aux * im * associatedLegendre(n, m, ϑ)
 
     #return SVector(Er, Eϑ, Eϕ)
     return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
@@ -241,38 +241,38 @@ The special values for ϑ ∈ {0, π/2, π} are treated properly.
 
 ϑ ∈ [0, π] assumed
 """
-# function associatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <: Real}
-
-#     cosϑ = cos(ϑ)
-#     sinϑ = sin(ϑ)
-#     mabs = abs(m)
-
-#     # --- handle limit cases
-#     if isapprox(ϑ, 0.0, atol=1e-6)
-
-#         mabs == 1 && return (-1)^mabs * F(m * n * (n + 1) / 2)
-#         return F(0.0)
-#     end
-
-#     if isapprox(ϑ, π,   rtol=1e-6)
-    
-#         mabs == 1 && return (-1)^mabs * F(m * (-1)^(n + 1) * n * (n + 1) / 2)
-#         return F(0.0)
-#     end
-
-#     return (-1)^mabs * m * Plm(cosϑ, n, mabs) / sinϑ
-# end
-
 function associatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <: Real}
 
     cosϑ = cos(ϑ)
     sinϑ = sin(ϑ)
     mabs = abs(m)
 
-    mabs == 0 && return F(0.0)
+    # --- handle limit cases
+    if isapprox(ϑ, 0.0, atol=1e-6)
 
-    return (-1)^mabs * m * sinϑ * Plm(cosϑ, n, mabs) + 0.5 * cosϑ * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs-1) + (-1)^(mabs+1) * Plm(cosϑ, n, mabs+1))
+        mabs == 1 && return (-1)^mabs * F(m * n * (n + 1) / 2)
+        return F(0.0)
+    end
+
+    if isapprox(ϑ, π,   rtol=1e-6)
+    
+        mabs == 1 && return (-1)^mabs * F(m * (-1)^(n + 1) * n * (n + 1) / 2)
+        return F(0.0)
+    end
+
+    return (-1)^mabs * m * Plm(cosϑ, n, mabs) / sinϑ
 end
+
+# function associatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <: Real}
+
+#     cosϑ = cos(ϑ)
+#     sinϑ = sin(ϑ)
+#     mabs = abs(m)
+
+#     mabs == 0 && return F(0.0)
+
+#     return (-1)^mabs * m * sinϑ * Plm(cosϑ, n, mabs) + 0.5 * cosϑ * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs-1) + (-1)^(mabs+1) * Plm(cosϑ, n, mabs+1))
+# end
 
 
 """

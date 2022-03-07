@@ -46,7 +46,7 @@ function scatteredfield(sphere::PECSphere, excitation::SphericalMode, point, qua
     Q = typeof(quantity)
 
     # outward travelling wave
-    Escat = T(excitation.embedding, excitation.wavenumber, excitation.amplitude, excitation.m, excitation.n, 1, excitation.center, excitation.orientation)
+    Escat = T(excitation.embedding, excitation.wavenumber, excitation.amplitude, excitation.m, excitation.n, 2, excitation.center, excitation.orientation)
 
     # scatter coefficient
     γ = scatterCoeff(sphere, excitation, excitation.n, ka)
@@ -64,7 +64,7 @@ Compute scattering coefficients for a spherical TE mode travelling towards the o
 """
 function scatterCoeff(sphere::PECSphere, excitation::SphericalModeTE, n::Int, ka)
 
-    return -hankelh1(n+0.5, ka) / hankelh2(n+0.5, ka)
+    return -hankelh2(n+0.5, ka) / hankelh1(n+0.5, ka)
 end
 
 
@@ -79,5 +79,8 @@ function scatterCoeff(sphere::PECSphere, excitation::SphericalModeTM, n::Int, ka
     dH1 = (n + 1) * hankelh1(n+0.5, ka) - ka * hankelh1(n+1.5, ka)
     dH2 = (n + 1) * hankelh2(n+0.5, ka) - ka * hankelh2(n+1.5, ka)
 
-    return -dH1 / dH2
+    #dH1 = (n + 1) * besselj(n+0.5, ka) - ka * besselj(n+1.5, ka)
+    #dH2 = (n + 1) * hankelh2(n+0.5, ka) - ka * hankelh2(n+1.5, ka)
+
+    return -dH2 / dH1
 end
