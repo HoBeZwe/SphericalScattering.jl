@@ -1,0 +1,4 @@
+
+# Dipoles
+
+Implementation details.
