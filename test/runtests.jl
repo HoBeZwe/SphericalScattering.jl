@@ -1,6 +1,20 @@
 using SphericalScattering
 using Test
 
-@testset "SphericalScattering.jl" begin
-    # Write your tests here.
+using StaticArrays
+
+@testset "Testing SphericalScattering functionality" begin
+    
+    @testset "Test dipoles" begin
+        include("dipoles.jl")
+    end
+    @testset "Test plane waves" begin
+        include("planeWave.jl")
+    end
+    @testset "Test ring currents" begin
+        include("ringCurrents.jl")
+    end
+    @testset "Test spherical modes" begin
+        include("sphericalModes.jl")
+    end
 end
