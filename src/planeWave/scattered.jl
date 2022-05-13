@@ -1,10 +1,10 @@
 
 """
-    scatteredfield(sphere::PECSphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
+    scatteredfield(sphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
     
 Compute the electric field scattered by a PEC sphere, for an incident plane wave.
 """
-function scatteredfield(sphere::PECSphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(sphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
@@ -27,13 +27,13 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere, excitation::PlaneWave, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
-Compute the electric field scattered by a PEC sphere, for an incident plane wave travelling in -z direction with polarization in x-direction.
+Compute the electric field scattered by a PEC sphere, for an incident plane wave travelling in -z direction with polarization in x-direction at `point`.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantity::ElectricField; parameter::Parameter=Parameter())
+function scatteredfield(sphere, excitation::PlaneWave, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -101,7 +101,7 @@ Compute the magnetic field scattered by a PEC sphere, for an incident plane wave
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantity::MagneticField; parameter::Parameter=Parameter())
+function scatteredfield(sphere, excitation::PlaneWave, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -171,7 +171,7 @@ Compute the (electric) far-field scattered by a PEC sphere, for an incident plan
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantity::FarField; parameter::Parameter=Parameter())
+function scatteredfield(sphere, excitation::PlaneWave, point, quantity::FarField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -248,6 +248,44 @@ function scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int, ka)
     return An, Bn
 end
 
+"""
+    scatterCoeff(sphere::DielectricSphere, excitation::PlaneWave, n::Int, ka)
+
+Compute scattering coefficients for a plane wave travelling in -z direction with polarization in x-direction.
+"""
+function scatterCoeff(sphere::DielectricSphere, excitation::PlaneWave, n::Int, ka)
+
+    m₀ = 1 # sqrt(sphere.embedding.ε * sphere.embedding.μ)
+    # Assume that the embedding is empty space
+    m₁ = sqrt(sphere.filling.ε * sphere.filling.μ) / sqrt(sphere.embedding.ε * sphere.embedding.μ)
+
+    k₀a = ka*m₀
+    k₁a = ka*m₁
+    s₀ = sqrt(π / 2 / k₀a)
+    s₁ = sqrt(π / 2 / k₁a)
+
+    J₀  = s₀ * besselj(n + 0.5, k₀a)   # spherical Bessel function
+    H₀  = s₀ * hankelh2(n + 0.5, k₀a)  # spherical Hankel function
+    J₁  = s₁ * besselj(n + 0.5, k₁a)   # spherical Bessel function
+    H₁  = s₁ * hankelh2(n + 0.5, k₁a)  # spherical Hankel function
+    J₀2 = s₀ * besselj(n - 0.5, k₀a)
+    H₀2 = s₀ * hankelh2(n - 0.5, k₀a)
+    J₁2 = s₁ * besselj(n - 0.5, k₁a)
+    H₁2 = s₁ * hankelh2(n - 0.5, k₁a)
+
+    k₀aJ1P = (k₀a * J₀2 - n * J₀ )    # derivatives spherical Bessel functions
+    k₀aH1P = (k₀a * H₀2 - n * H₀ )    # derivatives spherical Hankel functions
+    k₁aJ1P = (k₁a * J₁2 - n * J₁ )    # derivatives spherical Bessel functions
+    k₁aH1P = (k₁a * H₁2 - n * H₁ )    # derivatives spherical Hankel functions
+
+    An = ((im)^n) * (2*n + 1) / (n * (n + 1)) *
+         ( (J₀ * k₁aJ1P - J₁ * k₀aJ1P) / (J₁ * k₀aH1P - H₀ * k₁aJ1P) )  # Ruck, et. al. (3.3-3)
+
+    Bn = ((im)^(n + 1)) * (2*n + 1) / (n * (n + 1)) *
+         ( (J₀ * k₁aJ1P - m₁^2 * J₁ * k₀aJ1P) / (H₀ * k₁aJ1P - m₁^2 * J₁ * k₀aH1P) ) # Ruck, et. al. (3.3-4)
+
+    return An, Bn
+end
 
 
 """
@@ -255,8 +293,7 @@ end
 
 Compute functional dependencies of the Mie series for a plane wave travelling in -z direction with polarization in x-direction.
 """
-function expansion(sphere::PECSphere, excitation::PlaneWave, plm, kr, s, cosϑ, sinϑ, n::Int)
-
+function expansion(sphere, excitation::PlaneWave, plm, kr, s, cosϑ, sinϑ, n::Int)
     Hn  = s * hankelh2(n + 0.5, kr)     # spherical Hankel functions
     H2n = s * hankelh2(n - 0.5, kr)
 
@@ -304,11 +341,11 @@ end
 
 
 """
-    expansion(sphere::PECSphere, excitation::PlaneWave, ka, plm, cosϑ, sinϑ, n::Int)
+    expansion(sphere, excitation::PlaneWave, ka, plm, cosϑ, sinϑ, n::Int)
 
 Compute far-field functional dependencies of the Mie series for a plane wave travelling in -z direction with polarization in x-direction.
 """
-function expansion(sphere::PECSphere, excitation::PlaneWave, ka, plm, cosϑ, sinϑ, n::Int)
+function expansion(sphere, excitation::PlaneWave, ka, plm, cosϑ, sinϑ, n::Int)
     
     An, Bn = scatterCoeff(sphere, excitation, n, ka)
 
