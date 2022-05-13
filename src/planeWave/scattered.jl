@@ -159,10 +159,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
     end
 
-    ZF = -im * sqrt(μ / ε)
-
-    #return SVector(ZF * Hr, ZF * Hϑ, ZF * Hϕ)
-    return convertSpherical2Cartesian(SVector(ZF * Hr, ZF * Hϑ, ZF * Hϕ), point_sph)
+    return convertSpherical2Cartesian((im * sqrt(ε / μ)) .* SVector(Hr, Hϑ, Hϕ), point_sph)
 end
 
 
@@ -240,7 +237,9 @@ function scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int, ka)
     J2 = s * besselj(n - 0.5, ka)  
     H2 = s * hankelh2(n - 0.5, ka) 
 
+    # [k₀ * a * j_n(k₀ a)]'
     kaJ1P = (ka * J2 - n * J )    # derivatives spherical Bessel functions
+    # [k₀ * a * h2_n(k₀ a)]'
     kaH1P = (ka * H2 - n * H )    # derivatives spherical Hankel functions
 
     An = -((im)^n) * ( J / H ) * (2 * n + 1) / (n * (n + 1))                # Ruck, et. al. (3.2-1)
