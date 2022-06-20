@@ -18,6 +18,7 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 - :heavy_check_mark: Plane wave
 - :heavy_check_mark: Field of electric/magnetic ring current
 - :heavy_check_mark: Field of electric/magnetic dipole
+- :heavy_check_mark: TE/TM spherical vector waves
 
 ##### Available scattering objects:
 - :heavy_check_mark: PEC sphere
@@ -29,4 +30,4 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 
 ## Documentation
 
-Here you can find the [documentation]().
+Here you can find the [documentation](https://HoBeZwe.github.io/SphericalScattering.jl/stable).

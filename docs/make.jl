@@ -6,7 +6,7 @@ DocMeta.setdocmeta!(SphericalScattering, :DocTestSetup, :(using SphericalScatter
 makedocs(;
     modules=[SphericalScattering],
     authors="Bernd Hofmann <Bernd.Hofmann@tum.de> and contributors",
-    repo="https://github.com/HoBeZwe/SphericalScattering.jl/blob/{commit}{path}#{line}",
+    repo="https://github.com/HoBeZwe/SphericalScattering/tree/master",
     sitename="SphericalScattering.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
@@ -15,7 +15,14 @@ makedocs(;
     ),
     pages=[
         "Introduction" => "index.md",
-        "API Reference" => "apiref.md"
+        "Manual" => "manual.md",
+        "Implementation Details" => Any[
+            "Plane Wave" => "planeWave.md",
+            "Ring Currents" => "ringCurrents.md",
+            "Dipoles" => "dipoles.md",
+            "Spherical Modes" => "sphModes.md",
+        ],
+        "API Reference" => "apiref.md",
     ],
 )
 
