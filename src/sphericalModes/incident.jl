@@ -6,7 +6,8 @@ Compute the electric field of a spherical mode.
 """
 function field(excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
 
-    F = zeros(SVector{3,Complex{Float64}}, length(quantity.locations))
+    T = typeof(excitation.wavenumber)
+    F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
 
     # --- distinguish electric/magnetic field
     fieldType, exc = getFieldType(excitation, quantity)
@@ -37,24 +38,26 @@ function field(excitation::SphericalModeTE, point, quantity::ElectricField; para
     μ  = excitation.embedding.μ
     ε  = excitation.embedding.ε
 
+    T = typeof(k)
+
     r = point_sph[1]
     ϑ = point_sph[2]
     ϕ = point_sph[3]
 
     kr = k * r
 
-    Er = Complex{Float64}(0.0)
-    Eϑ = Complex{Float64}(0.0)
-    Eϕ = Complex{Float64}(0.0)
+    Er = Complex{T}(0.0)
+    Eϑ = Complex{T}(0.0)
+    Eϕ = Complex{T}(0.0)
 
     # --- common factor
     pf = prefac(m, n)
 
     # --- Hankel functions
     if excitation.c == 1        # inward
-        H = hankelh1(n+0.5, kr) * sqrt(π / 2 / kr)
+        H = hankelh1(n+T(0.5), kr) * sqrt(π / 2 / kr)
     elseif excitation.c == 2    # outward
-        H = hankelh2(n+0.5, kr) * sqrt(π / 2 / kr)
+        H = hankelh2(n+T(0.5), kr) * sqrt(π / 2 / kr)
     else
         error("Type can only be 1 or 2.")
     end
@@ -68,7 +71,7 @@ function field(excitation::SphericalModeTE, point, quantity::ElectricField; para
     Eϕ = aux * derivatieAssociatedLegendre(n, m, ϑ)
 
     #return SVector(Er, Eϑ, Eϕ)
-    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
+    return convertSpherical2Cartesian(SVector{3,Complex{T}}(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
 end
 
 
@@ -89,26 +92,28 @@ function field(excitation::SphericalModeTM, point, quantity::ElectricField; para
     μ  = excitation.embedding.μ
     ε  = excitation.embedding.ε
 
+    T = typeof(k)
+
     r = point_sph[1]
     ϑ = point_sph[2]
     ϕ = point_sph[3]
 
     kr = k * r
 
-    Er = Complex{Float64}(0.0)
-    Eϑ = Complex{Float64}(0.0)
-    Eϕ = Complex{Float64}(0.0)
+    Er = Complex{T}(0.0)
+    Eϑ = Complex{T}(0.0)
+    Eϕ = Complex{T}(0.0)
 
     # --- common factor
     pf = prefac(m, n)
 
     # --- Hankel functions
     if excitation.c == 1        # inward
-        H  = hankelh1(n+0.5, kr)  
-        dH = (n + 1) * H - kr * hankelh1(n+1.5, kr)
+        H  = hankelh1(n+T(0.5), kr)
+        dH = (n + 1) * H - kr * hankelh1(n+T(1.5), kr)
     elseif excitation.c == 2    # outward
-        H  = hankelh2(n+0.5, kr) 
-        dH = (n + 1) * H - kr * hankelh2(n+1.5, kr)
+        H  = hankelh2(n+T(0.5), kr)
+        dH = (n + 1) * H - kr * hankelh2(n+T(1.5), kr)
     else
         error("Type can only be 1 or 2.")
     end
@@ -126,7 +131,7 @@ function field(excitation::SphericalModeTM, point, quantity::ElectricField; para
     Eϕ = -aux * dH * im * associatedLegendre(n, m, ϑ)
 
     #return SVector(Er, Eϑ, Eϕ)
-    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
+    return convertSpherical2Cartesian(SVector{3,Complex{T}}(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
 end
 
 
@@ -147,27 +152,29 @@ function field(excitation::SphericalModeTE, point, quantity::FarField; parameter
     μ  = excitation.embedding.μ
     ε  = excitation.embedding.ε
 
+    T = typeof(k)
+
     ϑ = point_sph[2]
     ϕ = point_sph[3]
 
 
-    Er = Complex{Float64}(0.0)
-    Eϑ = Complex{Float64}(0.0)
-    Eϕ = Complex{Float64}(0.0)
+    Er = Complex{T}(0.0)
+    Eϑ = Complex{T}(0.0)
+    Eϕ = Complex{T}(0.0)
 
     # --- common factor
     pf = prefac(m, n)
 
     # --- factors Eϑ and Eϕ have in common
     mabs = abs(m)
-    aux = -excitation.amplitude * (im)^(n+1) * 1.0 * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
+    aux = -excitation.amplitude * (im)^(n+1) * T(1.0) * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
 
     # --- put things together
     Eϑ = aux * im * associatedLegendre(n, m, ϑ)
     Eϕ = aux * derivatieAssociatedLegendre(n, m, ϑ)
 
     #return SVector(Er, Eϑ, Eϕ)
-    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
+    return convertSpherical2Cartesian(SVector{3,Complex{T}}(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
 end
 
 
@@ -188,26 +195,28 @@ function field(excitation::SphericalModeTM, point, quantity::FarField; parameter
     μ  = excitation.embedding.μ
     ε  = excitation.embedding.ε
 
+    T = typeof(k)
+
     ϑ = point_sph[2]
     ϕ = point_sph[3]
 
-    Er = Complex{Float64}(0.0)
-    Eϑ = Complex{Float64}(0.0)
-    Eϕ = Complex{Float64}(0.0)
+    Er = Complex{T}(0.0)
+    Eϑ = Complex{T}(0.0)
+    Eϕ = Complex{T}(0.0)
 
     # --- common factor
     pf = prefac(m, n)
 
     # --- factors Er, Eϑ, and Eϕ have in common
     mabs = abs(m)
-    aux = excitation.amplitude * (-im)^n * 1.0 * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )  
+    aux = excitation.amplitude * (-im)^n * T(1.0) * sqrt(sqrt(μ / ε)) * pf * exp(-im * m * ϕ) * sqrt( (2*n + 1) / 2 * factorial(n-mabs) / factorial(n+mabs) )
 
     # --- put things together
     Eϑ = -aux * derivatieAssociatedLegendre(n, m, ϑ) 
     Eϕ =  aux * im * associatedLegendre(n, m, ϑ)
 
     #return SVector(Er, Eϑ, Eϕ)
-    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
+    return convertSpherical2Cartesian(SVector{3,Complex{T}}(Er, Eϑ, Eϕ), point_sph) # convert to Cartesian representation
 end
 
 
@@ -285,6 +294,6 @@ function derivatieAssociatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <
     mabs = abs(m)
 
     mabs == 0 && return Plm(cosϑ, n, 1) 
-    m == n && return 0.5 * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs - 1) )
-    return 0.5 * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs - 1) - (-1)^(mabs+1) * Plm(cosϑ, n, mabs + 1))
+    m == n && return F(0.5) * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs - 1) )
+    return F(0.5) * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs - 1) - (-1)^(mabs+1) * Plm(cosϑ, n, mabs + 1))
 end

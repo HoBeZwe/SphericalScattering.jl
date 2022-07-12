@@ -1,26 +1,26 @@
 
 abstract type SphericalMode <: Excitation end 
 
-struct SphericalModeTE{T,C,In<:Integer} <: SphericalMode
-    embedding::Medium{T}
-    wavenumber::T
-    amplitude::C
+struct SphericalModeTE{T,R,C,In<:Integer} <: SphericalMode
+    embedding::Medium{C}
+    wavenumber::R
+    amplitude::T
     m::In
     n::In
     c::In
-    center::SVector{3,T}
-    orientation::SVector{3,T}
+    center::SVector{3,R}
+    orientation::SVector{3,R}
 end
 
-struct SphericalModeTM{T,C,In<:Integer} <: SphericalMode
-    embedding::Medium{T}
-    wavenumber::T
-    amplitude::C
+struct SphericalModeTM{T,R,C,In<:Integer} <: SphericalMode
+    embedding::Medium{C}
+    wavenumber::R
+    amplitude::T
     m::In
     n::In
     c::In
-    center::SVector{3,T}
-    orientation::SVector{3,T}
+    center::SVector{3,R}
+    orientation::SVector{3,R}
 end
 
 SphericalModeTE(;
@@ -30,8 +30,8 @@ amplitude   = 1.0,
 m           = 0,
 n           = 1,
 c           = 1,
-center      = SVector(0.0,0.0,0.0),
-orientation = SVector(0.0,0.0,1.0)
+center      = SVector{3,typeof(wavenumber)}(0.0,0.0,0.0),
+orientation = SVector{3,typeof(wavenumber)}(0.0,0.0,1.0)
 ) = SphericalModeTE(embedding, wavenumber, amplitude, m, n, c, center, orientation)
 
 SphericalModeTM(;
@@ -41,8 +41,8 @@ amplitude   = 1.0,
 m           = 0,
 n           = 1,
 c           = 1,
-center      = SVector(0.0,0.0,0.0),
-orientation = SVector(0.0,0.0,1.0)
+center      = SVector{3,typeof(wavenumber)}(0.0,0.0,0.0),
+orientation = SVector{3,typeof(wavenumber)}(0.0,0.0,1.0)
 ) = SphericalModeTM(embedding, wavenumber, amplitude, m, n, c, center, orientation)
 
 

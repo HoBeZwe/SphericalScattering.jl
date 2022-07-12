@@ -1,36 +1,36 @@
 
 abstract type Dipole <: Excitation end 
 
-struct HertzianDipole{T,C} <: Dipole
-    embedding::Medium{T}
-    wavenumber::T
-    amplitude::C
-    center::SVector{3,T}
-    orientation::SVector{3,T}
+struct HertzianDipole{T,R,C} <: Dipole
+    embedding::Medium{C}
+    wavenumber::R
+    amplitude::T
+    center::SVector{3,R}
+    orientation::SVector{3,R}
 end
 
-struct FitzgeraldDipole{T,C} <: Dipole
-    embedding::Medium{T}
-    wavenumber::T
-    amplitude::C
-    center::SVector{3,T}
-    orientation::SVector{3,T}
+struct FitzgeraldDipole{T,R,C} <: Dipole
+    embedding::Medium{C}
+    wavenumber::R
+    amplitude::T
+    center::SVector{3,R}
+    orientation::SVector{3,R}
 end
 
 HertzianDipole(;
 embedding   = Medium(ε0, μ0),
 wavenumber  = error("missing argument `wavenumber`"),
 amplitude   = 1.0,
-center      = SVector(0.0,0.0,0.0),
-orientation = SVector(0.0,0.0,1.0)
+center      = SVector{3,typeof(wavenumber)}(0.0,0.0,0.0),
+orientation = SVector{3,typeof(wavenumber)}(0.0,0.0,1.0)
 ) = HertzianDipole(embedding, wavenumber, amplitude, center, orientation)
 
 FitzgeraldDipole(;
 embedding   = Medium(ε0, μ0),
 wavenumber  = error("missing argument `wavenumber`"),
 amplitude   = 1.0,
-center      = SVector(0.0,0.0,0.0),
-orientation = SVector(0.0,0.0,1.0)
+center      = SVector{3,typeof(wavenumber)}(0.0,0.0,0.0),
+orientation = SVector{3,typeof(wavenumber)}(0.0,0.0,1.0)
 ) = FitzgeraldDipole(embedding, wavenumber, amplitude, center, orientation)
 
 

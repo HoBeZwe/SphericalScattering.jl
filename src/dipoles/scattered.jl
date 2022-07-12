@@ -8,7 +8,9 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; 
 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
-    F = zeros(SVector{3,Complex{Float64}}, size(quantity.locations))
+    T = typeof(excitation.wavenumber)
+
+    F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- distinguish electric/magnetic current
     fieldType, exc = getFieldType(excitation, quantity)
@@ -42,6 +44,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
     point_sph = cart2sph(point) # [r ϑ φ]
 
     k  = excitation.wavenumber
+    T = typeof(k)
     Il = excitation.amplitude
     z0 = norm(excitation.center)   # distance Dipole-origin
 
@@ -50,9 +53,9 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
 
     eps = parameter.relativeAccuracy
     
-    Er  = complex(0.0) # initialize
-    Eϑ  = complex(0.0) # initialize
-    δEr = Inf
+    Er  = Complex{T}(0.0) # initialize
+    Eϑ  = Complex{T}(0.0) # initialize
+    δEr = T(Inf)
     n   = 0
     
     r = point_sph[1]
@@ -61,7 +64,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
     kz0 = k * z0
     ka  = k * sphere.radius
 
-    r <= sphere.radius && return SVector(complex(0.0), complex(0.0), complex(0.0)) # inside the sphere the field is 0
+    r <= sphere.radius && return SVector{3,Complex{T}}(0.0, 0.0, 0.0) # inside the sphere the field is 0
     
     sinϑ = sin(point_sph[2]) 
     cosϑ = cos(point_sph[2])    
@@ -73,9 +76,9 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
                            
             Jka_Hka = scatterCoeff(sphere, excitation, n, ka)
 
-            Hkr = hankelh2(n + 0.5, kr)   # Hankel function 2nd kind (without sqrt-term)
-            Hkz0 = hankelh2(n + 0.5, kz0) # Hankel function 2nd kind (without sqrt-term)
-            Hkrt = hankelh2(n + 1.5, kr)  # for derivative of Riccati-Hankel function 2nd kind
+            Hkr = hankelh2(n + T(0.5), kr)   # Hankel function 2nd kind (without sqrt-term)
+            Hkz0 = hankelh2(n + T(0.5), kz0) # Hankel function 2nd kind (without sqrt-term)
+            Hkrt = hankelh2(n + T(1.5), kr)  # for derivative of Riccati-Hankel function 2nd kind
   
             dHkr = (n + 1) * sqrt(z0 / r) * Jka_Hka * Hkr * Hkz0 - k * sqrt(r * z0) * Jka_Hka * Hkz0 * Hkrt  # HkR * derivative of Riccati-Hankel function 2nd kind
                         
@@ -96,7 +99,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
     Er *= -im * Il / 8 / k / z0 * sqrt(r / z0) / r / r * ZF  
     Eϑ *=  im * Il / 8 / k / z0 / z0 * sinϑ / r * ZF 
 
-    return convertSpherical2Cartesian(SVector(Er, Eϑ, 0.0), point_sph)
+    return convertSpherical2Cartesian(SVector{3,Complex{T}}(Er, Eϑ, 0.0), point_sph)
 end
 
 
@@ -113,13 +116,14 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
     point_sph = cart2sph(point) # [r ϑ φ]
 
     k  = excitation.wavenumber
+    T = typeof(k)
     Il = excitation.amplitude
     z0 = norm(excitation.center)    # distance Dipole-origin
 
     eps = parameter.relativeAccuracy
     
-    Hϕ = complex(0.0) # initialize
-    δH  = Inf
+    Hϕ = Complex{T}(0.0) # initialize
+    δH  = T(Inf)
     n   = 0
 
     r = point_sph[1]
@@ -128,7 +132,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
     kz0 = k * z0
     ka  = k * sphere.radius
 
-    r <= sphere.radius && return SVector(complex(0.0), complex(0.0), complex(0.0)) # inside the sphere the field is 0
+    r <= sphere.radius && return SVector{3,Complex{T}}(0.0, 0.0, 0.0) # inside the sphere the field is 0
     
     sinϑ = sin(point_sph[2]) 
     cosϑ = cos(point_sph[2])    
@@ -140,8 +144,8 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
             
             Jka_Hka = scatterCoeff(sphere, excitation, n, ka)
 
-            Hkz0 = hankelh2(n + 0.5, kz0) # Hankel function 2nd kind
-            Hkr  = hankelh2(n + 0.5, kr) # Hankel function 2nd kind
+            Hkz0 = hankelh2(n + T(0.5), kz0) # Hankel function 2nd kind
+            Hkr  = hankelh2(n + T(0.5), kr) # Hankel function 2nd kind
                     
             ΔH = expansion_coeff * Jka_Hka * Hkz0 * Hkr * dnPl(cosϑ, n, 1)
             isodd(n) &&  (δH = abs(ΔH / Hϕ)) # relative change every second n (for z0=0 the even expansion_coeff are 0)
@@ -154,7 +158,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
 
     Hϕ *= -Il / z0 / sqrt(z0 * r) * sinϑ / 8
 
-    return SVector(-Hϕ*sin(point_sph[3]), Hϕ*cos(point_sph[3]), 0.0) # convert to Cartesian representation
+    return SVector{3,Complex{T}}(-Hϕ*sin(point_sph[3]), Hϕ*cos(point_sph[3]), 0.0) # convert to Cartesian representation
 end
 
 
@@ -171,6 +175,7 @@ function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, qu
     point_sph = cart2sph(point) # [r ϑ φ]
     
     k  = excitation.wavenumber
+    T = typeof(k)
     Il = excitation.amplitude
     z0 = norm(excitation.center)    # distance dipole-origin
 
@@ -179,8 +184,8 @@ function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, qu
 
     eps = parameter.relativeAccuracy
     
-    Eϑ = complex(0.0) # initialize
-    δE = Inf
+    Eϑ = Complex{T}(0.0) # initialize
+    δE = T(Inf)
     n  = 0
      
     kz0 = k * z0
@@ -196,7 +201,7 @@ function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, qu
                     
             Jka_Hka = scatterCoeff(sphere, excitation, n, ka)
 
-            Hkz0 = hankelh2(n + 0.5, kz0) # Hankel function 2nd kind
+            Hkz0 = hankelh2(n + T(0.5), kz0) # Hankel function 2nd kind
                     
             ΔE = expansion_coeff * Jka_Hka * Hkz0 * im^(n+1) * dnPl(cosϑ, n, 1)
             isodd(n) &&  (δE = abs(ΔE / Eϑ)) # relative change every second n (for z0=0 the even expansion_coeff are 0)
@@ -209,7 +214,7 @@ function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, qu
 
     Eϑ *= Il / k * sinϑ / z0 / 4 * sqrt(k / z0 / 2 / π) * sqrt(μ / ε)
 
-    return SVector(Eϑ*cos(point_sph[2])*cos(point_sph[3]), Eϑ*cos(point_sph[2])*sin(point_sph[3]), -Eϑ*sin(point_sph[2])) # convert to Cartesian representation
+    return SVector{3,Complex{T}}(Eϑ*cos(point_sph[2])*cos(point_sph[3]), Eϑ*cos(point_sph[2])*sin(point_sph[3]), -Eϑ*sin(point_sph[2])) # convert to Cartesian representation
 end
 
 
@@ -226,6 +231,7 @@ function scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, point, 
     point_sph = cart2sph(point) # [r ϑ φ]
     
     k  = excitation.wavenumber
+    T = typeof(k)
     Ul = excitation.amplitude
     z0 = norm(excitation.center)    # distance dipole-origin
 
@@ -234,8 +240,8 @@ function scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, point, 
 
     eps = parameter.relativeAccuracy
     
-    Eϕ = complex(0.0) # initialize
-    δE = Inf
+    Eϕ = Complex{T}(0.0) # initialize
+    δE = T(Inf)
     n  = 0
      
     kz0 = k * z0
@@ -251,7 +257,7 @@ function scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, point, 
                     
             Jka_Hka = scatterCoeff(sphere, excitation, n, ka)
 
-            Hkz0 = hankelh2(n + 0.5, kz0) # Hankel function 2nd kind
+            Hkz0 = hankelh2(n + T(0.5), kz0) # Hankel function 2nd kind
                     
             ΔE = expansion_coeff * Jka_Hka * Hkz0 * im^(n+1) * dnPl(cosϑ, n, 1)
             isodd(n) &&  (δE = abs(ΔE / Eϕ)) # relative change every second n (for z0=0 the even expansion_coeff are 0)
@@ -264,7 +270,7 @@ function scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, point, 
 
     Eϕ *= -Ul / k * sinϑ / z0 / 4 * sqrt(k / z0 / 2 / π)
 
-    return SVector(-Eϕ*sin(point_sph[3]), Eϕ*cos(point_sph[3]), 0.0) # convert to Cartesian representation
+    return SVector{3,Complex{T}}(-Eϕ*sin(point_sph[3]), Eϕ*cos(point_sph[3]), 0.0) # convert to Cartesian representation
 end
 
 
@@ -276,8 +282,9 @@ Compute scattering coefficient for electric ring current.
 """
 function scatterCoeff(sphere::PECSphere, excitation::FitzgeraldDipole, n::Int, ka)
 
-    Jka = besselj(n + 0.5, ka)  # Bessel function 1st kind 
-    Hka = hankelh2(n + 0.5, ka) # Hankel function 2nd kind
+    T = typeof(ka)
+    Jka = besselj(n + T(0.5), ka)  # Bessel function 1st kind
+    Hka = hankelh2(n + T(0.5), ka) # Hankel function 2nd kind
 
     return Jka / Hka
 end
@@ -291,8 +298,9 @@ Compute scattering coefficient for magnetic ring current.
 """
 function scatterCoeff(sphere::PECSphere, excitation::HertzianDipole, n::Int, ka)
 
-    Jka = (n + 1) * besselj(n + 0.5, ka)   - ka * besselj(n + 1.5, ka)  # derivative spherical Bessel function 1st kind (without sqrt factor)
-    Hka = (n + 1) * hankelh2(n + 0.5, ka)  - ka * hankelh2(n + 1.5, ka) # derivative spherical Hankel function 2nd kind (without sqrt factor)
+    T = typeof(ka)
+    Jka = (n + 1) * besselj(n + T(0.5), ka)   - ka * besselj(n + T(1.5), ka)  # derivative spherical Bessel function 1st kind (without sqrt factor)
+    Hka = (n + 1) * hankelh2(n + T(0.5), ka)  - ka * hankelh2(n + T(1.5), ka) # derivative spherical Hankel function 2nd kind (without sqrt factor)
 
     return Jka / Hka
 end
