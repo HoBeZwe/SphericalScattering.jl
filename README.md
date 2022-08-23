@@ -1,11 +1,10 @@
 
 <img src="docs/src/assets/logo_Scat_README.svg" height="190"/>
 
-
-[![MIT license](https://img.shields.io/badge/License-GPL3-blue.svg)](https://HoBeZwe.github.io/SphericalScattering.jl)
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://HoBeZwe.github.io/SphericalScattering.jl/stable)
-[![Build Status](https://travis-ci.com/HoBeZwe/SphericalScattering.jl.svg?branch=master)](https://travis-ci.com/HoBeZwe/SphericalScattering.jl)
-[![Coverage](https://codecov.io/gh/HoBeZwe/SphericalScattering.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/HoBeZwe/SphericalScattering.jl)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://hobezwe.github.io/SphericalScattering/dev/)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/HoBeZwe/SphericalScattering/blob/master/LICENSE)
+[![CI](https://github.com/HoBeZwe/SphericalScattering/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/HoBeZwe/SphericalScattering/actions/workflows/CI.yml)
+[![codecov](https://codecov.io/gh/HoBeZwe/SphericalScattering/branch/master/graph/badge.svg?token=4F9NUNRC1K)](https://codecov.io/gh/HoBeZwe/SphericalScattering)
 
 ## Introduction
 
@@ -30,4 +29,4 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 
 ## Documentation
 
-Here you can find the [documentation](https://HoBeZwe.github.io/SphericalScattering.jl/stable).
+Here you can find the [documentation](https://HoBeZwe.github.io/SphericalScattering.jl/dev).

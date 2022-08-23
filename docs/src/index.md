@@ -32,3 +32,9 @@ Installing BEASTutils is done by entering the package manager (enter `]` at the 
 ```julia
 pkg> add BEASTutils
 ```
+
+## References
+
+The implementation is based on
+- J.-M. Jin, Theory and Computation of Electromagnetic Fields, Second edition. Hoboken, New Jersey: John Wiley & Sons, Inc, 2015.
+- G. T. Ruck, D. E. Barrick, W. D. Stuart, C. K. Krichbaum, Radar Cross Section Handbook, Volume 1, New York: Plenum Press, 1970.
