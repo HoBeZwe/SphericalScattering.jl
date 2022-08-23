@@ -5,6 +5,7 @@
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/HoBeZwe/SphericalScattering/blob/master/LICENSE)
 [![CI](https://github.com/HoBeZwe/SphericalScattering/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/HoBeZwe/SphericalScattering/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/HoBeZwe/SphericalScattering/branch/master/graph/badge.svg?token=4F9NUNRC1K)](https://codecov.io/gh/HoBeZwe/SphericalScattering)
+[![DOI](https://zenodo.org/badge/375493054.svg)](https://zenodo.org/badge/latestdoi/375493054)
 
 ## Introduction
 
@@ -26,7 +27,11 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 - :hourglass_flowing_sand: Mulitlayer dielectric sphere
 
 
+## Citation
+
+Please cite this package following the [CITATION.cff](https://github.com/HoBeZwe/SphericalScattering/blob/master/CITATION.cff) file.
+
 
 ## Documentation
 
-Here you can find the [documentation](https://HoBeZwe.github.io/SphericalScattering.jl/dev).
+Here you can find the [documentation](https://hobezwe.github.io/SphericalScattering/dev/).
