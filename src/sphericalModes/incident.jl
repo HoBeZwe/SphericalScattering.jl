@@ -285,5 +285,6 @@ function derivatieAssociatedLegendre(n::T, m::T, ϑ::F) where {T <: Integer, F <
     mabs = abs(m)
 
     mabs == 0 && return Plm(cosϑ, n, 1) 
+    m == n && return 0.5 * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs - 1) )
     return 0.5 * ((n - mabs + 1)*(n + mabs) * (-1)^(mabs-1) * Plm(cosϑ, n, mabs - 1) - (-1)^(mabs+1) * Plm(cosϑ, n, mabs + 1))
 end
