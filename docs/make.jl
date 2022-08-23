@@ -6,7 +6,7 @@ DocMeta.setdocmeta!(SphericalScattering, :DocTestSetup, :(using SphericalScatter
 makedocs(;
     modules=[SphericalScattering],
     authors="Bernd Hofmann <Bernd.Hofmann@tum.de> and contributors",
-    repo="https://github.com/HoBeZwe/SphericalScattering/tree/master",
+    repo="https://github.com/HoBeZwe/SphericalScattering.jl/tree/master",
     sitename="SphericalScattering.jl",
     format=Documenter.HTML(;
         prettyurls=get(ENV, "CI", "false") == "true",
