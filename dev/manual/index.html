@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Manual · SphericalScattering.jl</title><link rel="canonical" href="https://HoBeZwe.github.io/SphericalScattering.jl/manual/"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="SphericalScattering.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit">SphericalScattering.jl</span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Introduction</a></li><li class="is-active"><a class="tocitem" href>Manual</a><ul class="internal"><li><a class="tocitem" href="#Introductory-Example:-Plane-Wave"><span>Introductory Example: Plane Wave</span></a></li><li><a class="tocitem" href="#Defining-Observation-Points"><span>Defining Observation Points</span></a></li><li><a class="tocitem" href="#Defining-an-Excitation"><span>Defining an Excitation</span></a></li><li><a class="tocitem" href="#Computing-Incident-Fields"><span>Computing Incident Fields</span></a></li><li><a class="tocitem" href="#Defining-a-Scatterer"><span>Defining a Scatterer</span></a></li><li><a class="tocitem" href="#Computing-Scattered-Fields"><span>Computing Scattered Fields</span></a></li><li><a class="tocitem" href="#Conversion-to-Spherical-Basis"><span>Conversion to Spherical Basis</span></a></li></ul></li><li><span class="tocitem">Implementation Details</span><ul><li><a class="tocitem" href="../planeWave/">Plane Wave</a></li><li><a class="tocitem" href="../ringCurrents/">Ring Currents</a></li><li><a class="tocitem" href="../dipoles/">Dipoles</a></li><li><a class="tocitem" href="../sphModes/">Spherical Modes</a></li></ul></li><li><a class="tocitem" href="../apiref/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Manual</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Manual</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/HoBeZwe/SphericalScattering/tree/master" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Manual"><a class="docs-heading-anchor" href="#Manual">Manual</a><a id="Manual-1"></a><a class="docs-heading-anchor-permalink" href="#Manual" title="Permalink"></a></h1><p>The basic building blocks are introduced in the following simple example; more details are provided afterwards:</p><h2 id="Introductory-Example:-Plane-Wave"><a class="docs-heading-anchor" href="#Introductory-Example:-Plane-Wave">Introductory Example: Plane Wave</a><a id="Introductory-Example:-Plane-Wave-1"></a><a class="docs-heading-anchor-permalink" href="#Introductory-Example:-Plane-Wave" title="Permalink"></a></h2><pre><code class="language-julia">using SphericalScattering, StaticArrays
+
+# define excitation: plane wave travelling in negative z-direction with x-polarization
+ex = planewave(wavenumber=30.0) # ≈ 10 MHz
+
+# define scatterer: PEC sphere
+sp = PECSphere(radius = 1.0)
+
+# define an observation point
+point_cart = [SVector(2.0, 2.0, 3.2)] 
+
+# compute scattered fields
+E  = scatteredfield(sp, ex, ElectricField(point_cart))
+H  = scatteredfield(sp, ex, MagneticField(point_cart))
+FF = scatteredfield(sp, ex, FarField(point_cart))
+</code></pre><h2 id="Defining-Observation-Points"><a class="docs-heading-anchor" href="#Defining-Observation-Points">Defining Observation Points</a><a id="Defining-Observation-Points-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-Observation-Points" title="Permalink"></a></h2><p>In order to define points the <a href="https://github.com/JuliaArrays/StaticArrays.jl">StaticArrays</a> package has to be used.</p><pre><code class="language-julia">using StaticArrays
+
+# defining a single point
+point_cart = [SVector(2.0, 2.0, 3.2)] 
+
+# defining multiple points (along a line)
+point_cart = [SVector(5.0, 5.0, z) for z in -2:0.2:2]</code></pre><div class="admonition is-info"><header class="admonition-header">Info</header><div class="admonition-body"><p>A Cartesian basis is used for all coordinates and field components!</p></div></div><h2 id="Defining-an-Excitation"><a class="docs-heading-anchor" href="#Defining-an-Excitation">Defining an Excitation</a><a id="Defining-an-Excitation-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-an-Excitation" title="Permalink"></a></h2><p>For all available excitations a simple constructor with keyword arguments and default values is available.</p><h3 id="Plane-waves"><a class="docs-heading-anchor" href="#Plane-waves">Plane waves</a><a id="Plane-waves-1"></a><a class="docs-heading-anchor-permalink" href="#Plane-waves" title="Permalink"></a></h3><pre><code class="language-julia">ex = planewave(
+        embedding    = Medium(ε, μ),
+        wavenumber   = 30.0,
+        amplitude    = 1.0,
+        direction    = SVector(0.0,0.0,-1.0),
+        polarization = SVector(1.0,0.0,0.0)
+)</code></pre><h3 id="Ring-currents"><a class="docs-heading-anchor" href="#Ring-currents">Ring currents</a><a id="Ring-currents-1"></a><a class="docs-heading-anchor-permalink" href="#Ring-currents" title="Permalink"></a></h3><pre><code class="language-julia">ex = electricRingCurrent(
+        embedding   = Medium(ε, μ),
+        wavenumber  = 30.0,
+        amplitude   = 1.0,
+        radius      = 0.5,
+        center      = SVector(0.0,0.0,0.0),
+        rotation    = SVector(0.0,0.0)
+)
+
+ex = magneticRingCurrent(
+        embedding   = Medium(ε, μ),
+        wavenumber  = 30.0,
+        amplitude   = 1.0,
+        radius      = 0.5,
+        center      = SVector(0.0,0.0,0.0),
+        rotation    = SVector(0.0,0.0)
+)</code></pre><h3 id="Dipoles"><a class="docs-heading-anchor" href="#Dipoles">Dipoles</a><a id="Dipoles-1"></a><a class="docs-heading-anchor-permalink" href="#Dipoles" title="Permalink"></a></h3><pre><code class="language-julia">ex = HertzianDipole(
+        embedding   = Medium(ε, μ),
+        wavenumber  = 30.0,
+        amplitude   = 1.0,
+        center      = SVector(0.0,0.0,0.0),
+        orientation = SVector(0.0,0.0,1.0)
+)
+
+ex = FitzgeraldDipole(
+        embedding   = Medium(ε, μ),
+        wavenumber  = 30.0,
+        amplitude   = 1.0,
+        center      = SVector(0.0,0.0,0.0),
+        orientation = SVector(0.0,0.0,1.0)
+)</code></pre><h3 id="Spherical-modes"><a class="docs-heading-anchor" href="#Spherical-modes">Spherical modes</a><a id="Spherical-modes-1"></a><a class="docs-heading-anchor-permalink" href="#Spherical-modes" title="Permalink"></a></h3><pre><code class="language-julia">ex = SphericalModeTE(
+        embedding   = Medium(ε, μ),
+        wavenumber  = 30.0,
+        amplitude   = 1.0,
+        m           = 0,
+        n           = 1,
+        c           = 1,
+        center      = SVector(0.0,0.0,0.0),
+        orientation = SVector(0.0,0.0,1.0)
+)
+
+ex = SphericalModeTM(
+        embedding   = Medium(ε, μ),
+        wavenumber  = 30.0,
+        amplitude   = 1.0,
+        m           = 0,
+        n           = 1,
+        c           = 1,
+        center      = SVector(0.0,0.0,0.0),
+        orientation = SVector(0.0,0.0,1.0)
+)</code></pre><h2 id="Computing-Incident-Fields"><a class="docs-heading-anchor" href="#Computing-Incident-Fields">Computing Incident Fields</a><a id="Computing-Incident-Fields-1"></a><a class="docs-heading-anchor-permalink" href="#Computing-Incident-Fields" title="Permalink"></a></h2><p>For each excitation the far-field, the electric, and the magnetic near-field without a scatterer can be determined: </p><pre><code class="language-julia">E  = field(ex, ElectricField(point_cart))
+
+H  = field(ex, MagneticField(point_cart))
+
+FF = field(ex, FarField(point_cart))</code></pre><h2 id="Defining-a-Scatterer"><a class="docs-heading-anchor" href="#Defining-a-Scatterer">Defining a Scatterer</a><a id="Defining-a-Scatterer-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-a-Scatterer" title="Permalink"></a></h2><pre><code class="language-julia"># properties of the embedding medium
+μ = 4π * 1e-7             # permeability
+ε = 8.8541878176e-12      # permittivity
+me = Medium(ε, μ)
+
+# define PEC sphere
+sp = PECSphere(radius = 1.0, embedding = me)</code></pre><h2 id="Computing-Scattered-Fields"><a class="docs-heading-anchor" href="#Computing-Scattered-Fields">Computing Scattered Fields</a><a id="Computing-Scattered-Fields-1"></a><a class="docs-heading-anchor-permalink" href="#Computing-Scattered-Fields" title="Permalink"></a></h2><p>For each excitation the scattered fields from a given sphere can be determined as:</p><pre><code class="language-julia">E  = scatteredfield(sp, ex, ElectricField(point_cart))
+
+H  = scatteredfield(sp, ex, MagneticField(point_cart))
+
+FF = scatteredfield(sp, ex, FarField(point_cart))</code></pre><h2 id="Conversion-to-Spherical-Basis"><a class="docs-heading-anchor" href="#Conversion-to-Spherical-Basis">Conversion to Spherical Basis</a><a id="Conversion-to-Spherical-Basis-1"></a><a class="docs-heading-anchor-permalink" href="#Conversion-to-Spherical-Basis" title="Permalink"></a></h2><p>Methods are provide to convert between Cartesian and spherical coordinates:</p><pre><code class="language-julia">point_cart = SphericalScattering.sph2cart.(point_sph)
+
+point_sph  = SphericalScattering.cart2sph.(point_cart)</code></pre><p>Converting fields:</p><pre><code class="language-julia">F_cart = SphericalScattering.convertSpherical2Cartesian.(F_sph,  point_sph)
+
+F_sph  = SphericalScattering.convertCartesian2Spherical.(F_cart, point_sph)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Introduction</a><a class="docs-footer-nextpage" href="../planeWave/">Plane Wave »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 23 August 2022 15:39">Tuesday 23 August 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
