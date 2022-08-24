@@ -23,14 +23,14 @@ The following scenarios are implemented (✓) and planned (⌛):
 
 
 !!! note
-    A time convention of ``\mathrm{e}^{\,\mathrm{j}\omega t}`` ist used.
+    A time convention of ``\mathrm{e}^{\,\mathrm{j}\omega t}`` is used.
 
 ## Installation
 
-Installing BEASTutils is done by entering the package manager (enter `]` at the julia REPL) and issuing:
+Installing SphericalScattering is done by entering the package manager (enter `]` at the julia REPL) and issuing:
 
-```julia
-pkg> add BEASTutils
+```
+pkg> add SphericalScattering 
 ```
 
 ## References
