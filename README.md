@@ -29,7 +29,7 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 
 ## Citation
 
-Please cite this package following the [CITATION.cff](https://github.com/HoBeZwe/SphericalScattering.jl/blob/master/CITATION.cff) file.
+Please cite this package following the information on [Zenodo](https://zenodo.org/badge/latestdoi/375493054).
 
 
 ## Documentation
