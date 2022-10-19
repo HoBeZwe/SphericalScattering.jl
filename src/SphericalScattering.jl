@@ -30,7 +30,7 @@ export electricRingCurrent, magneticRingCurrent
 export HertzianDipole, FitzgeraldDipole
 export planeWave
 export SphericalMode, SphericalModeTE, SphericalModeTM
-export PECSphere
+export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export field, scatteredfield
 
 
