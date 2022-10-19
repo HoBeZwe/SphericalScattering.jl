@@ -14,6 +14,14 @@ struct MagneticField <: Field
     locations#::Vector
 end
 
+struct VectorField <: Field
+    locations
+end
+
+struct ScalarField <: Field
+    locations
+end
+
 abstract type Excitation end
 
 #abstract type Parameter end

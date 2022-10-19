@@ -19,8 +19,10 @@ using Requires
 # types
 export Excitation
 export PlaneWave
+export UniformField
 export ElectricRingCurrent, MagneticRingCurrent
 export FarField, ElectricField, MagneticField
+export VectorField, ScalarField
 export Medium, Parameter
 
 # functions
@@ -53,4 +55,8 @@ include("planeWave/scattered.jl")
 include("sphericalModes/excitation.jl")
 include("sphericalModes/incident.jl")
 include("sphericalModes/scattered.jl")
+
+include("UniformField/excitation.jl")
+include("UniformField/incident.jl")
+include("UniformField/scattered.jl")
 end
