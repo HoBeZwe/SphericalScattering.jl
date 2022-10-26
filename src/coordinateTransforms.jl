@@ -77,7 +77,7 @@ end
 # ----------------------- Convert the computed field from Cartesian to spherical representation
 function convertCartesian2Spherical(F_cart, point_sph)
 
-    T = eltype(F_sph)
+    T = eltype(F_cart)
 
     sinϑ = sin(point_sph[2]) 
     cosϑ = cos(point_sph[2])

@@ -11,7 +11,7 @@ The basic building blocks are introduced in the following simple example; more d
 using SphericalScattering, StaticArrays
 
 # define excitation: plane wave travelling in negative z-direction with x-polarization
-ex = planewave(wavenumber=30.0) # ≈ 10 MHz
+ex = planeWave(wavenumber=30.0) # ≈ 10 MHz
 
 # define scatterer: PEC sphere
 sp = PECSphere(radius = 1.0)
@@ -50,7 +50,7 @@ For all available excitations a simple constructor with keyword arguments and de
 ### Plane waves
 
 ```julia
-ex = planewave(
+ex = planeWave(
         embedding    = Medium(ε, μ),
         wavenumber   = 30.0,
         amplitude    = 1.0,
