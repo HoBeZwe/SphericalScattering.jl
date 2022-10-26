@@ -17,4 +17,7 @@ using StaticArrays
     @testset "Test spherical modes" begin
         include("sphericalModes.jl")
     end
+    @testset "Test uniform field" begin
+        include("uniformField.jl")
+    end
 end
