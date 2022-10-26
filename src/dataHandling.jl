@@ -14,11 +14,7 @@ struct MagneticField <: Field
     locations#::Vector
 end
 
-struct VectorField <: Field
-    locations
-end
-
-struct ScalarField <: Field
+struct ScalarPotential <: Field
     locations
 end
 

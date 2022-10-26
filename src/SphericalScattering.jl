@@ -22,7 +22,7 @@ export PlaneWave
 export UniformField
 export ElectricRingCurrent, MagneticRingCurrent
 export FarField, ElectricField, MagneticField
-export VectorField, ScalarField
+export ScalarPotential
 export Medium, Parameter
 
 # functions
