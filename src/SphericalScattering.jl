@@ -19,8 +19,10 @@ using Requires
 # types
 export Excitation
 export PlaneWave
+export UniformField
 export ElectricRingCurrent, MagneticRingCurrent
 export FarField, ElectricField, MagneticField
+export ScalarPotential
 export Medium, Parameter
 
 # functions
@@ -28,7 +30,7 @@ export electricRingCurrent, magneticRingCurrent
 export HertzianDipole, FitzgeraldDipole
 export planeWave
 export SphericalMode, SphericalModeTE, SphericalModeTM
-export PECSphere
+export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export field, scatteredfield
 
 
@@ -53,4 +55,8 @@ include("planeWave/scattered.jl")
 include("sphericalModes/excitation.jl")
 include("sphericalModes/incident.jl")
 include("sphericalModes/scattered.jl")
+
+include("UniformField/excitation.jl")
+include("UniformField/incident.jl")
+include("UniformField/scattered.jl")
 end

@@ -125,6 +125,15 @@ ex = SphericalModeTM(
 )
 ```
 
+### Uniform static field
+
+```julia
+ex = UniformField(
+        embedding    = Medium(ε0, μ0),
+        amplitude    = 1.0,
+        direction    = SVector(1.0,0.0,0.0)
+)
+```
 
 ## Computing Incident Fields
 
@@ -148,6 +157,24 @@ me = Medium(ε, μ)
 
 # define PEC sphere
 sp = PECSphere(radius = 1.0, embedding = me)
+
+# properties of filling media
+μ1 = 2 * μ
+ε1 = 2 * ε
+me1 = Medium(ε1, μ1)
+μ2 = 3 * μ
+ε2 = 3 * ε
+me2 = Medium(ε2, μ2)
+# define dielectric sphere
+sp = DielectricSphere(radius = 1.0, embedding = me, filling = me1)
+```
+For layered sphere, the radii and filling media are given starting with the outermost layer:
+```julia
+# define layered dielectric sphere
+sp = LayeredSphere(radii = SVector(1.0,0.5), embedding = me, filling = SVector(me1, me2))
+
+# define layered sphere with PEC core
+sp = LayeredSpherePEC(radii = SVector(1.0,0.5), embedding = me, filling = SVector(me1))
 ```
 
 ## Computing Scattered Fields
@@ -161,11 +188,14 @@ H  = scatteredfield(sp, ex, MagneticField(point_cart))
 
 FF = scatteredfield(sp, ex, FarField(point_cart))
 ```
-
+For the uniform field excitation, only the electric field as well as the scalar potential can be calculated:
+```julia
+Φ = scatteredfield(sp, ex, ScalarPotential(point_cart))
+```
 
 ## Conversion to Spherical Basis
 
-Methods are provide to convert between Cartesian and spherical coordinates:
+Methods are provided to convert between Cartesian and spherical coordinates:
 
 ```julia
 point_cart = SphericalScattering.sph2cart.(point_sph)
