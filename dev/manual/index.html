@@ -76,6 +76,10 @@ ex = SphericalModeTM(
         c           = 1,
         center      = SVector(0.0,0.0,0.0),
         orientation = SVector(0.0,0.0,1.0)
+)</code></pre><h3 id="Uniform-static-field"><a class="docs-heading-anchor" href="#Uniform-static-field">Uniform static field</a><a id="Uniform-static-field-1"></a><a class="docs-heading-anchor-permalink" href="#Uniform-static-field" title="Permalink"></a></h3><pre><code class="language-julia hljs">ex = UniformField(
+        embedding    = Medium(ε0, μ0),
+        amplitude    = 1.0,
+        direction    = SVector(1.0,0.0,0.0)
 )</code></pre><h2 id="Computing-Incident-Fields"><a class="docs-heading-anchor" href="#Computing-Incident-Fields">Computing Incident Fields</a><a id="Computing-Incident-Fields-1"></a><a class="docs-heading-anchor-permalink" href="#Computing-Incident-Fields" title="Permalink"></a></h2><p>For each excitation the far-field, the electric, and the magnetic near-field without a scatterer can be determined: </p><pre><code class="language-julia hljs">E  = field(ex, ElectricField(point_cart))
 
 H  = field(ex, MagneticField(point_cart))
@@ -86,12 +90,26 @@ FF = field(ex, FarField(point_cart))</code></pre><h2 id="Defining-a-Scatterer"><
 me = Medium(ε, μ)
 
 # define PEC sphere
-sp = PECSphere(radius = 1.0, embedding = me)</code></pre><h2 id="Computing-Scattered-Fields"><a class="docs-heading-anchor" href="#Computing-Scattered-Fields">Computing Scattered Fields</a><a id="Computing-Scattered-Fields-1"></a><a class="docs-heading-anchor-permalink" href="#Computing-Scattered-Fields" title="Permalink"></a></h2><p>For each excitation the scattered fields from a given sphere can be determined as:</p><pre><code class="language-julia hljs">E  = scatteredfield(sp, ex, ElectricField(point_cart))
+sp = PECSphere(radius = 1.0, embedding = me)
+
+# properties of filling media
+μ1 = 2 * μ
+ε1 = 2 * ε
+me1 = Medium(ε1, μ1)
+μ2 = 3 * μ
+ε2 = 3 * ε
+me2 = Medium(ε2, μ2)
+# define dielectric sphere
+sp = DielectricSphere(radius = 1.0, embedding = me, filling = me1)</code></pre><p>For layered sphere, the radii and filling media are given starting with the outermost layer:</p><pre><code class="language-julia hljs"># define layered dielectric sphere
+sp = LayeredSphere(radii = SVector(1.0,0.5), embedding = me, filling = SVector(me1, me2))
+
+# define layered sphere with PEC core
+sp = LayeredSpherePEC(radii = SVector(1.0,0.5), embedding = me, filling = SVector(me1))</code></pre><h2 id="Computing-Scattered-Fields"><a class="docs-heading-anchor" href="#Computing-Scattered-Fields">Computing Scattered Fields</a><a id="Computing-Scattered-Fields-1"></a><a class="docs-heading-anchor-permalink" href="#Computing-Scattered-Fields" title="Permalink"></a></h2><p>For each excitation the scattered fields from a given sphere can be determined as:</p><pre><code class="language-julia hljs">E  = scatteredfield(sp, ex, ElectricField(point_cart))
 
 H  = scatteredfield(sp, ex, MagneticField(point_cart))
 
-FF = scatteredfield(sp, ex, FarField(point_cart))</code></pre><h2 id="Conversion-to-Spherical-Basis"><a class="docs-heading-anchor" href="#Conversion-to-Spherical-Basis">Conversion to Spherical Basis</a><a id="Conversion-to-Spherical-Basis-1"></a><a class="docs-heading-anchor-permalink" href="#Conversion-to-Spherical-Basis" title="Permalink"></a></h2><p>Methods are provide to convert between Cartesian and spherical coordinates:</p><pre><code class="language-julia hljs">point_cart = SphericalScattering.sph2cart.(point_sph)
+FF = scatteredfield(sp, ex, FarField(point_cart))</code></pre><p>For the uniform field excitation, only the electric field as well as the scalar potential can be calculated:</p><pre><code class="language-julia hljs">Φ = scatteredfield(sp, ex, ScalarPotential(point_cart))</code></pre><h2 id="Conversion-to-Spherical-Basis"><a class="docs-heading-anchor" href="#Conversion-to-Spherical-Basis">Conversion to Spherical Basis</a><a id="Conversion-to-Spherical-Basis-1"></a><a class="docs-heading-anchor-permalink" href="#Conversion-to-Spherical-Basis" title="Permalink"></a></h2><p>Methods are provided to convert between Cartesian and spherical coordinates:</p><pre><code class="language-julia hljs">point_cart = SphericalScattering.sph2cart.(point_sph)
 
 point_sph  = SphericalScattering.cart2sph.(point_cart)</code></pre><p>Converting fields:</p><pre><code class="language-julia hljs">F_cart = SphericalScattering.convertSpherical2Cartesian.(F_sph,  point_sph)
 
-F_sph  = SphericalScattering.convertCartesian2Spherical.(F_cart, point_sph)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Introduction</a><a class="docs-footer-nextpage" href="../planeWave/">Plane Wave »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Friday 21 October 2022 08:42">Friday 21 October 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+F_sph  = SphericalScattering.convertCartesian2Spherical.(F_cart, point_sph)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Introduction</a><a class="docs-footer-nextpage" href="../planeWave/">Plane Wave »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Wednesday 26 October 2022 12:00">Wednesday 26 October 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
