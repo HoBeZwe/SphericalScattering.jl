@@ -8,7 +8,7 @@ All inputs are assumed do be in Cartesian coordinates.
 """
 function translate(points, translation::SVector{3,T}) where {T}
 
-    translation == SVector(0.0,0.0,0.0) && return points # no translation
+    translation == SVector{3,T}(0.0,0.0,0.0) && return points # no translation
 
     points_shifted = similar(points)
     for (ind, p) in enumerate(points)
@@ -28,7 +28,7 @@ The points are assumed do be in Cartesian coordinates.
 """
 function rotate!(points, rotation::SVector{2,T}) where {T}
 
-    rotation == SVector(0.0, 0.0) && return nothing # no rotation required
+    rotation == SVector{2,T}(0.0, 0.0) && return nothing # no rotation required
 
     # --- perform rotation
     wx = rotation[1] # rotation angle around x-axis (away from z-axis)
@@ -60,30 +60,34 @@ end
 
 function convertSpherical2Cartesian(F_sph, point_sph)
 
+    T = eltype(F_sph)
+
     sinϑ = sin(point_sph[2]) 
     cosϑ = cos(point_sph[2])
 
     sinϕ = sin(point_sph[3]) 
     cosϕ = cos(point_sph[3])
 
-    return SVector(F_sph[1] * sinϑ * cosϕ + F_sph[2] * cosϑ * cosϕ - F_sph[3] * sinϕ,
-                   F_sph[1] * sinϑ * sinϕ + F_sph[2] * cosϑ * sinϕ + F_sph[3] * cosϕ,
-                   F_sph[1] * cosϑ        - F_sph[2] * sinϑ )                                               
+    return SVector{3,T}(F_sph[1] * sinϑ * cosϕ + F_sph[2] * cosϑ * cosϕ - F_sph[3] * sinϕ,
+                        F_sph[1] * sinϑ * sinϕ + F_sph[2] * cosϑ * sinϕ + F_sph[3] * cosϕ,
+                        F_sph[1] * cosϑ        - F_sph[2] * sinϑ )                                               
 end
 
 
 # ----------------------- Convert the computed field from Cartesian to spherical representation
 function convertCartesian2Spherical(F_cart, point_sph)
 
+    T = eltype(F_sph)
+
     sinϑ = sin(point_sph[2]) 
     cosϑ = cos(point_sph[2])
 
     sinϕ = sin(point_sph[3]) 
     cosϕ = cos(point_sph[3])
 
-    return SVector( F_cart[1] * sinϑ * cosϕ + F_cart[2] * sinϑ * sinϕ + F_cart[3] * cosϑ,
-                    F_cart[1] * cosϑ * cosϕ + F_cart[2] * cosϑ * sinϕ - F_cart[3] * sinϑ,
-                   -F_cart[1] * sinϕ        + F_cart[2] * cosϕ )
+    return SVector{3,T}(F_cart[1] * sinϑ * cosϕ + F_cart[2] * sinϑ * sinϕ + F_cart[3] * cosϑ,
+                        F_cart[1] * cosϑ * cosϕ + F_cart[2] * cosϑ * sinϕ - F_cart[3] * sinϑ,
+                        -F_cart[1] * sinϕ        + F_cart[2] * cosϕ )
 end
 
 
@@ -92,11 +96,13 @@ function cart2sph(vec)
     y = vec[2]
     z = vec[3]
 
+    T = typeof(x)
+
     r = sqrt(x^2 + y^2 + z^2)
     t = (atan(sqrt(x^2 + y^2), z) + π) % π  # map to range [0, π]
     p = (atan(y, x) + 2 * π) % 2π                  # map to range [0, 2π]
 
-    return SVector(r, t, p)
+    return SVector{3,T}(r, t, p)
 end
 
 
@@ -105,9 +111,11 @@ function sph2cart(vec)
     ϑ = vec[2]
     ϕ = vec[3]
 
+    T = typeof(r)
+
     x = r * sin(ϑ) * cos(ϕ)
     y = r * sin(ϑ) * sin(ϕ)
     z = r * cos(ϑ)
 
-    return SVector(x, y, z)
+    return SVector{3,T}(x, y, z)
 end

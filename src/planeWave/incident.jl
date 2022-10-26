@@ -6,7 +6,9 @@ Compute the electric field of a plane wave.
 """
 function field(excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
 
-    F = zeros(SVector{3,Complex{Float64}}, length(quantity.locations))
+    T = typeof(excitation.wavenumber)
+
+    F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)

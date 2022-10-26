@@ -8,7 +8,9 @@ function scatteredfield(sphere::PECSphere, excitation::SphericalMode, quantity::
 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
-    F = zeros(SVector{3,Complex{Float64}}, size(quantity.locations))
+    T = typeof(excitation.wavenumber)
+
+    F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- distinguish electric/magnetic current
     fieldType, exc = getFieldType(excitation, quantity)
@@ -63,8 +65,8 @@ end
 Compute scattering coefficients for a spherical TE mode travelling towards the origin.
 """
 function scatterCoeff(sphere::PECSphere, excitation::SphericalModeTE, n::Int, ka)
-
-    return -hankelh2(n+0.5, ka) / hankelh1(n+0.5, ka)
+    T = typeof(ka)
+    return -hankelh2(n+T(0.5), ka) / hankelh1(n+T(0.5), ka)
 end
 
 
@@ -76,8 +78,10 @@ Compute scattering coefficients for a spherical TM mode travelling towards the o
 """
 function scatterCoeff(sphere::PECSphere, excitation::SphericalModeTM, n::Int, ka)
 
-    dH1 = (n + 1) * hankelh1(n+0.5, ka) - ka * hankelh1(n+1.5, ka)
-    dH2 = (n + 1) * hankelh2(n+0.5, ka) - ka * hankelh2(n+1.5, ka)
+    T = typeof(ka)
+
+    dH1 = (n + 1) * hankelh1(n+T(0.5), ka) - ka * hankelh1(n+T(1.5), ka)
+    dH2 = (n + 1) * hankelh2(n+T(0.5), ka) - ka * hankelh2(n+T(1.5), ka)
 
     #dH1 = (n + 1) * besselj(n+0.5, ka) - ka * besselj(n+1.5, ka)
     #dH2 = (n + 1) * hankelh2(n+0.5, ka) - ka * hankelh2(n+1.5, ka)

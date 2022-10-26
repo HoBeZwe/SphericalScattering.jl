@@ -7,7 +7,8 @@ Compute the electric field radiated by a magnetic/electric ring current at some 
 """
 function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
-    F = zeros(SVector{3,Complex{Float64}}, length(quantity.locations))
+    T = typeof(excitation.wavenumber)
+    F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
  
     # --- distinguish electric/magnetic current
     fieldType, exc = getFieldType(excitation, quantity)
@@ -42,13 +43,15 @@ function field(excitation::RingCurrent, point, quantity::ElectricField; paramete
     I0 = excitation.amplitude
     R  = excitation.radius
 
+    T = typeof(k)
+
     μ  = excitation.embedding.μ
     ε  = excitation.embedding.ε
 
     eps = parameter.relativeAccuracy
     
-    Eϕ = complex(0.0) # initialize
-    δE = Inf
+    Eϕ = Complex{T}(0.0) # initialize
+    δE = T(Inf)
     n  = -1
      
     r = point_sph[1]
@@ -56,9 +59,9 @@ function field(excitation::RingCurrent, point, quantity::ElectricField; paramete
     kr = k * r 
     kR = k * R
 
-    kr == 0.0 && return SVector(complex(0.0), complex(0.0), complex(0.0)) # in origin / at f=0 Hz the electric field is zero
+    kr == T(0.0) && return SVector{3,Complex{T}}(0.0, 0.0, 0.0) # in origin / at f=0 Hz the electric field is zero
     
-    cosθ = 0.0
+    cosθ = T(0.0)
     sinϑ = sin(point_sph[2]) 
     cosϑ = cos(point_sph[2])    
 
@@ -68,8 +71,8 @@ function field(excitation::RingCurrent, point, quantity::ElectricField; paramete
                 n += 2                      # (for z0=0 the even expansion_coeff are 0)
                 expansion_coeff = (2 * n + 1) / 2 / n / (n + 1) * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                 
-                Jkr = besselj(n + 0.5, kr)  # Bessel function 1st kind 
-                HkR = hankelh2(n + 0.5, kR) # Hankel function 2nd kind
+                Jkr = besselj(n + T(0.5), kr)  # Bessel function 1st kind
+                HkR = hankelh2(n + T(0.5), kR) # Hankel function 2nd kind
                 
                 ΔE = expansion_coeff * HkR * Jkr * dnPl(cosϑ, n, 1)
                 δE = abs(ΔE / Eϕ)           # relative change 
@@ -82,8 +85,8 @@ function field(excitation::RingCurrent, point, quantity::ElectricField; paramete
                 n += 2                      # (for z0=0 the even expansion_coeff are 0)
                 expansion_coeff = (2 * n + 1) / 2 / n / (n + 1) * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                                         
-                Hkr = hankelh2(n + 0.5, kr) # Hankel function 2nd kind
-                JkR = besselj(n + 0.5, kR)  # Bessel function 1st kind     
+                Hkr = hankelh2(n + T(0.5), kr) # Hankel function 2nd kind
+                JkR = besselj(n + T(0.5), kR)  # Bessel function 1st kind
                         
                 ΔE = expansion_coeff * Hkr * JkR * dnPl(cosϑ, n, 1)
                 δE = abs(ΔE / Eϕ)           # relative change 
@@ -113,14 +116,15 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
     point_sph = cart2sph(point) # [r ϑ φ]
 
     k  = excitation.wavenumber
+    T = typeof(k)
     I0 = excitation.amplitude
     R  = excitation.radius
 
     eps = parameter.relativeAccuracy
     
-    Hr  = complex(0.0) # initialize
-    Hϑ  = complex(0.0) # initialize
-    δHr = Inf
+    Hr  = Complex{T}(0.0) # initialize
+    Hϑ  = Complex{T}(0.0) # initialize
+    δHr = T(Inf)
     n   = -1
      
     r = point_sph[1]
@@ -128,9 +132,9 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
     kr = k * r 
     kR = k * R
 
-    kr == 0.0 && return SVector(complex(0.0), complex(0.0), complex(0.0)) # in origin / at f=0 Hz the field is zero
+    kr == T(0.0) && return SVector{3,Complex{T}}(0.0, 0.0, 0.0) # in origin / at f=0 Hz the field is zero
     
-    cosθ = 0.0
+    cosθ = T(0.0)
     sinϑ = sin(point_sph[2]) 
     cosϑ = cos(point_sph[2])    
 
@@ -140,9 +144,9 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
                 n += 2                      # (for z0=0 the even expansion_coeff are 0)
                 expansion_coeff = (2 * n + 1) / 2  * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                 
-                jkr = besselj(n + 0.5, kr)   # Bessel function 1st kind (without sqrt-term)
-                hkR = hankelh2(n + 0.5, kR)  # Hankel function 2nd kind (without sqrt-term)
-                jkrt = besselj(n + 1.5, kr)  # for derivative of Riccati-Bessel function 1st kind
+                jkr = besselj(n + T(0.5), kr)   # Bessel function 1st kind (without sqrt-term)
+                hkR = hankelh2(n + T(0.5), kR)  # Hankel function 2nd kind (without sqrt-term)
+                jkrt = besselj(n + T(1.5), kr)  # for derivative of Riccati-Bessel function 1st kind
 
                 dJkr = (n + 1) * sqrt(R / r) * jkr * hkR - k * sqrt(r * R) * hkR * jkrt  # HkR * derivative of Riccati-Bessel function 1st kind
                 
@@ -160,9 +164,9 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
                 n += 2                       # (for z0=0 the even expansion_coeff are 0)
                 expansion_coeff = (2 * n + 1) / 2 * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                                         
-                hkr = hankelh2(n + 0.5, kr)  # Hankel function 2nd kind (without sqrt-term)
-                jkR = besselj(n + 0.5, kR)   # Bessel function 1st kind (without sqrt-term)
-                hkrt = hankelh2(n + 1.5, kr) # for derivative of Riccati-Hankel function 2nd kind
+                hkr = hankelh2(n + T(0.5), kr)  # Hankel function 2nd kind (without sqrt-term)
+                jkR = besselj(n + T(0.5), kR)   # Bessel function 1st kind (without sqrt-term)
+                hkrt = hankelh2(n + T(1.5), kr) # for derivative of Riccati-Hankel function 2nd kind
                 
                 dHkr = (n + 1) * sqrt(R / r) * hkr * jkR - k * sqrt(r * R) * jkR * hkrt  # JkR * derivative of Riccati-Hankel function 2nd kind
                         
@@ -182,7 +186,7 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
     Hr *= im * I0 * sqrt(R / r) / r * π / 2
     Hϑ *= -im * I0 * sinϑ / r * π / 2
 
-    return convertSpherical2Cartesian(SVector(Hr, Hϑ, 0.0), point_sph)
+    return convertSpherical2Cartesian(SVector{3,Complex{T}}(Hr, Hϑ, 0.0), point_sph)
 end
 
 
@@ -200,13 +204,15 @@ function field(excitation::RingCurrent, point, quantity::FarField; parameter::Pa
     I0 = excitation.amplitude
     R  = excitation.radius
     
+    T = typeof(k)
+
     μ  = excitation.embedding.μ
     ε  = excitation.embedding.ε
     
     eps = parameter.relativeAccuracy
     
-    Eϕ = complex(0.0) # initialize
-    δE = Inf
+    Eϕ = Complex{T}(0.0) # initialize
+    δE = T(Inf)
     n  = -1
     
     r = point_sph[1]
@@ -214,7 +220,7 @@ function field(excitation::RingCurrent, point, quantity::FarField; parameter::Pa
     kr = k * r 
     kR = k * R
     
-    cosθ = 0.0
+    cosθ = T(0.0)
     sinϑ = sin(point_sph[2]) 
     cosϑ = cos(point_sph[2])    
     
@@ -223,8 +229,8 @@ function field(excitation::RingCurrent, point, quantity::FarField; parameter::Pa
             n += 2                      # (for z0=0 the even expansion_coeff are 0)
             expansion_coeff = (2 * n + 1) / 2 / n / (n + 1) * dnPl(cosθ, n, 1) # variable part of expansion coefficients
                                         
-            Hkr = hankelh2(n + 0.5, kr) # Hankel function 2nd kind
-            JkR = besselj(n + 0.5, kR)  # Bessel function 1st kind     
+            Hkr = hankelh2(n + T(0.5), kr) # Hankel function 2nd kind
+            JkR = besselj(n + T(0.5), kR)  # Bessel function 1st kind
                         
             ΔE = expansion_coeff * Hkr * JkR * dnPl(cosϑ, n, 1)
             δE = abs(ΔE / Eϕ)           # relative change 
@@ -237,5 +243,5 @@ function field(excitation::RingCurrent, point, quantity::FarField; parameter::Pa
     
     Eϕ *= -I0 * sqrt(μ / ε) * sinϑ * k * sqrt(R / r) / 2 * π # constant factors
     
-    return SVector(-Eϕ*sin(point_sph[3]), Eϕ*cos(point_sph[3]), 0.0) # convert to Cartesian representation
+    return SVector{3,Complex{T}}(-Eϕ*sin(point_sph[3]), Eϕ*cos(point_sph[3]), 0.0) # convert to Cartesian representation
 end

@@ -24,7 +24,7 @@ abstract type Excitation end
 
 struct Parameter
     nmax::Int
-    relativeAccuracy::Float64
+    relativeAccuracy::AbstractFloat
 end
 
 Parameter() = Parameter(-1, 1e-12)

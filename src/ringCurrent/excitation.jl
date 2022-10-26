@@ -1,22 +1,22 @@
 
 abstract type RingCurrent <: Excitation end
 
-struct ElectricRingCurrent{T} <: RingCurrent
-    embedding::Medium{T}
-    wavenumber::T
+struct ElectricRingCurrent{T,R,C} <: RingCurrent
+    embedding::Medium{C}
+    wavenumber::R
     amplitude::T
-    radius::T
-    center::SVector{3,T}
-    rotation::SVector{2,T}
+    radius::R
+    center::SVector{3,R}
+    rotation::SVector{2,R}
 end
 
-struct MagneticRingCurrent{T} <: RingCurrent
-    embedding::Medium{T}
-    wavenumber::T
+struct MagneticRingCurrent{T,R,C} <: RingCurrent
+    embedding::Medium{C}
+    wavenumber::R
     amplitude::T
-    radius::T
-    center::SVector{3,T}
-    rotation::SVector{2,T}
+    radius::R
+    center::SVector{3,R}
+    rotation::SVector{2,R}
 end
 
 electricRingCurrent(;
@@ -24,8 +24,8 @@ embedding   = Medium(ε0, μ0),
 wavenumber  = error("missing argument `wavenumber`"),
 amplitude   = 1.0,
 radius      = error("missing argument `radius`"),
-center      = SVector(0.0,0.0,0.0),
-rotation    = SVector(0.0,0.0)
+center      = SVector{3,typeof(wavenumber)}(0.0,0.0,0.0),
+rotation    = SVector{2,typeof(wavenumber)}(0.0,0.0)
 ) = ElectricRingCurrent(embedding, wavenumber, amplitude, radius, center, rotation)
 
 magneticRingCurrent(;
@@ -33,8 +33,8 @@ embedding   = Medium(ε0, μ0),
 wavenumber  = error("missing argument `wavenumber`"),
 amplitude   = 1.0,
 radius      = error("missing argument `radius`"),
-center      = SVector(0.0,0.0,0.0),
-rotation    = SVector(0.0,0.0)
+center      = SVector{3,typeof(wavenumber)}(0.0,0.0,0.0),
+rotation    = SVector{2,typeof(wavenumber)}(0.0,0.0)
 ) = MagneticRingCurrent(embedding, wavenumber, amplitude, radius, center, rotation)
 
 

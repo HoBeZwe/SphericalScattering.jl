@@ -6,7 +6,9 @@ Compute the electric field radiated by a magnetic/electric ring current at some 
 """
 function field(excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
 
-    F = zeros(SVector{3,Complex{Float64}}, length(quantity.locations))
+    T = typeof(excitation.wavenumber)
+
+    F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
 
     # --- distinguish electric/magnetic current
     fieldType, exc = getFieldType(excitation, quantity)

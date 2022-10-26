@@ -8,7 +8,9 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, quantity::Fiel
 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
-    F = zeros(SVector{3,Complex{Float64}}, size(quantity.locations))
+    T = typeof(excitation.wavenumber)
+
+    F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- rotate coordinates
     # rotate!(points, -excitation.rotation)
@@ -38,16 +40,17 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     point_sph = cart2sph(point) # [r ϑ φ]
 
     k  = excitation.wavenumber
+    T = typeof(k)
 
     eps = parameter.relativeAccuracy
 
-    point_sph[1] <= sphere.radius && return SVector(complex(0.0), complex(0.0), complex(0.0)) # inside the sphere the field is 0
+    point_sph[1] <= sphere.radius && return SVector{3,Complex{T}}(0.0, 0.0, 0.0) # inside the sphere the field is 0
 
-    Er = complex(0.0)
-    Eϑ = complex(0.0)
-    Eϕ = complex(0.0)
+    Er = Complex{T}(0.0)
+    Eϑ = Complex{T}(0.0)
+    Eϕ = Complex{T}(0.0)
 
-    δE = Inf
+    δE = T(Inf)
     n = 0
 
     kr = k * point_sph[1]
@@ -59,9 +62,9 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     cosϕ = cos(point_sph[3]) 
 
     # first two values of the Associated Legendre Polynomial
-    plm = Vector{Float64}()
+    plm = Vector{T}()
     push!(plm, -sinϑ)
-    push!(plm, -3.0 * sinϑ * cosϑ)
+    push!(plm, -T(3.0) * sinϑ * cosϑ)
 
     s = sqrt(π / 2 / kr)
 
@@ -82,7 +85,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
             δE = (abs(ΔEr) + abs(ΔEϑ) + abs(ΔEϕ)) / (abs(Er) + abs(Eϑ) + abs(Eϕ)) # relative change
 
-            n > 1 && push!(plm, (2.0 * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship for next associated Legendre polynomials
+            n > 1 && push!(plm, (T(2.0) * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship for next associated Legendre polynomials
         end
     catch
 
@@ -106,19 +109,19 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     point_sph = cart2sph(point) # [r ϑ φ]
 
     k  = excitation.wavenumber
-
+    T = typeof(k)
     μ  = excitation.embedding.μ
     ε  = excitation.embedding.ε
 
     eps = parameter.relativeAccuracy
 
-    point_sph[1] <= sphere.radius && return SVector(complex(0.0), complex(0.0), complex(0.0)) # inside the sphere the field is 0
+    point_sph[1] <= sphere.radius && return SVector{3,Complex{T}}(0.0, 0.0, 0.0) # inside the sphere the field is 0
 
-    Hr = complex(0.0)
-    Hϑ = complex(0.0)
-    Hϕ = complex(0.0)
+    Hr = Complex{T}(0.0)
+    Hϑ = Complex{T}(0.0)
+    Hϕ = Complex{T}(0.0)
 
-    δH = Inf
+    δH = T(Inf)
     n = 0
 
     kr = k * point_sph[1]
@@ -130,9 +133,9 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     cosϕ = cos(point_sph[3]) 
 
     # first two values of the Associated Legendre Polynomial
-    plm = Vector{Float64}()
+    plm = Vector{T}()
     push!(plm, -sinϑ)
-    push!(plm, -3.0 * sinϑ * cosϑ)  
+    push!(plm, -T(3.0) * sinϑ * cosϑ)
     
     s = sqrt(π / 2 / kr)
 
@@ -153,7 +156,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
             δH = (abs(ΔHr) + abs(ΔHϑ) + abs(ΔHϕ)) / (abs(Hr) + abs(Hϑ) + abs(Hϕ)) # relative change
 
-            n > 1 && push!(plm, (2.0 * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship for next associated Legendre polynomials
+            n > 1 && push!(plm, (T(2.0) * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship for next associated Legendre polynomials
         end
     catch
 
@@ -176,7 +179,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     point_sph = cart2sph(point) # [r ϑ φ]
 
     k  = excitation.wavenumber
-
+    T = typeof(k)
     eps = parameter.relativeAccuracy
 
     sinϑ = abs(sin(point_sph[2]))  # note: theta only defined from from 0 to pi
@@ -185,16 +188,16 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     cosϕ = cos(point_sph[3]) 
 
     # first two values of the Associated Legendre Polynomial
-    plm = Vector{Float64}()
+    plm = Vector{T}()
     push!(plm, -sinϑ)
-    push!(plm, -3.0 * sinϑ * cosϑ)
+    push!(plm, -T(3.0) * sinϑ * cosϑ)
 
     ka = k * sphere.radius
 
-    Sϑ = complex(0.0)
-    Sϕ = complex(0.0)
+    Sϑ = Complex{T}(0.0)
+    Sϕ = Complex{T}(0.0)
 
-    δS = Inf
+    δS = T(Inf)
     n = 0
 
     try
@@ -208,7 +211,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
             δS = (abs(ΔSϑ) + abs(ΔSϕ)) / (abs(Sϑ) + abs(Sϑ)) # relative change
 
-            n > 1 && push!(plm, (2.0 * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship associated Legendre polynomial
+            n > 1 && push!(plm, (T(2.0) * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship associated Legendre polynomial
         end
     catch
 
@@ -218,7 +221,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     Eϕ = -Sϕ * sinϕ / k
 
     #return SVector(0.0, Eϑ, Eϕ)
-    return convertSpherical2Cartesian(SVector(0.0, Eϑ, Eϕ), point_sph)
+    return convertSpherical2Cartesian(SVector{3,Complex{T}}(0.0, Eϑ, Eϕ), point_sph)
 end
 
 
@@ -230,12 +233,13 @@ Compute scattering coefficients for a plane wave travelling in -z direction with
 """
 function scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int, ka)
 
+    T = typeof(excitation.wavenumber)
     s = sqrt(π / 2 / ka) 
 
-    J  = s * besselj(n + 0.5, ka)   # spherical Bessel function
-    H  = s * hankelh2(n + 0.5, ka)  # spherical Hankel function
-    J2 = s * besselj(n - 0.5, ka)  
-    H2 = s * hankelh2(n - 0.5, ka) 
+    J  = s * besselj(n + T(0.5), ka)   # spherical Bessel function
+    H  = s * hankelh2(n + T(0.5), ka)  # spherical Hankel function
+    J2 = s * besselj(n - T(0.5), ka)
+    H2 = s * hankelh2(n - T(0.5), ka)
 
     # [k₀ * a * j_n(k₀ a)]'
     kaJ1P = (ka * J2 - n * J )    # derivatives spherical Bessel functions
@@ -257,8 +261,10 @@ Compute functional dependencies of the Mie series for a plane wave travelling in
 """
 function expansion(sphere::PECSphere, excitation::PlaneWave, plm, kr, s, cosϑ, sinϑ, n::Int)
 
-    Hn  = s * hankelh2(n + 0.5, kr)     # spherical Hankel functions
-    H2n = s * hankelh2(n - 0.5, kr)
+    T = typeof(excitation.wavenumber)
+
+    Hn  = s * hankelh2(n + T(0.5), kr)     # spherical Hankel functions
+    H2n = s * hankelh2(n - T(0.5), kr)
 
     krH1Pn = kr * H2n - n * Hn          # derivatives spherical Hankel functions
 
@@ -266,9 +272,9 @@ function expansion(sphere::PECSphere, excitation::PlaneWave, plm, kr, s, cosϑ, 
 
     if abs(cosϑ) < 0.999999
         if n == 1 # derivative of associated Legendre Polynomial
-            dp = cosϑ * plm[1] / sqrt(1.0 - cosϑ * cosϑ)
+            dp = cosϑ * plm[1] / sqrt(T(1.0) - cosϑ * cosϑ)
         else
-            dp = (n * cosϑ * plm[n] - (n + 1) * plm[n - 1]) / sqrt(1.0 - cosϑ * cosϑ)
+            dp = (n * cosϑ * plm[n] - (n + 1) * plm[n - 1]) / sqrt(T(1.0) - cosϑ * cosϑ)
         end
 
         Mn_ϑ = Hn * p / sinϑ
@@ -278,7 +284,7 @@ function expansion(sphere::PECSphere, excitation::PlaneWave, plm, kr, s, cosϑ, 
         Nn_ϕ = krH1Pn * p  / (kr * sinϑ)
 
     elseif cosϑ > 0.999999
-        aux = (n + 1.0) * n / 2.0
+        aux = (n + T(1.0)) * n / T(2.0)
 
         Mn_ϑ = -Hn * aux
         Mn_ϕ = Mn_ϑ
@@ -287,7 +293,7 @@ function expansion(sphere::PECSphere, excitation::PlaneWave, plm, kr, s, cosϑ, 
         Nn_ϕ = Nn_ϑ
 
     elseif cosϑ < -0.999999
-        aux = (n + 1.0) * n / 2.0 * (-1.0)^n
+        aux = (n + T(1.0)) * n / T(2.0) * T(-1.0)^n
 
         Mn_ϑ =  Hn * aux
         Mn_ϕ = -Mn_ϑ
@@ -310,14 +316,15 @@ Compute far-field functional dependencies of the Mie series for a plane wave tra
 """
 function expansion(sphere::PECSphere, excitation::PlaneWave, ka, plm, cosϑ, sinϑ, n::Int)
     
+    T = typeof(excitation.wavenumber)
     An, Bn = scatterCoeff(sphere, excitation, n, ka)
 
     # derivative of associated Legendre Polynomial
     if abs(cosϑ) < 0.999999
         if n == 1
-            dp = cosϑ * plm[1] / sqrt(1.0 - cosϑ * cosϑ)
+            dp = cosϑ * plm[1] / sqrt(T(1.0) - cosϑ * cosϑ)
         else
-            dp = (n * cosϑ * plm[n] - (n + 1) * plm[n - 1]) / sqrt(1.0 - cosϑ * cosϑ)
+            dp = (n * cosϑ * plm[n] - (n + 1) * plm[n - 1]) / sqrt(T(1.0) - cosϑ * cosϑ)
         end
     end
 

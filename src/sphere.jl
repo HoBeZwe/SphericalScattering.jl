@@ -1,15 +1,15 @@
 
-struct Medium{T}
-    ε::T
-    μ::T
+struct Medium{C}
+    ε::C
+    μ::C
 end
 
 abstract type Sphere end
 
-struct DielectricSphere{T} <: Sphere
-    radius::T
-    embedding::Medium{T}
-    filling::Medium{T}
+struct DielectricSphere{C,R} <: Sphere
+    radius::R
+    embedding::Medium{C}
+    filling::Medium{C}
 end
 
 DielectricSphere(;
@@ -18,9 +18,9 @@ embedding   = Medium(ε0, μ0),
 filling = error("missing argument `filling`")
 ) = DielectricSphere(radius, embedding, filling)
 
-struct PECSphere{T} <: Sphere
-    radius::T
-    embedding::Medium{T}
+struct PECSphere{C,R} <: Sphere
+    radius::R
+    embedding::Medium{C}
 end
 
 PECSphere(;
