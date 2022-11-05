@@ -1,7 +1,7 @@
 
 # SphericalScattering.jl
 
-This package provides semi-analytical solutions to the scattering of time harmonic electromagnetic fields from spherical objects. 
+This package provides semi-analytical solutions to the scattering of time harmonic and static electromagnetic fields from spherical objects. 
 To this end, series expansions are evaluated. Special care is taken to obtain accurate solutions down to the static limit.
 
 
@@ -19,9 +19,9 @@ The following scenarios are implemented (✓) and planned (⌛):
 ##### Available scattering objects:
 - ✓ PEC sphere
 - ⌛ PMC sphere
-- ✓/⌛ Dielectric sphere (only for uniform field)
-- ✓/⌛ Mulitlayer dielectric sphere (only for uniform field)
-- ✓/⌛ Mulitlayer dielectric sphere with PEC core (only for uniform field)
+- ⌛ Dielectric sphere (only for uniform field)
+- ⌛ Mulitlayer dielectric sphere (only for uniform field)
+- ⌛ Mulitlayer dielectric sphere with PEC core (only for uniform field)
 
 
 !!! note
@@ -40,4 +40,4 @@ pkg> add SphericalScattering
 The implementation is based on
 - J.-M. Jin, Theory and Computation of Electromagnetic Fields, Second edition. Hoboken, New Jersey: John Wiley & Sons, Inc, 2015.
 - G. T. Ruck, D. E. Barrick, W. D. Stuart, C. K. Krichbaum, Radar Cross Section Handbook, Volume 1, New York: Plenum Press, 1970.
-- Sihvola, Ari & Lindell, Ismo. (1988). Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers. Journal of Electromagnetic Waves and Applications - J ELECTROMAGNET WAVE APPLICAT. 2. 741-756. 
+- Sihvola, Ari & Lindell, Ismo., Transmission Line Analogy for Calculating the Effective Permittivity of Mixtures with Spherical Multilayer Scatterers, Journal of Electromagnetic Waves and Applications, Volume 2, Pages 741-756, 1988.

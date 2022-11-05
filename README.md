@@ -9,7 +9,7 @@
 
 ## Introduction
 
-This package provides semi-analytical solutions to the scattering of time harmonic electromagnetic fields from spherical objects. 
+This package provides semi-analytical solutions to the scattering of time harmonic and static electromagnetic fields from spherical objects. 
 To this end, series expansions are evaluated. Special care is taken to obtain accurate solutions down to the static limit.
 
 
@@ -19,12 +19,14 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 - :heavy_check_mark: Field of electric/magnetic ring current
 - :heavy_check_mark: Field of electric/magnetic dipole
 - :heavy_check_mark: TE/TM spherical vector waves
+- :heavy_check_mark: Uniform static electric field
 
 ##### Available scattering objects:
 - :heavy_check_mark: PEC sphere
 - :hourglass_flowing_sand: PMC sphere
-- :hourglass_flowing_sand: Dielectric sphere
-- :hourglass_flowing_sand: Mulitlayer dielectric sphere
+- :hourglass_flowing_sand: Dielectric sphere (so far only for uniform static field)
+- :hourglass_flowing_sand: Mulitlayer dielectric sphere (so far only for uniform static field)
+- :hourglass_flowing_sand: Mulitlayer dielectric sphere with PEC core (so far only for uniform static field)
 
 
 ## Citation
