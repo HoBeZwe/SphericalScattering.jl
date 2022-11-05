@@ -19,7 +19,7 @@ function field(excitation::Dipole, quantity::Field; parameter::Parameter=Paramet
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)
-        F[ind] = field(exc, point, fieldType, parameter=parameter)
+        F[ind] = field(exc, point, fieldType; parameter=parameter)
     end
 
     # --- rotate resulting field
@@ -102,7 +102,7 @@ function field(excitation::HertzianDipole, point, quantity::FarField; parameter:
     n = point / norm(point)
     kd = k * r0 ⋅ point         # phase correction if dipole is not placed in origin
 
-    return Il / (4 * π) * sqrt(μ / ε) * k * ((n × p) × n) * exp(im*kd)
+    return Il / (4 * π) * sqrt(μ / ε) * k * ((n × p) × n) * exp(im * kd)
 end
 
 
@@ -125,7 +125,7 @@ function field(excitation::FitzgeraldDipole, point, quantity::FarField; paramete
     n = point / norm(point)
     kd = k * r0 ⋅ point         # phase correction if dipole is not placed in origin
 
-    return Il / (4 * π) * (n × p) * k * exp(im*kd)
+    return Il / (4 * π) * (n × p) * k * exp(im * kd)
 end
 
 
@@ -142,12 +142,12 @@ end
 #     ε  = excitation.embedding.ε
 
 #     eps = parameter.relativeAccuracy
-    
+
 #     Hr  = complex(0.0) # initialize
 #     Hϑ  = complex(0.0) # initialize
 #     δHr = Inf
 #     n   = 0
-     
+
 #     r = point_sph[1]
 
 #     kr = k * r 
@@ -163,13 +163,13 @@ end
 #             while δHr > eps || n < 10
 #                 n += 1
 #                 expansion_coeff = 2 * n + 1  # variable part of expansion coefficients
-                
+
 #                 jkr = besselj(n + 0.5, kr)   # Bessel function 1st kind (without sqrt-term)
 #                 hkR = hankelh2(n + 0.5, kR)  # Hankel function 2nd kind (without sqrt-term)
 #                 jkrt = besselj(n + 1.5, kr)  # for derivative of Riccati-Bessel function 1st kind
 
 #                 dJkr = (n + 1) * sqrt(R / r) * jkr * hkR - k * sqrt(r * R) * hkR * jkrt  # HkR * derivative of Riccati-Bessel function 1st kind
-                
+
 #                 ΔHr = expansion_coeff * n * (n + 1) * hkR * jkr * Pl(cosϑ, n)
 #                 ΔHϑ = expansion_coeff * dJkr * dnPl(cosϑ, n, 1)
 
@@ -179,21 +179,21 @@ end
 #                 Hϑ += ΔHϑ 
 #                 # @show Hr
 #             end
-        
+
 #         else # r >=R
 #             while δHr > eps || n < 10
 #                 n += 1
 #                 expansion_coeff = 2 * n + 1  # variable part of expansion coefficients
-                                        
+
 #                 hkr = hankelh2(n + 0.5, kr)  # Hankel function 2nd kind (without sqrt-term)
 #                 jkR = besselj(n + 0.5, kR)   # Bessel function 1st kind (without sqrt-term)
 #                 hkrt = hankelh2(n + 1.5, kr) # for derivative of Riccati-Hankel function 2nd kind
-                
+
 #                 dHkr = (n + 1) * sqrt(R / r) * hkr * jkR - k * sqrt(r * R) * jkR * hkrt  # JkR * derivative of Riccati-Hankel function 2nd kind
-                        
+
 #                 ΔHr = expansion_coeff * n * (n + 1) * hkr * jkR * Pl(cosϑ, n)
 #                 ΔHϑ = expansion_coeff * dHkr * dnPl(cosϑ, n, 1)
-     
+
 #                 δHr = abs(ΔHr / Hr)           # relative change
 
 #                 Hr += ΔHr
@@ -208,6 +208,6 @@ end
 #     ZF = sqrt(μ / ε)
 #     Hr *= -im*I0 * sqrt(R / r) / r / 8 / k / R / R * ZF
 #     Hϑ *=  im*I0 * sinϑ / r / 8 / k / R / R * ZF
-    
+
 #     return convertSpherical2Cartesian(SVector(Hr, Hϑ, 0.0), point_sph)
 # end

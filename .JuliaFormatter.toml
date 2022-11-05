@@ -1,0 +1,12 @@
+
+style = "blue"
+
+
+margin = 135
+
+align_assignment = true
+align_matrix = true
+
+always_use_return = false
+short_to_long_function_def = false
+remove_extra_newlines = false

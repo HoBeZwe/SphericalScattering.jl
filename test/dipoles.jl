@@ -2,17 +2,17 @@
 
 @testset "Hertzian dipole" begin
 
-    ex = HertzianDipole(wavenumber=30.0, center=SVector(0.0,0.0,2.0)) # ≈ 10 MHz
+    ex = HertzianDipole(; wavenumber=30.0, center=SVector(0.0, 0.0, 2.0)) # ≈ 10 MHz
 
     @testset "Incident fields" begin
 
         # define an observation point
-        point_cart = [SVector(2.0, 2.0, 3.2)] 
+        point_cart = [SVector(2.0, 2.0, 3.2)]
 
         E  = field(ex, ElectricField(point_cart))
         H  = field(ex, MagneticField(point_cart))
         FF = field(ex, FarField(point_cart))
-            
+
         # TODO: find better way of verifying (via BEAST)
         @test FF[1][1] ≈ 295.0240872654143 + 112.00825545163434im
         @test FF[1][2] ≈ 295.0240872654143 + 112.00825545163434im
@@ -30,10 +30,10 @@
     @testset "Scattered fields" begin
 
         # define scatterer: PEC sphere
-        sp = PECSphere(radius = 1.0)
+        sp = PECSphere(; radius=1.0)
 
         # define an observation point
-        point_cart = [SVector(2.0, 2.0, 3.2)] 
+        point_cart = [SVector(2.0, 2.0, 3.2)]
 
         # compute scattered fields
         E  = scatteredfield(sp, ex, ElectricField(point_cart))
@@ -57,17 +57,17 @@ end
 
 @testset "Fitzgerald dipole" begin
 
-    ex = FitzgeraldDipole(wavenumber=30.0, center=SVector(0.0,0.0,2.0)) # ≈ 10 MHz
+    ex = FitzgeraldDipole(; wavenumber=30.0, center=SVector(0.0, 0.0, 2.0)) # ≈ 10 MHz
 
     @testset "Incident fields" begin
 
         # define an observation point
-        point_cart = [SVector(2.0, 2.0, 3.2)] 
+        point_cart = [SVector(2.0, 2.0, 3.2)]
 
         E  = field(ex, ElectricField(point_cart))
         H  = field(ex, MagneticField(point_cart))
         FF = field(ex, FarField(point_cart))
-            
+
         @test E[1][1] ≈ 0.23911545354270725 - 0.4457313513337625im
         @test E[1][2] ≈ -0.23911545354270725 + 0.4457313513337625im
         @test E[1][3] ≈ 0.0 - 0.0im
@@ -84,10 +84,10 @@ end
     @testset "Scattered fields" begin
 
         # define scatterer: PEC sphere
-        sp = PECSphere(radius = 1.0)
+        sp = PECSphere(; radius=1.0)
 
         # define an observation point
-        point_cart = [SVector(2.0, 2.0, 3.2)] 
+        point_cart = [SVector(2.0, 2.0, 3.2)]
 
         # compute scattered fields
         E  = scatteredfield(sp, ex, ElectricField(point_cart))

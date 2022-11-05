@@ -12,7 +12,7 @@ function field(excitation::PlaneWave, quantity::Field; parameter::Parameter=Para
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)
-        F[ind] = field(excitation, point, quantity, parameter=parameter)
+        F[ind] = field(excitation, point, quantity; parameter=parameter)
     end
 
     return F
@@ -55,8 +55,8 @@ function field(excitation::PlaneWave, point, quantity::MagneticField; parameter:
     d = excitation.direction
     p = excitation.polarization
 
-    ε  = excitation.embedding.ε
-    μ  = excitation.embedding.μ
+    ε = excitation.embedding.ε
+    μ = excitation.embedding.μ
 
     return a * sqrt(ε / μ) * exp(-im * k * dot(d, point)) * (d × p)
 end

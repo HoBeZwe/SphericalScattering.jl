@@ -2,15 +2,15 @@
 
 abstract type Field end
 
-struct FarField <: Field 
+struct FarField <: Field
     locations#::Vector
 end
 
-struct ElectricField <: Field 
+struct ElectricField <: Field
     locations#::Vector
 end
 
-struct MagneticField <: Field 
+struct MagneticField <: Field
     locations#::Vector
 end
 

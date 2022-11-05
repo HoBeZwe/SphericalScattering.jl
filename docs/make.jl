@@ -9,9 +9,7 @@ makedocs(;
     repo="https://github.com/HoBeZwe/SphericalScattering.jl/tree/master",
     sitename="SphericalScattering.jl",
     format=Documenter.HTML(;
-        prettyurls=get(ENV, "CI", "false") == "true",
-        canonical="https://HoBeZwe.github.io/SphericalScattering.jl",
-        assets=String[],
+        prettyurls=get(ENV, "CI", "false") == "true", canonical="https://HoBeZwe.github.io/SphericalScattering.jl", assets=String[]
     ),
     pages=[
         "Introduction" => "index.md",
@@ -26,6 +24,4 @@ makedocs(;
     ],
 )
 
-deploydocs(;
-    repo="github.com/HoBeZwe/SphericalScattering.jl",
-)
+deploydocs(; repo="github.com/HoBeZwe/SphericalScattering.jl")

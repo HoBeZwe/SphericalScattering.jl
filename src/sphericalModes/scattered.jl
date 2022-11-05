@@ -21,7 +21,7 @@ function scatteredfield(sphere::PECSphere, excitation::SphericalMode, quantity::
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
-        F[ind] = scatteredfield(sphere, exc, point, fieldType, parameter=parameter)
+        F[ind] = scatteredfield(sphere, exc, point, fieldType; parameter=parameter)
     end
 
     # --- rotate resulting field
@@ -48,11 +48,20 @@ function scatteredfield(sphere::PECSphere, excitation::SphericalMode, point, qua
     Q = typeof(quantity)
 
     # outward travelling wave
-    Escat = T(excitation.embedding, excitation.wavenumber, excitation.amplitude, excitation.m, excitation.n, 2, excitation.center, excitation.orientation)
+    Escat = T(
+        excitation.embedding,
+        excitation.wavenumber,
+        excitation.amplitude,
+        excitation.m,
+        excitation.n,
+        2,
+        excitation.center,
+        excitation.orientation,
+    )
 
     # scatter coefficient
     γ = scatterCoeff(sphere, excitation, excitation.n, ka)
-    E = field(Escat, Q([point])) 
+    E = field(Escat, Q([point]))
 
     return γ * E[1]
 end
@@ -66,7 +75,7 @@ Compute scattering coefficients for a spherical TE mode travelling towards the o
 """
 function scatterCoeff(sphere::PECSphere, excitation::SphericalModeTE, n::Int, ka)
     T = typeof(ka)
-    return -hankelh2(n+T(0.5), ka) / hankelh1(n+T(0.5), ka)
+    return -hankelh2(n + T(0.5), ka) / hankelh1(n + T(0.5), ka)
 end
 
 
@@ -80,8 +89,8 @@ function scatterCoeff(sphere::PECSphere, excitation::SphericalModeTM, n::Int, ka
 
     T = typeof(ka)
 
-    dH1 = (n + 1) * hankelh1(n+T(0.5), ka) - ka * hankelh1(n+T(1.5), ka)
-    dH2 = (n + 1) * hankelh2(n+T(0.5), ka) - ka * hankelh2(n+T(1.5), ka)
+    dH1 = (n + 1) * hankelh1(n + T(0.5), ka) - ka * hankelh1(n + T(1.5), ka)
+    dH2 = (n + 1) * hankelh2(n + T(0.5), ka) - ka * hankelh2(n + T(1.5), ka)
 
     #dH1 = (n + 1) * besselj(n+0.5, ka) - ka * besselj(n+1.5, ka)
     #dH2 = (n + 1) * hankelh2(n+0.5, ka) - ka * hankelh2(n+1.5, ka)

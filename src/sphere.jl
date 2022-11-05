@@ -13,9 +13,7 @@ struct DielectricSphere{C,R} <: Sphere
 end
 
 DielectricSphere(;
-radius      = error("missing argument `wavenumber`"),
-embedding   = Medium(ε0, μ0),
-filling = error("missing argument `filling`")
+    radius=error("missing argument `wavenumber`"), embedding=Medium(ε0, μ0), filling=error("missing argument `filling`")
 ) = DielectricSphere(radius, embedding, filling)
 
 struct PECSphere{C,R} <: Sphere
@@ -23,10 +21,7 @@ struct PECSphere{C,R} <: Sphere
     embedding::Medium{C}
 end
 
-PECSphere(;
-radius      = error("missing argument `wavenumber`"),
-embedding   = Medium(ε0, μ0)
-) = PECSphere(radius, embedding)
+PECSphere(; radius=error("missing argument `wavenumber`"), embedding=Medium(ε0, μ0)) = PECSphere(radius, embedding)
 
 struct LayeredSphere{N,R,C} <: Sphere
     radii::SVector{N,R}
@@ -34,11 +29,8 @@ struct LayeredSphere{N,R,C} <: Sphere
     filling::SVector{N,Medium{C}}
 end
 
-LayeredSphere(;
-radii = error("Missing argument `radii`"),
-embedding = Medium(ε0, μ0),
-filling = error("`missing argument `filling`")
-) = LayeredSphere(radii, embedding, filling)
+LayeredSphere(; radii=error("Missing argument `radii`"), embedding=Medium(ε0, μ0), filling=error("`missing argument `filling`")) =
+    LayeredSphere(radii, embedding, filling)
 
 struct LayeredSpherePEC{N,D,R,C} <: Sphere
     radii::SVector{N,R}
@@ -46,8 +38,5 @@ struct LayeredSpherePEC{N,D,R,C} <: Sphere
     embedding::Medium{C}
 end
 
-LayeredSpherePEC(;
-    radii = error("Missing argument `radii`"),
-    embedding = Medium(ε0, μ0),
-    filling = error("Missing argument `filling`")
-) = LayeredSpherePEC(radii, embedding, filling)
+LayeredSpherePEC(; radii=error("Missing argument `radii`"), embedding=Medium(ε0, μ0), filling=error("Missing argument `filling`")) =
+    LayeredSpherePEC(radii, embedding, filling)
