@@ -26,8 +26,8 @@
 
         ex3 = SphericalModeTE(; wavenumber=κ, m=0, n=1, c=3)
 
-        @test_throws "Type can only be 1 or 2." EF = field(ex3, ElectricField(point_cart))
-        @test_throws "Type can only be 1 or 2." HF = field(ex3, MagneticField(point_cart))
+        @test_throws ErrorException("Type can only be 1 or 2.") EF = field(ex3, ElectricField(point_cart))
+        @test_throws ErrorException("Type can only be 1 or 2.") HF = field(ex3, MagneticField(point_cart))
 
         # @test FF[1][1] ≈ 295.0240872654143 + 112.00825545163434im
         # @test FF[1][2] ≈ 295.0240872654143 + 112.00825545163434im
@@ -110,8 +110,8 @@ end
 
         ex3 = SphericalModeTM(; wavenumber=κ, m=0, n=1, c=3)
 
-        @test_throws "Type can only be 1 or 2." EF = field(ex3, ElectricField(point_cart))
-        @test_throws "Type can only be 1 or 2." HF = field(ex3, MagneticField(point_cart))
+        @test_throws ErrorException("Type can only be 1 or 2.") EF = field(ex3, ElectricField(point_cart))
+        @test_throws ErrorException("Type can only be 1 or 2.") HF = field(ex3, MagneticField(point_cart))
 
         # @test FF[1][1] ≈ 295.0240872654143 + 112.00825545163434im
         # @test FF[1][2] ≈ 295.0240872654143 + 112.00825545163434im
