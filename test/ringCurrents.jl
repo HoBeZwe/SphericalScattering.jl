@@ -1,5 +1,4 @@
 
-
 @testset "Electric ring current" begin
 
     f = 1e8
