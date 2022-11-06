@@ -69,6 +69,10 @@ points_cartNF, points_sphNF = getDefaultPoints(5.0)
         include("uniformField.jl")
     end
 
+    @testset "Test coordinate transforms" begin
+        include("coordinateTransforms.jl")
+    end
+
     @testset "Test formatting of files" begin
         pkgpath = pkgdir(SphericalScattering)   # path of this package including name
         @test format(pkgpath, overwrite=false)  # check whether files are formatted according to the .JuliaFormatter.toml 
