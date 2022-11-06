@@ -30,7 +30,7 @@
         u = T \ e
 
         EF_MoM = potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        HF_MoM = potential(MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+        HF_MoM = potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
         FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
 
 
