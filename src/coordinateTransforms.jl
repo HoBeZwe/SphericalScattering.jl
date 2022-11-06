@@ -31,31 +31,31 @@ function rotate!(points, rotation::SVector{2,T}) where {T}
     rotation == SVector{2,T}(0.0, 0.0) && return nothing # no rotation required
 
     # --- perform rotation
-    wx = rotation[1] # rotation angle around x-axis (away from z-axis)
-    wy = rotation[2] # rotation angle around y-axis (away from z-axis)
+    # wx = rotation[1] # rotation angle around x-axis (away from z-axis)
+    # wy = rotation[2] # rotation angle around y-axis (away from z-axis)
 
-    cosy = cos(wy)
-    siny = sin(wy)
-    cosx = cos(wx)
-    sinx = sin(wx)
+    # cosy = cos(wy)
+    # siny = sin(wy)
+    # cosx = cos(wx)
+    # sinx = sin(wx)
 
-    Ry = [
-        cosy 0 siny
-        0 1 0
-        -siny 0 cosy
-    ]
+    # Ry = [
+    #     cosy 0 siny
+    #     0 1 0
+    #     -siny 0 cosy
+    # ]
 
-    Rx = [
-        1 0 0
-        0 cosx sinx
-        0 -sinx cosx
-    ]
+    # Rx = [
+    #     1 0 0
+    #     0 cosx sinx
+    #     0 -sinx cosx
+    # ]
 
-    R = Rx * Ry
+    # R = Rx * Ry
 
-    for (ind, p) in enumerate(points)
-        points[ind] = R * p
-    end
+    # for (ind, p) in enumerate(points)
+    #     points[ind] = R * p
+    # end
 
     return nothing
 end

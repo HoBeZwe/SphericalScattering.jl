@@ -39,4 +39,4 @@ struct LayeredSpherePEC{N,D,R,C} <: Sphere
 end
 
 LayeredSpherePEC(; radii=error("Missing argument `radii`"), embedding=Medium(ε0, μ0), filling=error("Missing argument `filling`")) =
-    LayeredSpherePEC(radii, embedding, filling)
+    LayeredSpherePEC(radii, filling, embedding)
