@@ -16,6 +16,19 @@
         @test_nowarn HF = field(ex, MagneticField(point_cart))
         @test_nowarn FF = field(ex, FarField(point_cart))
 
+        point_cart = [SVector(0.0, 0.0, 3.2), SVector(0.0, 0.0, -3.2)]
+
+        ex2 = SphericalModeTE(; wavenumber=κ, m=1, n=1, c=1)
+
+        @test_nowarn EF = field(ex2, ElectricField(point_cart))
+        @test_nowarn HF = field(ex2, MagneticField(point_cart))
+        @test_nowarn FF = field(ex2, FarField(point_cart))
+
+        ex3 = SphericalModeTE(; wavenumber=κ, m=0, n=1, c=3)
+
+        @test_throws "Type can only be 1 or 2." EF = field(ex3, ElectricField(point_cart))
+        @test_throws "Type can only be 1 or 2." HF = field(ex3, MagneticField(point_cart))
+
         # @test FF[1][1] ≈ 295.0240872654143 + 112.00825545163434im
         # @test FF[1][2] ≈ 295.0240872654143 + 112.00825545163434im
         # @test FF[1][3] ≈ -368.78010908176793 - 140.01031931454293im
@@ -86,6 +99,19 @@ end
         @test_nowarn EF = field(ex, ElectricField(point_cart))
         @test_nowarn HF = field(ex, MagneticField(point_cart))
         @test_nowarn FF = field(ex, FarField(point_cart))
+
+        ex2 = SphericalModeTM(; wavenumber=κ, m=1, n=1, c=1)
+
+        point_cart = [SVector(0.0, 0.0, 3.2), SVector(0.0, 0.0, -3.2)]
+
+        @test_nowarn EF = field(ex2, ElectricField(point_cart))
+        @test_nowarn HF = field(ex2, MagneticField(point_cart))
+        @test_nowarn FF = field(ex2, FarField(point_cart))
+
+        ex3 = SphericalModeTM(; wavenumber=κ, m=0, n=1, c=3)
+
+        @test_throws "Type can only be 1 or 2." EF = field(ex3, ElectricField(point_cart))
+        @test_throws "Type can only be 1 or 2." HF = field(ex3, MagneticField(point_cart))
 
         # @test FF[1][1] ≈ 295.0240872654143 + 112.00825545163434im
         # @test FF[1][2] ≈ 295.0240872654143 + 112.00825545163434im

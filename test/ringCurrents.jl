@@ -10,7 +10,7 @@
     @testset "Incident fields" begin
 
         # define an observation point
-        point_cart = [SVector(4.0, 2.0, 3.2)]
+        point_cart = [SVector(4.0, 2.0, 3.2), SVector(0.2, 0.1, 2.3)]
 
         EF = field(ex, ElectricField(point_cart))
         HF = field(ex, MagneticField(point_cart))
@@ -78,7 +78,7 @@ end
     @testset "Incident fields" begin
 
         # define an observation point
-        point_cart = [SVector(4.0, 2.0, 3.2)]
+        point_cart = [SVector(4.0, 2.0, 3.2), SVector(0.2, 0.1, 2.3)]
 
         EF = field(ex, ElectricField(point_cart))
         HF = field(ex, MagneticField(point_cart))
