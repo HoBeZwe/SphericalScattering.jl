@@ -1,16 +1,11 @@
 
 @testset "Plane wave" begin
 
-    𝜇 = SphericalScattering.μ0
-    𝜀 = SphericalScattering.ε0
-
-    c = 1 / sqrt(𝜇 * 𝜀)
-
     f = 1e8
     κ = 2π * f / c   # Wavenumber
 
-
     ex = planeWave(; wavenumber=κ)
+
 
     @testset "Incident fields" begin
 
@@ -23,18 +18,7 @@
 
     @testset "Scattered fields" begin
 
-        # ----- parameters
-        spRadius = 1.0 # radius of sphere
-
-        points_cartFF, points_sphFF = getDefaultPoints(1.0)
-        points_cartNF, points_sphNF = getDefaultPoints(5.0)
-        #point_cart = [SVector(2.0, 2.0, 3.2)]   
-
-
         # ----- BEAST solution
-        Γ  = meshsphere(spRadius, 0.45)
-        RT = raviartthomas(Γ)
-
         𝐸 = Maxwell3D.planewave(; direction=-ẑ, polarization=x̂, wavenumber=κ)
 
         𝑒 = n × 𝐸 × n
