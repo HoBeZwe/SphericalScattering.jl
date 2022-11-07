@@ -1,5 +1,9 @@
 
-<img src="docs/src/assets/logo_Scat_README.svg" height="190"/>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/src/assets/logo_Scat_README_white.svg" height="190">
+  <source media="(prefers-color-scheme: light)" srcset="docs/src/assets/logo_Scat_README.svg" height="190">
+  <img alt="" src="" height="190">
+</picture>
 
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://hobezwe.github.io/SphericalScattering.jl/dev/)
 [![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/HoBeZwe/SphericalScattering.jl/blob/master/LICENSE)
@@ -25,8 +29,8 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 - :heavy_check_mark: PEC sphere
 - :hourglass_flowing_sand: PMC sphere
 - :hourglass_flowing_sand: Dielectric sphere (so far only for uniform static field)
-- :hourglass_flowing_sand: Mulitlayer dielectric sphere (so far only for uniform static field)
-- :hourglass_flowing_sand: Mulitlayer dielectric sphere with PEC core (so far only for uniform static field)
+- :hourglass_flowing_sand: Multilayer dielectric sphere (so far only for uniform static field)
+- :hourglass_flowing_sand: Multilayer dielectric sphere with PEC core (so far only for uniform static field)
 
 
 ## Citation
