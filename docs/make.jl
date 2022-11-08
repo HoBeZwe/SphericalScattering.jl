@@ -20,6 +20,7 @@ makedocs(;
             "Dipoles" => "dipoles.md",
             "Spherical Modes" => "sphModes.md",
         ],
+        "Contributing" => "contributing.md",
         "API Reference" => "apiref.md",
     ],
 )
