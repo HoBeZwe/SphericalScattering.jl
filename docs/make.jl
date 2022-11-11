@@ -15,6 +15,7 @@ makedocs(;
         "Introduction" => "index.md",
         "Manual" => "manual.md",
         "Implementation Details" => Any[
+            "General" => "general.md",
             "Plane Wave" => "planeWave.md",
             "Ring Currents" => "ringCurrents.md",
             "Dipoles" => "dipoles.md",
