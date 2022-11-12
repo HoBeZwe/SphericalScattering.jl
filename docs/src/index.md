@@ -20,8 +20,8 @@ The following scenarios are implemented (✓) and planned (⌛):
 - ✓ PEC sphere
 - ⌛ PMC sphere
 - ⌛ Dielectric sphere (only for uniform field)
-- ⌛ Mulitlayer dielectric sphere (only for uniform field)
-- ⌛ Mulitlayer dielectric sphere with PEC core (only for uniform field)
+- ⌛ Multilayer dielectric sphere (only for uniform field)
+- ⌛ Multilayer dielectric sphere with PEC core (only for uniform field)
 
 
 !!! note
