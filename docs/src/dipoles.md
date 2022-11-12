@@ -43,19 +43,19 @@ The Fitzgerald (magnetic) dipole with dipole length ``l``, magnetic current ``M`
 The API provides the following constructors with default values:
 ```julia
 ex = HertzianDipole(
-        embedding   = Medium(ε, μ),
-        wavenumber  = 30.0,
+        embedding   = Medium(ε0, μ0),
+        wavenumber  = error("missing argument `wavenumber`"),
         amplitude   = 1.0,
-        center      = SVector(0.0,0.0,0.0),
-        orientation = SVector(0.0,0.0,1.0)
+        center      = SVector{3,typeof(wavenumber)}(0.0, 0.0, 0.0),
+        orientation = SVector{3,typeof(wavenumber)}(0.0, 0.0, 1.0),
 )
 
 ex = FitzgeraldDipole(
-        embedding   = Medium(ε, μ),
-        wavenumber  = 30.0,
+        embedding   = Medium(ε0, μ0),
+        wavenumber  = error("missing argument `wavenumber`"),
         amplitude   = 1.0,
-        center      = SVector(0.0,0.0,0.0),
-        orientation = SVector(0.0,0.0,1.0)
+        center      = SVector{3,typeof(wavenumber)}(0.0, 0.0, 0.0),
+        orientation = SVector{3,typeof(wavenumber)}(0.0, 0.0, 1.0),
 )
 ```
 
@@ -102,7 +102,7 @@ FF = field(ex, FarField(point_cart))
 The dipole has to be oriented such that it is normal to the sphere surface and located outside of the sphere.
 
 !!! warning
-    So far the dipole is assumed to be along the ``z``-axis!
+    So far the dipole is assumed to be along the ``z``-axis! This is planned to be generalized.
 
 #### API
 

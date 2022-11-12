@@ -5,12 +5,12 @@
 ```@raw html
 <figure>
   <img
-    src="assets/Fig_SphereDP.svg"
+    src="assets/PECsphere.svg"
     alt="Setup"
     width="300" />
 
   <figcaption>
-    Setup for the excitation with a Hertzian or a Fitzgerald dipole.
+    Setup for the excitation with a plane wave. TODO: more suitable image.
   </figcaption>
 </figure>
 <br/>
@@ -19,24 +19,11 @@
 ---
 ## Definition
 
-The dipoles are defined as infinitesimal current elements. Note that the definitions differ from the ones employed in[^1] basically by a factor of ``k``. Hence, they lead to different static fields, i.e., for ``k\rightarrow 0``.
-
-[^1]: Book by Jackson.
-
-#### Hertzian Dipole
-
-The Hertzian dipole with dipole length ``l``, electric current ``I``, and orientation ``\hat{\bm p}`` at position ``\bm r_0`` is assumed to have the current density
+The plane wave with amplitude ``a``, wave vector ``\bm k``, and polarization ``\hat{\bm p}`` is assumed to have the field
 ```math
-\bm{j}_\mathrm{HD} = Il \hat{\bm p} \delta (\bm r - \bm r_0) \,,
+\bm e_\mathrm{PW}(\bm r) = a \hat{\bm p}  \, \mathrm{e}^{-\mathrm{j} \bm k \cdot \bm r}  \,.
 ```
-where ``\delta`` denotes the Dirac delta distribution.
 
-#### Fitzgeral Dipole
-
-The Fitzgerald (magnetic) dipole with dipole length ``l``, magnetic current ``M``, and orientation ``\hat{\bm p}`` at position ``\bm r_0`` is assumed to have the current density
-```math
-\bm{m}_\mathrm{FD} = Ml \hat{\bm p} \delta (\bm r - \bm r_0) \,.
-```
 
 ---
 ## [API](@id pwAPI)
@@ -44,33 +31,23 @@ The Fitzgerald (magnetic) dipole with dipole length ``l``, magnetic current ``M`
 The API provides the following constructors with default values:
 ```julia
 ex = planeWave(
-        embedding    = Medium(ε, μ),
-        wavenumber   = 30.0,
+        embedding    = Medium(ε0, μ0),
+        wavenumber   = error("missing argument `wavenumber`"),
         amplitude    = 1.0,
-        direction    = SVector(0.0,0.0,-1.0),
-        polarization = SVector(1.0,0.0,0.0)
+        direction    = SVector{3,typeof(wavenumber)}(0.0, 0.0, -1.0),
+        polarization = SVector{3,typeof(wavenumber)}(1.0, 0.0, 0.0),
 )
 ```
 
 
 ---
-## Radiated Field
+## Incident Field
 
-The electric field of the Hertzian dipole itself (without scatterer) is
+The electric field of the plane wave is as given above. The magnetic field is given by
 ```math
-\bm e(\bm r) = Z_\mathrm{F} \cfrac{Il}{4 \pi} \mathrm{e}^{-\mathrm{j} k r}  \left( \cfrac{k}{r}  ((\hat{\bm n} \times \hat{\bm p}) \times \hat{\bm n}) + \left(\cfrac{1}{k r^3} + \cfrac{\mathrm{j}}{r^2} \right)  (3 \hat{\bm n} (\hat{\bm n} \cdot \hat{\bm p}) - \hat{\bm p}) \right)
+\bm h_\mathrm{PW}(\bm r) = \cfrac{a}{Z_\mathrm{F}} (\hat{\bm k} \times \hat{\bm p})  \mathrm{e}^{-\mathrm{j} \bm k \cdot \bm r}
 ```
-with ``Z_\mathrm{F} = \sqrt{\mu / \varepsilon}`` and the magnetic field
-```math
-\bm h(\bm r) = \cfrac{Il}{4 \pi} \cfrac{\mathrm{e}^{-\mathrm{j} k r} }{r}  \left(k + \cfrac{1}{\mathrm{j} r} \right) (\hat{\bm n} \times \hat{\bm p})
-```
-where
-```math
-\hat{\bm n} = \cfrac{\bm r - \bm r_0}{|\bm r - \bm r_0|}\,.
-```
-!!! note
-    The fields of the Fitzgerald dipole are computed via [duality relations](@ref dualityRelations).
-
+with ``Z_\mathrm{F} = \sqrt{\mu / \varepsilon}``
 
 #### API
 
@@ -86,13 +63,8 @@ FF = field(ex, FarField(point_cart))
 ---
 ## Scattered Field
 
-!!! note
-    Orientation and location of the dipole are restricted for the scattered field computation!
-
-The dipole has to be oriented such that it is normal to the sphere surface and located outside of the sphere.
-
 !!! warning
-    So far the dipole is assumed to be along the ``z``-axis!
+    So far the plane wave is assumed to travel in negative ``z``-axis direction and to have a polarization along the ``x``-axis! This is planned to be generalized.
 
 #### API
 
