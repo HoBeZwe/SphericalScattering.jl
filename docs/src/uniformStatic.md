@@ -1,0 +1,4 @@
+
+# Uniform Static Field
+
+Details.

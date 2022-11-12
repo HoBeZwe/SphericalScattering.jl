@@ -5,6 +5,7 @@ This package provides semi-analytical solutions to the scattering of time harmon
 To this end, series expansions are evaluated. Special care is taken to obtain accurate solutions down to the static limit.
 
 
+---
 ## Overview
 
 The following scenarios are implemented (✓) and planned (⌛):
@@ -27,6 +28,7 @@ The following scenarios are implemented (✓) and planned (⌛):
 !!! note
     A time convention of ``\mathrm{e}^{\,\mathrm{j}\omega t}`` is used.
 
+---
 ## Installation
 
 Installing SphericalScattering is done by entering the package manager (enter `]` at the julia REPL) and issuing:
@@ -35,6 +37,7 @@ Installing SphericalScattering is done by entering the package manager (enter `]
 pkg> add SphericalScattering 
 ```
 
+---
 ## References
 
 The implementation is based on

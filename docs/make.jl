@@ -14,13 +14,15 @@ makedocs(;
     pages=[
         "Introduction" => "index.md",
         "Manual" => "manual.md",
-        "Implementation Details" => Any[
-            "General" => "general.md",
+        "Geometry" => Any["Coordinate System" => "coordinateSys.md", "Sphere Dimensions" => "scatterer.md"],
+        "Excitations" => Any[
             "Plane Wave" => "planeWave.md",
-            "Ring Currents" => "ringCurrents.md",
             "Dipoles" => "dipoles.md",
+            "Ring Currents" => "ringCurrents.md",
             "Spherical Modes" => "sphModes.md",
+            "Uniform Static Field" => "uniformStatic.md",
         ],
+        "Further Details" => "details.md",
         "Contributing" => "contributing.md",
         "API Reference" => "apiref.md",
     ],

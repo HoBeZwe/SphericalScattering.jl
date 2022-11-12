@@ -8,6 +8,7 @@ In order to contribute to this package directly create a pull request against th
 - Write tests and check that no errors occur.
 
 
+---
 ## Style
 
 For a consistent style the [JuliaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl) package is used which enforces the style defined in the *.JuliaFormatter.toml* file. To follow this style simply run
@@ -20,11 +21,13 @@ format(pkgdir(SphericalScattering))
     That all files follow the JuliaFormatter style is tested during the unit tests. Hence, do not forget to execute the two lines above. Otherwise, the tests are likely to not pass.
 
 
+---
 ## Documentation
 
 Add documentation for any changes or new features following the style of the existing documentation. For more information you can have a look at the [Documenter.jl](https://documenter.juliadocs.org/stable/) documentation.
 
 
+---
 ## Tests
 
 Write tests for your code changes and verify that no errors occur, e.g., by running

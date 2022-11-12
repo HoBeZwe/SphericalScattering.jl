@@ -19,13 +19,13 @@ end
 
 """
     DielectricSphere(;
-        radius=error("missing argument `wavenumber`"), embedding=Medium(ε0, μ0), filling=error("missing argument `filling`")
+        radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0), filling=error("missing argument `filling`")
     )
 
 Constructor for the dielectric sphere.
 """
 DielectricSphere(;
-    radius=error("missing argument `wavenumber`"), embedding=Medium(ε0, μ0), filling=error("missing argument `filling`")
+    radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0), filling=error("missing argument `filling`")
 ) = DielectricSphere(radius, embedding, filling)
 
 
@@ -35,11 +35,11 @@ struct PECSphere{C,R} <: Sphere
 end
 
 """
-    PECSphere(; radius=error("missing argument `wavenumber`"), embedding=Medium(ε0, μ0))
+    PECSphere(; radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0))
 
 Constructor for the PEC sphere.
 """
-PECSphere(; radius=error("missing argument `wavenumber`"), embedding=Medium(ε0, μ0)) = PECSphere(radius, embedding)
+PECSphere(; radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0)) = PECSphere(radius, embedding)
 
 
 struct LayeredSphere{N,R,C} <: Sphere

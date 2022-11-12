@@ -1,43 +1,14 @@
 
-# General
-
-The following conventions are employed for all excitations.
-
-## Coordinate System
-
-!!! info
-    At the user interface a Cartesian basis is used for all coordinates and field components. Internally, spherical coordinates are used as well.
-
-The employed coordinate system uses the following convention for the spherical coordinates.
-
-```@raw html
-<div align="center">
-<img src="assets/CoordinateSystem.svg" width="350"/>
-</div>
-<br/>
-```
-
-```@raw html
-<!---
-<center>
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/SphereEx_white.svg" height="3000" align="middle">
-  <source media="(prefers-color-scheme: light)" srcset="assets/SphereEx.svg" height="3000">
-  <img alt="" src="" height="3000">
-</picture>
-</center>
---->
-```
-
-## Sphere Dimensions
+# Sphere Dimensions
 
 !!! note
     In all of the following setups the sphere is embedded in a homogeneous background medium with permeability $\mu$ and permittivity $\varepsilon$ defined by [`Medium(ε, μ)`](@ref). The values [`μ0`](@ref) and [`ε0`](@ref)  are provided containing the free space values.
 
 
-#### PEC Sphere
+---
+## PEC/PMC Sphere
 
-The perfectly electrically conducting (PEC) sphere has radius $r$ and is assumed to be located in the origin. It is defined by [`PECSphere`](@ref).
+The perfectly electrically conducting (PEC) or perfectly magnetically conducting (PMC) sphere has radius $r$ and is assumed to be located in the origin. It is defined by [`PECSphere`](@ref).
 ```@raw html
 <div align="center">
 <img src="assets/PECsphere.svg" width="300"/>
@@ -45,8 +16,17 @@ The perfectly electrically conducting (PEC) sphere has radius $r$ and is assumed
 <br/>
 ```
 
+#### [API](@id pecAPI)
 
-#### Dielectric Sphere
+```julia
+PECSphere(
+    radius    = error("missing argument `radius`"), 
+    embedding = Medium(ε0, μ0)
+)
+```
+
+---
+## Dielectric Sphere
 
 The dielectric sphere has radius $r$ and is assumed to be located in the origin. It is defined by [`DielectricSphere`](@ref). In addition to the embedding [`Medium(ε, μ)`](@ref) a filling [`Medium(εᵢ, μᵢ)`](@ref) with permeability $\mu_\mathrm{i}$ and permittivity $\varepsilon_\mathrm{i}$ has to be defined. 
 ```@raw html
@@ -56,8 +36,19 @@ The dielectric sphere has radius $r$ and is assumed to be located in the origin.
 <br/>
 ```
 
+#### [API](@id dielecAPI)
 
-#### Layered Dielectric Sphere
+```julia
+DielectricSphere(
+    radius    = error("missing argument `radius`"), 
+    embedding = Medium(ε0, μ0), 
+    filling   = error("missing argument `filling`")
+)
+```
+Here `radius` is a Float and `filling` of type [`Medium(εᵢ, μᵢ)`](@ref).
+
+---
+## Layered Dielectric Sphere
 
 The layered dielectric sphere has radii $[r_1, r_2, \dots, r_N]$ and is assumed to be located in the origin. It is defined by [`LayeredSphere`](@ref). In addition to the embedding [`Medium(ε, μ)`](@ref) a vector of fillings [[`Medium(ε₁, μ₁)`](@ref), [`Medium(ε₂, μ₂)`](@ref), ..., [`Medium(εN, μN)`](@ref)] with permeability $\mu_n$ and permittivity $\varepsilon_n$ has to be defined.
 ```@raw html
@@ -67,8 +58,23 @@ The layered dielectric sphere has radii $[r_1, r_2, \dots, r_N]$ and is assumed 
 <br/>
 ```
 
+#### [API](@id mlDielecAPI)
 
-#### Layered Dielectric Sphere with PEC Core
+```julia
+LayeredSphere(
+    radii     = error("Missing argument `radii`"), 
+    embedding = Medium(ε0, μ0), 
+    filling   = error("`missing argument `filling`")
+)
+```
+with, e.g., `radii = SVector(1.0, 0.5, 0.25)` and `radii = SVector(Medium(ε1, μ1), Medium(ε2, μ2), Medium(ε3, μ3))`.
+
+!!! warning
+    The order of the radii does not yet match the image!
+
+
+---
+## Layered Dielectric Sphere with PEC Core
 
 The layered dielectric sphere has radii $[r_1, r_2, \dots, r_{N+1}]$ and is assumed to be located in the origin. It is defined by [`LayeredSpherePEC`](@ref). In addition to the embedding [`Medium(ε, μ)`](@ref) a vector of fillings [[`Medium(ε₁, μ₁)`](@ref), [`Medium(ε₂, μ₂)`](@ref), ..., [`Medium(εN, μN)`](@ref)] with permeability $\mu_n$ and permittivity $\varepsilon_n$ has to be defined.
 ```@raw html
@@ -76,3 +82,17 @@ The layered dielectric sphere has radii $[r_1, r_2, \dots, r_{N+1}]$ and is assu
 <img src="assets/LayeredSpherePEC.svg" width="300"/>
 </div>
 ```
+
+#### [API](@id mlDielecPecAPI)
+
+```julia
+LayeredSpherePEC(
+    radii     = error("Missing argument `radii`"), 
+    embedding = Medium(ε0, μ0), 
+    filling   = error("Missing argument `filling`")
+)
+```
+with, e.g., `radii = SVector(1.0, 0.5, 0.25)` and `radii = SVector(Medium(ε1, μ1), Medium(ε2, μ2))`.
+
+!!! warning
+    The order of the radii does not yet match the image!
