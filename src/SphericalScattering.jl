@@ -1,7 +1,17 @@
 module SphericalScattering
 
+"""
+    μ0 = 4pi * 1e-7 
 
+Free space permeability.
+"""
 const μ0 = 4pi * 1e-7        # default permeability
+
+"""
+    ε0 = 8.8541878176e-12 
+
+Free space permittivity.
+"""
 const ε0 = 8.8541878176e-12  # default permittivity
 
 
@@ -24,6 +34,7 @@ export ElectricRingCurrent, MagneticRingCurrent
 export FarField, ElectricField, MagneticField
 export ScalarPotential
 export Medium, Parameter
+export μ0, ε0
 
 # functions
 export electricRingCurrent, magneticRingCurrent

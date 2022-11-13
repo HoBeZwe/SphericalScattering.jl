@@ -1,4 +1,0 @@
-
-# Uniform Field
-
-Implementation details.
