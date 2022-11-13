@@ -4,7 +4,7 @@
 ```@raw html
 <figure>
   <img
-    src="assets/PECsphere.svg"
+    src="../assets/PECsphere.svg"
     alt="Setup"
     width="300" />
 

@@ -4,7 +4,7 @@
 ```@raw html
 <figure>
   <img
-    src="assets/Fig_SphereRC.svg"
+    src="../assets/Fig_SphereRC.svg"
     alt="Setup"
     width="300" />
 

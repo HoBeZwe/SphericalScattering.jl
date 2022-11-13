@@ -8,7 +8,7 @@ The employed coordinate system uses the following convention for the spherical c
 
 ```@raw html
 <div align="center">
-<img src="assets/CoordinateSystem.svg" width="350"/>
+<img src="../assets/CoordinateSystem.svg" width="350"/>
 </div>
 <br/>
 ```
