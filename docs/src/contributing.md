@@ -36,7 +36,7 @@ using Pkg
 Pkg.test("SphericalScattering")
 ```
 
-For more detailed information on which parts are tested the coverage can be evaluated, e.g., by
+For more detailed information on which parts are tested the coverage can be evaluated on your local machine, e.g., by
 ```julia
 using Pkg
 Pkg.test("SphericalScattering"; coverage=true, julia_args=`--threads 4`)

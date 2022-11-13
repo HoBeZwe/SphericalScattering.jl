@@ -18,9 +18,7 @@
 ---
 ## Definition
 
-The dipoles are defined as infinitesimal current elements. Note that the definitions differ from the ones employed in[^1] basically by a factor of ``k``. Hence, they lead to different static fields, i.e., for ``k\rightarrow 0``.
-
-[^1]: Book by Jackson.
+The dipoles are defined as infinitesimal time harmonic current elements. Note that the definitions differ from the ones employed in [[4]](@ref refs) basically by a factor of ``k``. Hence, they lead to different static fields, i.e., for ``k\rightarrow 0``.
 
 #### Hertzian Dipole
 
@@ -95,6 +93,8 @@ FF = field(ex, FarField(point_cart))
 
 ---
 ## Scattered Field
+
+The scattered field computation is a generalization of the analysis in [[1, pp. 374ff]](@ref refs). For the magnetic ring current [duality relations](@ref dualityRelations) are employed.
 
 !!! note
     Orientation and location of the dipole are restricted for the scattered field computation!

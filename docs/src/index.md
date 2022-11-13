@@ -20,13 +20,13 @@ The following scenarios are implemented (✓) and planned (⌛):
 ##### Available scattering objects:
 - ✓ PEC sphere
 - ⌛ PMC sphere
-- ⌛ Dielectric sphere (only for uniform field)
-- ⌛ Multilayer dielectric sphere (only for uniform field)
-- ⌛ Multilayer dielectric sphere with PEC core (only for uniform field)
+- ⌛ Dielectric sphere (so far only for uniform field)
+- ⌛ Multilayer dielectric sphere (so far only for uniform field)
+- ⌛ Multilayer dielectric sphere with PEC core (so far only for uniform field)
 
 
 !!! note
-    A time convention of ``\mathrm{e}^{\,\mathrm{j}\omega t}`` is used.
+    A time convention of ``\mathrm{e}^{\,\mathrm{j}\omega t}`` is used everywhere.
 
 ---
 ## Installation
@@ -38,9 +38,11 @@ pkg> add SphericalScattering
 ```
 
 ---
-## References
+## [References](@id refs)
 
 The implementation is based on
-- J.-M. Jin, Theory and Computation of Electromagnetic Fields, Second edition. Hoboken, New Jersey: John Wiley & Sons, Inc, 2015.
-- G. T. Ruck, D. E. Barrick, W. D. Stuart, C. K. Krichbaum, Radar Cross Section Handbook, Volume 1, New York: Plenum Press, 1970.
-- Sihvola, Ari & Lindell, Ismo., Transmission Line Analogy for Calculating the Effective Permittivity of Mixtures with Spherical Multilayer Scatterers, Journal of Electromagnetic Waves and Applications, Volume 2, Pages 741-756, 1988.
+- [1] J.-M. Jin, Theory and Computation of Electromagnetic Fields, Second edition. Hoboken, New Jersey: John Wiley & Sons, Inc, 2015.
+- [2] G. T. Ruck, D. E. Barrick, W. D. Stuart, C. K. Krichbaum, Radar Cross Section Handbook, Volume 1, New York: Plenum Press, 1970.
+- [3] Sihvola, Ari & Lindell, Ismo., Transmission Line Analogy for Calculating the Effective Permittivity of Mixtures with Spherical Multilayer Scatterers, Journal of Electromagnetic Waves and Applications, Volume 2, Pages 741-756, 1988.
+- [4] Jackson.
+- [5] Hansen.

@@ -1,7 +1,6 @@
 
 # Plane Wave
 
-
 ```@raw html
 <figure>
   <img
@@ -28,7 +27,7 @@ The plane wave with amplitude ``a``, wave vector ``\bm k``, and polarization ``\
 ---
 ## [API](@id pwAPI)
 
-The API provides the following constructors with default values:
+The API provides the following constructor with default values:
 ```julia
 ex = planeWave(
         embedding    = Medium(ε0, μ0),
@@ -62,6 +61,8 @@ FF = field(ex, FarField(point_cart))
 
 ---
 ## Scattered Field
+
+The scattered field computation follows [[2, pp. 141ff]](@ref refs). 
 
 !!! warning
     So far the plane wave is assumed to travel in negative ``z``-axis direction and to have a polarization along the ``x``-axis! This is planned to be generalized.
