@@ -41,8 +41,8 @@ pkg> add SphericalScattering
 ## [References](@id refs)
 
 The implementation is based on
-- [1] J.-M. Jin, Theory and Computation of Electromagnetic Fields, Second edition. Hoboken, New Jersey: John Wiley & Sons, Inc, 2015.
-- [2] G. T. Ruck, D. E. Barrick, W. D. Stuart, C. K. Krichbaum, Radar Cross Section Handbook, Volume 1, New York: Plenum Press, 1970.
-- [3] Sihvola, Ari & Lindell, Ismo., Transmission Line Analogy for Calculating the Effective Permittivity of Mixtures with Spherical Multilayer Scatterers, Journal of Electromagnetic Waves and Applications, Volume 2, Pages 741-756, 1988.
-- [4] Jackson.
-- [5] Hansen.
+- [1] J.-M. Jin, *Theory and Computation of Electromagnetic Fields*, Second edition. Hoboken, New Jersey: John Wiley & Sons, Inc, 2015.
+- [2] G. T. Ruck, D. E. Barrick, W. D. Stuart, C. K. Krichbaum, *Radar Cross Section Handbook*, Volume 1, New York: Plenum Press, 1970.
+- [3] Sihvola, Ari & Lindell, Ismo., *Transmission Line Analogy for Calculating the Effective Permittivity of Mixtures with Spherical Multilayer Scatterers*, Journal of Electromagnetic Waves and Applications, Volume 2, Pages 741-756, 1988.
+- [4] J. D. Jackson, *Classical Electrodynamics*, New York: Wiley, 3rd ed., 1999.
+- [5] J. E. Hansen, ed., *Spherical Near-field Antenna Measurements*, The Institution of Engineering and Technology, Michael Faraday House, Six Hills Way, Stevenage SG1 2AY, UK: IET, 1988.

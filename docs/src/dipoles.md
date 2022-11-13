@@ -18,7 +18,7 @@
 ---
 ## Definition
 
-The dipoles are defined as infinitesimal time harmonic current elements. Note that the definitions differ from the ones employed in [[4]](@ref refs) basically by a factor of ``k``. Hence, they lead to different static fields, i.e., for ``k\rightarrow 0``.
+The dipoles are defined as infinitesimal time harmonic current elements. Note that the definitions differ from the ones employed in [[4, pp. 411ff]](@ref refs) basically by a factor of ``k``. Hence, they lead to different static fields, i.e., for ``k\rightarrow 0``.
 
 #### Hertzian Dipole
 
@@ -64,7 +64,7 @@ ex = FitzgeraldDipole(
 ---
 ## Radiated Field
 
-The electric field of the Hertzian dipole itself (without scatterer) is
+The electric field of the Hertzian dipole itself (without scatterer) is [[4, pp. 411ff]](@ref refs)
 ```math
 \bm e(\bm r) = Z_\mathrm{F} \cfrac{Il}{4 \pi} \mathrm{e}^{-\mathrm{j} k r}  \left( \cfrac{k}{r}  ((\hat{\bm n} \times \hat{\bm p}) \times \hat{\bm n}) + \left(\cfrac{1}{k r^3} + \cfrac{\mathrm{j}}{r^2} \right)  (3 \hat{\bm n} (\hat{\bm n} \cdot \hat{\bm p}) - \hat{\bm p}) \right)
 ```
