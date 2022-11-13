@@ -24,9 +24,8 @@ end
 
 Constructor for the dielectric sphere.
 """
-DielectricSphere(;
-    radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0), filling=error("missing argument `filling`")
-) = DielectricSphere(radius, embedding, filling)
+DielectricSphere(; radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0), filling=error("missing argument `filling`")) =
+    DielectricSphere(radius, embedding, filling)
 
 
 struct PECSphere{C,R} <: Sphere
