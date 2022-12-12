@@ -19,26 +19,25 @@
     @testset "Scattered fields" begin
 
         # ----- BEAST solution
-        𝐸 = Maxwell3D.planewave(; direction=-ẑ, polarization=x̂, wavenumber=κ)
+        𝐸 = Maxwell3D.planewave(; direction=ẑ, polarization=x̂, wavenumber=κ)
 
         𝑒 = n × 𝐸 × n
-        𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+        𝑇 = Maxwell3D.singlelayer(; wavenumber=κ, alpha=-im * 𝜇 * (2π * f), beta=1 / (-im * 𝜀 * (2π * f)))
 
-        e = assemble(𝑒, RT)
+        e = -assemble(𝑒, RT)
         T = assemble(𝑇, RT, RT)
 
         u = T \ e
 
-        EF_MoM = potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+        EF_MoM = potential(MWSingleLayerField3D(𝑇), points_cartNF, u, RT)
         HF_MoM = potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
-
+        FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(𝑇), points_cartFF, u, RT)
 
         # ----- this package
         sp = PECSphere(; radius=spRadius)
 
         EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
-        HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
+        HF = scatteredfield(sp, ex, MagneticField(points_cartNF))
         FF = scatteredfield(sp, ex, FarField(points_cartFF))
 
 
