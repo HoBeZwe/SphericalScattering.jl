@@ -31,7 +31,8 @@ end
 """
     scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
-Compute the electric field scattered by a PEC sphere, for an incident plane wave travelling in -z direction with polarization in x-direction.
+Compute the electric field scattered by a PEC sphere, for an incident plane wave
+travelling in +z-direction with E-field polarization in x-direction.
 
 The point and the returned field are in Cartesian coordinates.
 """
@@ -72,12 +73,13 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
         while δE > eps
             n += 1
 
-            An, Bn = scatterCoeff(sphere, excitation, n, ka)
+            aₙ, bₙ = scatterCoeff(sphere, excitation, n, ka)
+
             Nn_r, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ = expansion(sphere, excitation, plm, kr, s, cosϑ, sinϑ, n)
 
-            ΔEr = Bn * Nn_r * cosϕ
-            ΔEϑ = An * Mn_ϑ * cosϕ + Bn * Nn_ϑ * cosϕ
-            ΔEϕ = -An * Mn_ϕ * sinϕ - Bn * Nn_ϕ * sinϕ
+            ΔEr = +(cosϕ / (im * kr^2)) * aₙ * Nn_r
+            ΔEϑ = -(cosϕ / kr) * (aₙ * Nn_ϑ + bₙ * Mn_ϑ)
+            ΔEϕ = +(sinϕ / kr) * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
 
             Er += ΔEr
             Eϑ += ΔEϑ
@@ -100,7 +102,8 @@ end
 """
     scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
-Compute the magnetic field scattered by a PEC sphere, for an incident plane wave travelling in -z direction with polarization in x-direction.
+Compute the magnetic field scattered by a PEC sphere, for an incident plane wave
+travelling in +z-direction with E-field polarization in x-direction.
 
 The point and the returned field are in Cartesian coordinates.
 """
@@ -112,6 +115,8 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     T = typeof(k)
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε
+    η = sqrt(μ / ε)
+    H₀ = 1 / η # We assume that E₀ (defined in Jin (7.4.12)) is 1
 
     eps = parameter.relativeAccuracy
 
@@ -143,12 +148,12 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
         while δH > eps
             n += 1
 
-            An, Bn = scatterCoeff(sphere, excitation, n, ka)
+            aₙ, bₙ = scatterCoeff(sphere, excitation, n, ka)
             Nn_r, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ = expansion(sphere, excitation, plm, kr, s, cosϑ, sinϑ, n)
 
-            ΔHr = An * Nn_r * sinϕ
-            ΔHϑ = -Bn * Mn_ϑ * sinϕ + An * Nn_ϑ * sinϕ
-            ΔHϕ = -Bn * Mn_ϕ * cosϕ + An * Nn_ϕ * cosϕ
+            ΔHr = +(sinϕ / (im * kr^2)) * bₙ * Nn_r
+            ΔHϑ = -(sinϕ / kr) * (aₙ * Mn_ϑ + bₙ * Nn_ϑ)
+            ΔHϕ = -(cosϕ / kr) * (aₙ * Mn_ϕ + bₙ * Nn_ϕ)
 
             Hr += ΔHr
             Hϑ += ΔHϑ
@@ -162,15 +167,16 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
     end
 
-    return convertSpherical2Cartesian((im * sqrt(ε / μ)) .* SVector(Hr, Hϑ, Hϕ), point_sph)
+    return convertSpherical2Cartesian(H₀ .* SVector(Hr, Hϑ, Hϕ), point_sph)
 end
 
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantity::MagneticField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantity::FarField; parameter::Parameter=Parameter())
 
-Compute the (electric) far-field scattered by a PEC sphere, for an incident plane wave travelling in -z direction with polarization in x-direction.
+Compute the (electric) far-field scattered by a PEC sphere, for an incident plane wave
+travelling in +z-direction with E-field polarization in x-direction.
 
 The point and the returned field are in Cartesian coordinates.
 """
@@ -194,22 +200,28 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
     ka = k * sphere.radius
 
-    Sϑ = Complex{T}(0.0)
-    Sϕ = Complex{T}(0.0)
+    Eϑ = Complex{T}(0.0)
+    Eϕ = Complex{T}(0.0)
 
-    δS = T(Inf)
+    δE = T(Inf)
     n = 0
 
     try
-        while δS > eps || n < 10
+        while δE > eps || n < 10
             n += 1
 
-            ΔSϑ, ΔSϕ = expansion(sphere, excitation, ka, plm, cosϑ, sinϑ, n)
+            aₙ, bₙ = scatterCoeff(sphere, excitation, n, ka)
+            Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ = expansion(sphere, excitation, ka, plm, cosϑ, sinϑ, n)
 
-            Sϑ += ΔSϑ
-            Sϕ += ΔSϕ
+            # See Jin, (7.4.44)-(7.4.45)
+            # We deviate from Jin by replacing exp(-im*kr) / kr with 1/k
+            ΔEϑ = -im * cosϕ * 1 / k * im^n * (aₙ * Nn_ϑ + bₙ * Mn_ϑ)
+            ΔEϕ = +im * sinϕ * 1 / k * im^n * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
 
-            δS = (abs(ΔSϑ) + abs(ΔSϕ)) / (abs(Sϑ) + abs(Sϑ)) # relative change
+            Eϑ += ΔEϑ
+            Eϕ += ΔEϕ
+
+            δE = (abs(ΔEϑ) + abs(ΔEϕ)) / (abs(Eϑ) + abs(Eϕ)) # relative change
 
             n > 1 && push!(plm, (T(2.0) * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship associated Legendre polynomial
         end
@@ -217,10 +229,6 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
     end
 
-    Eϑ = Sϑ * cosϕ / k # Ruck, et. al. (3.1-5)
-    Eϕ = -Sϕ * sinϕ / k
-
-    #return SVector(0.0, Eϑ, Eϕ)
     return convertSpherical2Cartesian(SVector{3,Complex{T}}(0.0, Eϑ, Eϕ), point_sph)
 end
 
@@ -236,20 +244,19 @@ function scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int, ka)
     T = typeof(excitation.wavenumber)
     s = sqrt(π / 2 / ka)
 
-    J  = s * besselj(n + T(0.5), ka)   # spherical Bessel function
-    H  = s * hankelh2(n + T(0.5), ka)  # spherical Hankel function
-    J2 = s * besselj(n - T(0.5), ka)
-    H2 = s * hankelh2(n - T(0.5), ka)
+    Ĵ  = ka * s * besselj(n + T(0.5), ka)   # Riccati-Bessel function
+    Ĥ  = ka * s * hankelh2(n + T(0.5), ka)  # Riccati-Hankel function
+    Ĵ2 = ka * s * besselj(n - T(0.5), ka)   # for derivate needed
+    Ĥ2 = ka * s * hankelh2(n - T(0.5), ka)  # for derivate needed
 
-    # [k₀ * a * j_n(k₀ a)]'
-    kaJ1P = (ka * J2 - n * J)    # derivatives spherical Bessel functions
-    # [k₀ * a * h2_n(k₀ a)]'
-    kaH1P = (ka * H2 - n * H)    # derivatives spherical Hankel functions
+    # Use recurrence relationship
+    dĴ = (Ĵ2 - n / ka * Ĵ)    # derivative Riccati-Bessel function
+    dĤ = (Ĥ2 - n / ka * Ĥ)    # derivative Riccati-Hankel function
 
-    An = -((im)^n) * (J / H) * (2 * n + 1) / (n * (n + 1))                # Ruck, et. al. (3.2-1)
-    Bn = ((im)^(n + 1)) * (kaJ1P / kaH1P) * (2 * n + 1) / (n * (n + 1))     # Ruck, et. al. (3.2-2)
+    aₙ = -im^(-T(n)) * (dĴ / dĤ) * (2 * n + 1) / (n * (n + 1))  # Jin (7.4.41)
+    bₙ = -im^(-T(n)) * (Ĵ / Ĥ) * (2 * n + 1) / (n * (n + 1))    # Jin (7.4.42)
 
-    return An, Bn
+    return aₙ, bₙ
 end
 
 
@@ -263,10 +270,10 @@ function expansion(sphere::PECSphere, excitation::PlaneWave, plm, kr, s, cosϑ, 
 
     T = typeof(excitation.wavenumber)
 
-    Hn  = s * hankelh2(n + T(0.5), kr)     # spherical Hankel functions
-    H2n = s * hankelh2(n - T(0.5), kr)
+    Ĥ  = kr * s * hankelh2(n + T(0.5), kr)     # Riccati-Hankel function
+    Ĥ2 = kr * s * hankelh2(n - T(0.5), kr)
 
-    krH1Pn = kr * H2n - n * Hn          # derivatives spherical Hankel functions
+    dĤ = Ĥ2 - n / kr * Ĥ          # derivative of Riccati-Hankel function
 
     p = plm[n]
 
@@ -277,32 +284,34 @@ function expansion(sphere::PECSphere, excitation::PlaneWave, plm, kr, s, cosϑ, 
             dp = (n * cosϑ * plm[n] - (n + 1) * plm[n - 1]) / sqrt(T(1.0) - cosϑ * cosϑ)
         end
 
-        Mn_ϑ = Hn * p / sinϑ
-        Mn_ϕ = Hn * dp
+        Mn_ϑ = Ĥ * p / sinϑ
+        Mn_ϕ = Ĥ * dp
 
-        Nn_ϑ = krH1Pn * dp / kr
-        Nn_ϕ = krH1Pn * p / (kr * sinϑ)
+        Nn_ϑ = dĤ * dp
+        Nn_ϕ = dĤ * p / sinϑ
 
     elseif cosϑ > 0.999999
         aux = (n + T(1.0)) * n / T(2.0)
 
-        Mn_ϑ = -Hn * aux
+        Mn_ϑ = -Ĥ * aux
         Mn_ϕ = Mn_ϑ
 
-        Nn_ϑ = -krH1Pn * aux / kr
+        Nn_ϑ = -dĤ * aux
         Nn_ϕ = Nn_ϑ
 
     elseif cosϑ < -0.999999
         aux = (n + T(1.0)) * n / T(2.0) * T(-1.0)^n
 
-        Mn_ϑ = Hn * aux
+        Mn_ϑ = Ĥ * aux
         Mn_ϕ = -Mn_ϑ
 
-        Nn_ϑ = -krH1Pn * aux / kr
+        Nn_ϑ = -dĤ * aux
         Nn_ϕ = -Nn_ϑ
     end
 
-    Nn_r = (n * (n + 1) / kr) * Hn * p
+    Nn_r = n * (n + 1) * Ĥ * p
+    Nn_ϑ = im * Nn_ϑ
+    Nn_ϕ = im * Nn_ϕ
 
     return Nn_r, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ
 end
@@ -317,32 +326,40 @@ Compute far-field functional dependencies of the Mie series for a plane wave tra
 function expansion(sphere::PECSphere, excitation::PlaneWave, ka, plm, cosϑ, sinϑ, n::Int)
 
     T = typeof(excitation.wavenumber)
-    An, Bn = scatterCoeff(sphere, excitation, n, ka)
 
-    # derivative of associated Legendre Polynomial
+    p = plm[n]
+
     if abs(cosϑ) < 0.999999
-        if n == 1
+        if n == 1 # derivative of associated Legendre Polynomial
             dp = cosϑ * plm[1] / sqrt(T(1.0) - cosϑ * cosϑ)
         else
             dp = (n * cosϑ * plm[n] - (n + 1) * plm[n - 1]) / sqrt(T(1.0) - cosϑ * cosϑ)
         end
-    end
 
-    if abs(sinϑ) > 1.0e-6
-        t1 = An * plm[n] / sinϑ
-        t2 = Bn * plm[n] / sinϑ
-    end
+        Mn_ϑ = p / sinϑ
+        Mn_ϕ = dp
 
-    if cosϑ > 0.999999
-        ΔSϑ = ((im)^(n - 1)) * (n * (n + 1) / 2) * (An - im * Bn) # Ruck, et. al. (3.1-12)
-        ΔSϕ = ΔSϑ
+        Nn_ϑ = dp
+        Nn_ϕ = p / sinϑ
+
+    elseif cosϑ > 0.999999
+        aux = (n + T(1.0)) * n / T(2.0)
+
+        Mn_ϑ = -aux
+        Mn_ϕ = Mn_ϑ
+
+        Nn_ϑ = -aux
+        Nn_ϕ = Nn_ϑ
+
     elseif cosϑ < -0.999999
-        ΔSϑ = ((-im)^(n - 1)) * (n * (n + 1) / 2) * (An + im * Bn) # Ruck, et. al. (3.1-14)
-        ΔSϕ = -ΔSϑ
-    else
-        ΔSϑ = ((im)^(n + 1)) * (t1 - im * Bn * dp) # Ruck, et. al. (3.1-6)
-        ΔSϕ = ((im)^(n + 1)) * (An * dp - im * t2) # Ruck, et. al. (3.1-7)
+        aux = (n + T(1.0)) * n / T(2.0) * T(-1.0)^n
+
+        Mn_ϑ = aux
+        Mn_ϕ = -Mn_ϑ
+
+        Nn_ϑ = -aux
+        Nn_ϕ = -Nn_ϑ
     end
 
-    return ΔSϑ, ΔSϕ
+    return Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ
 end
