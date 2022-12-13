@@ -62,10 +62,10 @@ FF = field(ex, FarField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation follows [[2, pp. 141ff]](@ref refs). 
+The scattered field computation follows [[1, pp. 347ff]](@ref refs). 
 
 !!! warning
-    So far the plane wave is assumed to travel in negative ``z``-axis direction and to have a polarization along the ``x``-axis! This is planned to be generalized.
+    So far the plane wave is assumed to travel in positive ``z``-axis direction and to have a polarization along the ``x``-axis! This is planned to be generalized.
 
 #### API
 
