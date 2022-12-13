@@ -41,6 +41,8 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     point_sph = cart2sph(point) # [r ϑ φ]
 
     k = excitation.wavenumber
+    E₀ = excitation.amplitude
+
     T = typeof(k)
 
     eps = parameter.relativeAccuracy
@@ -93,8 +95,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
     end
 
-    #return SVector(Er, Eϑ, Eϕ)
-    return convertSpherical2Cartesian(SVector(Er, Eϑ, Eϕ), point_sph)
+    return convertSpherical2Cartesian(E₀ .* SVector(Er, Eϑ, Eϕ), point_sph)
 end
 
 
@@ -116,7 +117,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε
     η = sqrt(μ / ε)
-    H₀ = 1 / η # We assume that E₀ (defined in Jin (7.4.12)) is 1
+    H₀ = 1 / η * excitation.amplitude
 
     eps = parameter.relativeAccuracy
 
@@ -185,6 +186,8 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
     point_sph = cart2sph(point) # [r ϑ φ]
 
     k = excitation.wavenumber
+    E₀ = excitation.amplitude
+
     T = typeof(k)
     eps = parameter.relativeAccuracy
 
@@ -229,7 +232,7 @@ function scatteredfield(sphere::PECSphere, excitation::PlaneWave, point, quantit
 
     end
 
-    return convertSpherical2Cartesian(SVector{3,Complex{T}}(0.0, Eϑ, Eϕ), point_sph)
+    return convertSpherical2Cartesian(E₀ .* SVector{3,Complex{T}}(0.0, Eϑ, Eϕ), point_sph)
 end
 
 
