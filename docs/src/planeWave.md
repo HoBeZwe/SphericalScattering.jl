@@ -31,7 +31,17 @@ The API provides the following constructor with default values:
 ```julia
 ex = planeWave(
         embedding    = Medium(ε0, μ0),
-        wavenumber   = error("missing argument `wavenumber`"),
+        frequency    = error("missing argument `frequency`"),
+        amplitude    = 1.0,
+        direction    = SVector{3,typeof(wavenumber)}(0.0, 0.0, -1.0),
+        polarization = SVector{3,typeof(wavenumber)}(1.0, 0.0, 0.0),
+)
+```
+and
+```julia
+ex = planeWave(
+        sphere::Sphere,
+        frequency    = error("missing argument `frequency`"),
         amplitude    = 1.0,
         direction    = SVector{3,typeof(wavenumber)}(0.0, 0.0, -1.0),
         polarization = SVector{3,typeof(wavenumber)}(1.0, 0.0, 0.0),
