@@ -55,6 +55,7 @@ points_cartNF, points_sphNF = getDefaultPoints(5.0)
 
     @testset "Test plane waves" begin
         include("planeWave.jl")
+        include("planeWave_dielectric.jl")
     end
 
     @testset "Test ring currents" begin

@@ -1,7 +1,7 @@
 
 struct PlaneWave{T,R,C} <: Excitation
     embedding::Medium{C}
-    wavenumber::R
+    frequency::R
     amplitude::T
     direction::SVector{3,R}
     polarization::SVector{3,R}
@@ -9,8 +9,16 @@ end
 
 planeWave(;
     embedding    = Medium(ε0, μ0),
-    wavenumber   = error("missing argument `wavenumber`"),
+    frequency    = error("missing argument `frequency`"),
     amplitude    = 1.0,
-    direction    = SVector{3,typeof(wavenumber)}(0.0, 0.0, -1.0),
-    polarization = SVector{3,typeof(wavenumber)}(1.0, 0.0, 0.0),
-) = PlaneWave(embedding, wavenumber, amplitude, direction, polarization)
+    direction    = SVector{3,typeof(frequency)}(0.0, 0.0, -1.0),
+    polarization = SVector{3,typeof(frequency)}(1.0, 0.0, 0.0),
+) = PlaneWave(embedding, frequency, amplitude, direction, polarization)
+
+planeWave(
+    sp::Sphere;
+    frequency    = error("missing argument `frequency`"),
+    amplitude    = 1.0,
+    direction    = SVector{3,typeof(frequency)}(0.0, 0.0, -1.0),
+    polarization = SVector{3,typeof(frequency)}(1.0, 0.0, 0.0),
+) = PlaneWave(sp.embedding, frequency, amplitude, direction, polarization)

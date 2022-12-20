@@ -6,7 +6,7 @@ Compute the electric field of a plane wave.
 """
 function field(excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
 
     F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
 
@@ -30,7 +30,7 @@ The point and the returned field are in Cartesian coordinates.
 function field(excitation::PlaneWave, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     a = excitation.amplitude
-    k = excitation.wavenumber
+    k = wavenumber(excitation)
 
     d = excitation.direction
     p = excitation.polarization
@@ -50,7 +50,7 @@ The point and the returned field are in Cartesian coordinates.
 function field(excitation::PlaneWave, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
     a = excitation.amplitude
-    k = excitation.wavenumber
+    k = wavenumber(excitation)
 
     d = excitation.direction
     p = excitation.polarization
