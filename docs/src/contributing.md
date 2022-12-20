@@ -42,6 +42,7 @@ using Pkg
 Pkg.test("SphericalScattering"; coverage=true, julia_args=`--threads 4`)
 
 # determine coverage
+using Coverage
 src_folder = pkgdir(SphericalScattering) * "/src"
 coverage   = process_folder(src_folder)
 LCOV.writefile("path-to-folder-you-like" * "SphericalScattering.lcov.info", coverage)

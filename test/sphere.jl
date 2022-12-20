@@ -15,4 +15,8 @@
 
     @test sp isa DielectricSphere{Float64,Float32}
 
+    @test SphericalScattering.impedance(sp, 2.0) ≈ 0.707106 rtol = 1e-5
+
+    @test SphericalScattering.wavenumber(sp, planeWave(sp; frequency=1e8), 2.0) ≈ 8.8857658e8 rtol = 1e-5
+
 end
