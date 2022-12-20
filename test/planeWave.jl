@@ -6,6 +6,9 @@
     sp = PECSphere(; radius=spRadius, embedding=Medium(𝜀, 𝜇))
     ex = planeWave(sp; frequency=f)
 
+    @testset "Planewave excitation" begin
+        @test planeWave(sp; frequency=f) isa PlaneWave{Float64,Float64,Float64}
+    end
 
     @testset "Incident fields" begin
 

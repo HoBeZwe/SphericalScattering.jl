@@ -49,6 +49,10 @@ points_cartNF, points_sphNF = getDefaultPoints(5.0)
 # ----- testsets
 @testset "Testing SphericalScattering functionality" begin
 
+    @testset "Medium and Sphere" begin
+        include("sphere.jl")
+    end
+
     @testset "Test dipoles" begin
         include("dipoles.jl")
     end
