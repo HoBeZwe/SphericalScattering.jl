@@ -34,27 +34,31 @@
 
         u = T \ e
 
-        EF_MoM = potential(MWSingleLayerField3D(𝑇), points_cartNF, u, RT)
-        HF_MoM = potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+        EF_MoM₂ = potential(MWSingleLayerField3D(𝑇), points_cartNF, u, RT)
+        HF_MoM₂ = potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
         FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(𝑇), points_cartFF, u, RT)
 
         # ----- this package
-        EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
-        HF = scatteredfield(sp, ex, MagneticField(points_cartNF))
+        EF₂ = scatteredfield(sp, ex, ElectricField(points_cartNF))
+        EF₁ = scatteredfield(sp, ex, ElectricField(points_cartNF_inside))
+        HF₂ = scatteredfield(sp, ex, MagneticField(points_cartNF))
+        HF₁ = scatteredfield(sp, ex, MagneticField(points_cartNF_inside))
         FF = scatteredfield(sp, ex, FarField(points_cartFF))
 
 
         # ----- compare
-        diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
-        diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+        diff_EF₂ = norm.(EF₂ - EF_MoM₂) ./ maximum(norm.(EF₂))  # worst case error
+        diff_HF₂ = norm.(HF₂ - HF_MoM₂) ./ maximum(norm.(HF₂))  # worst case error
         diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
 
         #@show maximum(20 * log10.(abs.(diff_EF)))
         #@show maximum(20 * log10.(abs.(diff_HF)))
         #@show maximum(20 * log10.(abs.(diff_FF)))
 
-        @test maximum(20 * log10.(abs.(diff_EF))) < -25 # dB
-        @test maximum(20 * log10.(abs.(diff_HF))) < -25 # dB
+        @test maximum(20 * log10.(abs.(diff_EF₂))) < -25 # dB
+        @test norm(EF₁) == 0.0
+        @test maximum(20 * log10.(abs.(diff_HF₂))) < -25 # dB
+        @test norm(HF₁) == 0.0
         @test maximum(20 * log10.(abs.(diff_FF))) < -25 # dB
     end
 end

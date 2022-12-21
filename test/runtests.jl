@@ -44,7 +44,7 @@ c = 1 / sqrt(𝜇 * 𝜀)
 
 points_cartFF, points_sphFF = getDefaultPoints(1.0)
 points_cartNF, points_sphNF = getDefaultPoints(5.0)
-
+points_cartNF_inside, ~ = getDefaultPoints(0.5)
 
 # ----- testsets
 @testset "Testing SphericalScattering functionality" begin

@@ -69,8 +69,6 @@
         return potential(MWFarField3D(𝓣), pts, j, X_j) .+ potential(BEAST.MWDoubleLayerFarField3D(𝓚), pts, m, X_m)
     end
 
-    points_cartNF_inside, ~ = getDefaultPoints(0.5)
-
     EF₂MoM = efield(𝓣k2, j, RT, 𝓚k2, -m, RT, points_cartNF)
     EF₁MoM = efield(𝓣k1, -j, RT, 𝓚k1, +m, RT, points_cartNF_inside)
 
