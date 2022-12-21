@@ -77,40 +77,8 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::
             n += 1
 
             coeffs = scatterCoeff(sphere, excitation, n)
-            Nn_r, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ = expansion(sphere, excitation, quantity, r, plm, cosϑ, sinϑ, n)
-
-            if quantity isa FarField
-                k = wavenumber(excitation)
-                aₙ = coeffs[1]
-                bₙ = coeffs[2]
-            else
-                k = wavenumber(sphere, excitation, r)
-                kr = k * r
-
-                if r >= sphere.radius
-                    aₙ = coeffs[1]
-                    bₙ = coeffs[2]
-                else
-                    aₙ = coeffs[3]
-                    bₙ = coeffs[4]
-                end
-            end
-
-            if quantity isa ElectricField
-                ΔFr = +(cosϕ / (im * kr^2)) * aₙ * Nn_r
-                ΔFϑ = -(cosϕ / kr) * (aₙ * Nn_ϑ + bₙ * Mn_ϑ)
-                ΔFϕ = +(sinϕ / kr) * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
-            elseif quantity isa MagneticField
-                ΔFr = +(sinϕ / (im * kr^2)) * bₙ * Nn_r
-                ΔFϑ = -(sinϕ / kr) * (aₙ * Mn_ϑ + bₙ * Nn_ϑ)
-                ΔFϕ = -(cosϕ / kr) * (aₙ * Mn_ϕ + bₙ * Nn_ϕ)
-            else # FarField
-                # See Jin, (7.4.44)-(7.4.45)
-                # We deviate from Jin by replacing exp(-im*kr) / kr with 1/k
-                ΔFr = T(0)
-                ΔFϑ = -im * cosϕ * 1 / k * im^n * (aₙ * Nn_ϑ + bₙ * Mn_ϑ)
-                ΔFϕ = +im * sinϕ * 1 / k * im^n * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
-            end
+            expansions = expansion(sphere, excitation, quantity, r, plm, cosϑ, sinϑ, n)
+            ΔFr, ΔFϑ, ΔFϕ = Δfieldₙ(sphere, excitation, quantity, r, coeffs, expansions, sinϕ, cosϕ, n)
 
             Fr += ΔFr
             Fϑ += ΔFϑ
@@ -129,8 +97,74 @@ end
 
 
 
+function Δfieldₙ(sphere, excitation::PlaneWave, quantity::ElectricField, r, coeffs, expansion, sinϕ, cosϕ, n)
+    (Nn_r, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ) = expansion
+
+    k = wavenumber(sphere, excitation, r)
+    kr = k * r
+
+    aₙ, bₙ = scatterCoeff_of_layer(sphere, r, coeffs)
+
+    ΔEr = +(cosϕ / (im * kr^2)) * aₙ * Nn_r
+    ΔEϑ = -(cosϕ / kr) * (aₙ * Nn_ϑ + bₙ * Mn_ϑ)
+    ΔEϕ = +(sinϕ / kr) * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
+
+    return ΔEr, ΔEϑ, ΔEϕ
+end
+
+
+
+function Δfieldₙ(sphere, excitation::PlaneWave, quantity::MagneticField, r, coeffs, expansion, sinϕ, cosϕ, n)
+    (Nn_r, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ) = expansion
+
+    k = wavenumber(sphere, excitation, r)
+    kr = k * r
+
+    aₙ, bₙ = scatterCoeff_of_layer(sphere, r, coeffs)
+
+    ΔHr = +(sinϕ / (im * kr^2)) * bₙ * Nn_r
+    ΔHϑ = -(sinϕ / kr) * (aₙ * Mn_ϑ + bₙ * Nn_ϑ)
+    ΔHϕ = -(cosϕ / kr) * (aₙ * Mn_ϕ + bₙ * Nn_ϕ)
+
+    return ΔHr, ΔHϑ, ΔHϕ
+end
+
+
+
+function Δfieldₙ(sphere, excitation::PlaneWave, quantity::FarField, r, coeffs, expansion, sinϕ, cosϕ, n)
+    (~, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ) = expansion
+
+    k = wavenumber(excitation)
+    aₙ = coeffs[1]
+    bₙ = coeffs[2]
+
+    # See Jin, (7.4.44)-(7.4.45)
+    # We deviate from Jin by replacing exp(-im*kr) / kr with 1/k
+    ΔEϑ = -im * cosϕ * 1 / k * im^n * (aₙ * Nn_ϑ + bₙ * Mn_ϑ)
+    ΔEϕ = +im * sinϕ * 1 / k * im^n * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
+
+    return eltype(ΔEϑ)(0.0), ΔEϑ, ΔEϕ
+end
+
+
+
 """
-    scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int, ka)
+    scatterCoeff_of_layer(sphere, r, coeffs)
+
+Given a tuple of scattering coefficients `coeffs`, it returns the two scattering
+coefficients of the layer to which `r` belongs.
+"""
+function scatterCoeff_of_layer(sphere, r, coeffs)
+    cmp_index = layer(sphere, r)
+    aₙ = coeffs[end - 2 * (cmp_index - 1) - 1]
+    bₙ = coeffs[end - 2 * (cmp_index - 1)]
+    return aₙ, bₙ
+end
+
+
+
+"""
+    scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int)
 
 Compute scattering coefficients for a plane wave travelling in +z-direction 
 with polarization in x-direction.
@@ -157,7 +191,15 @@ function scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int)
     aₙ = -im^(-T(n)) * (dĴ / dĤ) * (2 * n + 1) / (n * (n + 1))  # Jin (7.4.41)
     bₙ = -im^(-T(n)) * (Ĵ / Ĥ) * (2 * n + 1) / (n * (n + 1))    # Jin (7.4.42)
 
-    return aₙ, bₙ
+    # PEC: ensure field is zero inside
+    # We could enforce this somewhat differently
+    # But by ensuring that the number of coefficients = 2 * number of layers
+    # the code is more elegant
+
+    cₙ = T(0) * aₙ
+    dₙ = T(0) * aₙ
+
+    return aₙ, bₙ, cₙ, dₙ
 end
 
 
