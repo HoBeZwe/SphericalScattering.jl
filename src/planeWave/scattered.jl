@@ -55,9 +55,7 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::
         A₀ = excitation.amplitude
     end
 
-    Fr = Complex{T}(0.0)
-    Fϑ = Complex{T}(0.0)
-    Fϕ = Complex{T}(0.0)
+    F = SVector{3,Complex{T}}(0.0, 0.0, 0.0)
 
     δF = T(Inf)
     n = 0
@@ -78,13 +76,11 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::
 
             coeffs = scatterCoeff(sphere, excitation, n)
             expansions = expansion(sphere, excitation, quantity, r, plm, cosϑ, sinϑ, n)
-            ΔFr, ΔFϑ, ΔFϕ = Δfieldₙ(sphere, excitation, quantity, r, coeffs, expansions, sinϕ, cosϕ, n)
+            ΔF = Δfieldₙ(sphere, excitation, quantity, r, coeffs, expansions, sinϕ, cosϕ, n)
 
-            Fr += ΔFr
-            Fϑ += ΔFϑ
-            Fϕ += ΔFϕ
+            F += ΔF
 
-            δF = (abs(ΔFr) + abs(ΔFϑ) + abs(ΔFϕ)) / (abs(Fr) + abs(Fϑ) + abs(Fϕ)) # relative change
+            δF = norm(ΔF) / norm(F) # relative change
 
             n > 1 && push!(plm, (T(2.0) * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship for next associated Legendre polynomials
         end
@@ -92,7 +88,7 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::
 
     end
 
-    return convertSpherical2Cartesian(A₀ .* SVector(Fr, Fϑ, Fϕ), point_sph)
+    return convertSpherical2Cartesian(A₀ .* F, point_sph)
 end
 
 
@@ -109,7 +105,7 @@ function Δfieldₙ(sphere, excitation::PlaneWave, quantity::ElectricField, r, c
     ΔEϑ = -(cosϕ / kr) * (aₙ * Nn_ϑ + bₙ * Mn_ϑ)
     ΔEϕ = +(sinϕ / kr) * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
 
-    return ΔEr, ΔEϑ, ΔEϕ
+    return SVector(ΔEr, ΔEϑ, ΔEϕ)
 end
 
 
@@ -126,7 +122,7 @@ function Δfieldₙ(sphere, excitation::PlaneWave, quantity::MagneticField, r, c
     ΔHϑ = -(sinϕ / kr) * (aₙ * Mn_ϑ + bₙ * Nn_ϑ)
     ΔHϕ = -(cosϕ / kr) * (aₙ * Mn_ϕ + bₙ * Nn_ϕ)
 
-    return ΔHr, ΔHϑ, ΔHϕ
+    return SVector(ΔHr, ΔHϑ, ΔHϕ)
 end
 
 
@@ -143,7 +139,7 @@ function Δfieldₙ(sphere, excitation::PlaneWave, quantity::FarField, r, coeffs
     ΔEϑ = -im * cosϕ * 1 / k * im^n * (aₙ * Nn_ϑ + bₙ * Mn_ϑ)
     ΔEϕ = +im * sinϕ * 1 / k * im^n * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
 
-    return eltype(ΔEϑ)(0.0), ΔEϑ, ΔEϕ
+    return SVector(eltype(ΔEϑ)(0.0), ΔEϑ, ΔEϕ)
 end
 
 
