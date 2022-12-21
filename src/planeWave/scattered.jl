@@ -45,17 +45,12 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::
 
     eps = parameter.relativeAccuracy
 
-    if !(quantity isa FarField)
-        sphere isa PECSphere && r < sphere.radius && return SVector{3,Complex{T}}(0.0, 0.0, 0.0) # inside the sphere the field is 0
-    end
+    ST = SVector{3,Complex{T}}
+    F = ST(0.0, 0.0, 0.0)
 
-    if quantity isa MagneticField
-        A₀ = 1 / impedance(sphere, r) * excitation.amplitude
-    else
-        A₀ = excitation.amplitude
-    end
+    A₀ = amplitude(sphere, excitation::PlaneWave, quantity, r)
 
-    F = SVector{3,Complex{T}}(0.0, 0.0, 0.0)
+    A₀ == 0.0 && return F # Inside of PEC return zero field
 
     δF = T(Inf)
     n = 0
@@ -94,6 +89,7 @@ end
 
 
 function Δfieldₙ(sphere, excitation::PlaneWave, quantity::ElectricField, r, coeffs, expansion, sinϕ, cosϕ, n)
+
     (Nn_r, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ) = expansion
 
     k = wavenumber(sphere, excitation, r)
@@ -111,6 +107,7 @@ end
 
 
 function Δfieldₙ(sphere, excitation::PlaneWave, quantity::MagneticField, r, coeffs, expansion, sinϕ, cosϕ, n)
+
     (Nn_r, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ) = expansion
 
     k = wavenumber(sphere, excitation, r)
@@ -128,6 +125,7 @@ end
 
 
 function Δfieldₙ(sphere, excitation::PlaneWave, quantity::FarField, r, coeffs, expansion, sinϕ, cosϕ, n)
+
     (~, Nn_ϑ, Nn_ϕ, Mn_ϑ, Mn_ϕ) = expansion
 
     k = wavenumber(excitation)
@@ -140,6 +138,52 @@ function Δfieldₙ(sphere, excitation::PlaneWave, quantity::FarField, r, coeffs
     ΔEϕ = +im * sinϕ * 1 / k * im^n * (aₙ * Nn_ϕ + bₙ * Mn_ϕ)
 
     return SVector(eltype(ΔEϑ)(0.0), ΔEϑ, ΔEϕ)
+end
+
+
+
+"""
+    amplitude(sphere, excitation::PlaneWave, quantity::MagneticField, r)
+
+Returns ``H₀/ηᵢ``, where ``H₀`` is the magnetic field of the incident plane wave.
+For PEC layers, it returns ``0``.
+"""
+function amplitude(sphere, excitation::PlaneWave, quantity::MagneticField, r)
+    η = impedance(sphere, r)
+
+    if η == 0.0 # PEC case
+        return η * excitation.amplitude # return zero of correct type
+    else
+        return 1 / η * excitation.amplitude
+    end
+end
+
+
+
+"""
+    amplitude(sphere, excitation::PlaneWave, quantity::MagneticField, r)
+
+Returns ``E₀``, where ``E₀`` is the electric field of the incident plane wave.
+For PEC layers, it returns ``0``.
+"""
+function amplitude(sphere, excitation::PlaneWave, quantity::ElectricField, r)
+    η = impedance(sphere, r)
+
+    if η == 0.0 # PEC case
+        return η * excitation.amplitude # return zero of correct type
+    else
+        return excitation.amplitude
+    end
+end
+
+
+"""
+    amplitude(sphere, excitation::PlaneWave, quantity::MagneticField, r)
+
+Returns ``E₀``, where ``E₀`` is the electric field of the incident plane wave.
+"""
+function amplitude(sphere, excitation::PlaneWave, quantity::FarField, r)
+    return excitation.amplitude
 end
 
 

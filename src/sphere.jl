@@ -147,7 +147,7 @@ function impedance(sp::PECSphere, r)
         ε = sp.embedding.ε
         μ = sp.embedding.μ
     else
-        return promote_type(sp.embedding.ε, sp.embedding.μ)(0.0)
+        return promote_type(typeof(sp.embedding.ε), typeof(sp.embedding.μ))(0.0)
     end
 
     return sqrt(μ / ε)
