@@ -44,10 +44,14 @@ c = 1 / sqrt(𝜇 * 𝜀)
 
 points_cartFF, points_sphFF = getDefaultPoints(1.0)
 points_cartNF, points_sphNF = getDefaultPoints(5.0)
-
+points_cartNF_inside, ~ = getDefaultPoints(0.5)
 
 # ----- testsets
 @testset "Testing SphericalScattering functionality" begin
+
+    @testset "Medium and Sphere" begin
+        include("sphere.jl")
+    end
 
     @testset "Test dipoles" begin
         include("dipoles.jl")
@@ -55,6 +59,7 @@ points_cartNF, points_sphNF = getDefaultPoints(5.0)
 
     @testset "Test plane waves" begin
         include("planeWave.jl")
+        include("planeWave_dielectric.jl")
     end
 
     @testset "Test ring currents" begin

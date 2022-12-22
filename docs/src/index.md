@@ -20,7 +20,7 @@ The following scenarios are implemented (✓) and planned (⌛):
 ##### Available scattering objects:
 - ✓ PEC sphere
 - ⌛ PMC sphere
-- ⌛ Dielectric sphere (so far only for uniform field)
+- ⌛ Dielectric sphere (so far only for uniform field and the plane-wave)
 - ⌛ Multilayer dielectric sphere (so far only for uniform field)
 - ⌛ Multilayer dielectric sphere with PEC core (so far only for uniform field)
 
