@@ -28,7 +28,7 @@ To this end, series expansions are evaluated. Special care is taken to obtain ac
 ##### Available scattering objects:
 - :heavy_check_mark: PEC sphere
 - :hourglass_flowing_sand: PMC sphere
-- :hourglass_flowing_sand: Dielectric sphere (so far only for uniform static field)
+- :hourglass_flowing_sand: Dielectric sphere (so far only for uniform static field and the plane-wave)
 - :hourglass_flowing_sand: Multilayer dielectric sphere (so far only for uniform static field)
 - :hourglass_flowing_sand: Multilayer dielectric sphere with PEC core (so far only for uniform static field)
 
