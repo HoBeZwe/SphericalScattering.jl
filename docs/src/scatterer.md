@@ -18,12 +18,10 @@ The perfectly electrically conducting (PEC) or perfectly magnetically conducting
 
 #### [API](@id pecAPI)
 
-```julia
-PECSphere(
-    radius    = error("missing argument `radius`"), 
-    embedding = Medium(ε0, μ0)
-)
+```@docs
+PECSphere
 ```
+
 
 ---
 ## Dielectric Sphere
@@ -38,14 +36,11 @@ The dielectric sphere has radius $r$ and is assumed to be located in the origin.
 
 #### [API](@id dielecAPI)
 
-```julia
-DielectricSphere(
-    radius    = error("missing argument `radius`"), 
-    embedding = Medium(ε0, μ0), 
-    filling   = error("missing argument `filling`")
-)
+```@docs
+DielectricSphere
 ```
 Here `radius` is a Float and `filling` of type [`Medium(εᵢ, μᵢ)`](@ref).
+
 
 ---
 ## Layered Dielectric Sphere
@@ -60,12 +55,8 @@ The layered dielectric sphere has radii $[r_1, r_2, \dots, r_N]$ and is assumed 
 
 #### [API](@id mlDielecAPI)
 
-```julia
-LayeredSphere(
-    radii     = error("Missing argument `radii`"), 
-    embedding = Medium(ε0, μ0), 
-    filling   = error("`missing argument `filling`")
-)
+```@docs
+LayeredSphere
 ```
 with, e.g., `radii = SVector(1.0, 0.5, 0.25)` and `radii = SVector(Medium(ε1, μ1), Medium(ε2, μ2), Medium(ε3, μ3))`.
 
@@ -85,12 +76,8 @@ The layered dielectric sphere has radii $[r_1, r_2, \dots, r_{N+1}]$ and is assu
 
 #### [API](@id mlDielecPecAPI)
 
-```julia
-LayeredSpherePEC(
-    radii     = error("Missing argument `radii`"), 
-    embedding = Medium(ε0, μ0), 
-    filling   = error("Missing argument `filling`")
-)
+```@docs
+LayeredSpherePEC
 ```
 with, e.g., `radii = SVector(1.0, 0.5, 0.25)` and `radii = SVector(Medium(ε1, μ1), Medium(ε2, μ2))`.
 

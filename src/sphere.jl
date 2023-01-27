@@ -17,7 +17,11 @@ function Medium{T}(md) where {T}
     return Medium(T(md.ε), T(md.μ))
 end
 
+
+
+
 abstract type Sphere end
+
 struct DielectricSphere{C,R} <: Sphere
     radius::R
     embedding::Medium{C}
@@ -25,6 +29,7 @@ struct DielectricSphere{C,R} <: Sphere
 end
 
 function DielectricSphere(r::R, embedding::Medium{C1}, filling::Medium{C2}) where {R,C1,C2}
+    
     C = promote_type(C1, C2)
 
     DielectricSphere(r, Medium{C}(embedding), Medium{C}(filling))
@@ -32,8 +37,10 @@ end
 
 
 """
-    DielectricSphere(;
-        radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0), filling=error("missing argument `filling`")
+    DielectricSphere(
+        radius      = error("missing argument `radius`"), 
+        embedding   = Medium(ε0, μ0), 
+        filling     = error("missing argument `filling`")
     )
 
 Constructor for the dielectric sphere.
@@ -48,11 +55,15 @@ struct PECSphere{C,R} <: Sphere
 end
 
 """
-    PECSphere(; radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0))
+    PECSphere( 
+        radius      = error("missing argument `radius`"), 
+        embedding   = Medium(ε0, μ0)
+    )
 
 Constructor for the PEC sphere.
 """
 PECSphere(; radius=error("missing argument `radius`"), embedding=Medium(ε0, μ0)) = PECSphere(radius, embedding)
+
 
 
 struct LayeredSphere{N,R,C} <: Sphere
@@ -62,12 +73,18 @@ struct LayeredSphere{N,R,C} <: Sphere
 end
 
 """
-    LayeredSphere(; radii=error("Missing argument `radii`"), embedding=Medium(ε0, μ0), filling=error("`missing argument `filling`"))
+    LayeredSphere( 
+        radii       = error("Missing argument `radii`"), 
+        embedding   = Medium(ε0, μ0), 
+        filling     = error("`missing argument `filling`")
+    )
 
 Constructor for the layered dielectric sphere.
 """
 LayeredSphere(; radii=error("Missing argument `radii`"), embedding=Medium(ε0, μ0), filling=error("`missing argument `filling`")) =
     LayeredSphere(radii, embedding, filling)
+
+
 
 
 struct LayeredSpherePEC{N,D,R,C} <: Sphere
@@ -77,12 +94,19 @@ struct LayeredSpherePEC{N,D,R,C} <: Sphere
 end
 
 """
-    LayeredSpherePEC(; radii=error("Missing argument `radii`"), embedding=Medium(ε0, μ0), filling=error("Missing argument `filling`"))
+    LayeredSpherePEC( 
+        radii       = error("Missing argument `radii`"), 
+        embedding   = Medium(ε0, μ0), 
+        filling     = error("Missing argument `filling`")
+    )
 
 Constructor for the layered dielectric sphere.
 """
 LayeredSpherePEC(; radii=error("Missing argument `radii`"), embedding=Medium(ε0, μ0), filling=error("Missing argument `filling`")) =
     LayeredSpherePEC(radii, filling, embedding)
+
+
+
 
 """
     layer(sp::Sphere, r)

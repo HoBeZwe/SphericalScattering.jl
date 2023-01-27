@@ -40,26 +40,10 @@ The magnetic ring current with amplitude ``M``, and orientation ``\hat{\bm e}_z`
 ## [API](@id rcAPI)
 
 The API provides the following constructors with default values:
-```julia
-ex = electricRingCurrent(
-        embedding  = Medium(ε0, μ0),
-        wavenumber = error("missing argument `wavenumber`"),
-        amplitude  = 1.0,
-        radius     = error("missing argument `radius`"),
-        center     = SVector{3,typeof(wavenumber)}(0.0, 0.0, 0.0),
-        rotation   = SVector{2,typeof(wavenumber)}(0.0, 0.0),
-)
-
-ex = magneticRingCurrent(
-        embedding  = Medium(ε0, μ0),
-        wavenumber = error("missing argument `wavenumber`"),
-        amplitude  = 1.0,
-        radius     = error("missing argument `radius`"),
-        center     = SVector{3,typeof(wavenumber)}(0.0, 0.0, 0.0),
-        rotation   = SVector{2,typeof(wavenumber)}(0.0, 0.0),
-)
+```@docs
+electricRingCurrent
+magneticRingCurrent
 ```
-
 
 ---
 ## Radiated Field

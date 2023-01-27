@@ -17,6 +17,15 @@ struct FitzgeraldDipole{T,R,C} <: Dipole
     orientation::SVector{3,R}
 end
 
+"""
+    ex = HertzianDipole(
+            embedding   = Medium(ε0, μ0),
+            frequency   = error("missing argument `frequency`"),
+            amplitude   = 1.0,
+            center      = SVector{3,typeof(frequency)}(0.0, 0.0, 0.0),
+            orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
+    )
+"""
 HertzianDipole(;
     embedding   = Medium(ε0, μ0),
     frequency   = error("missing argument `frequency`"),
@@ -25,6 +34,16 @@ HertzianDipole(;
     orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
 ) = HertzianDipole(embedding, frequency, amplitude, center, orientation)
 
+
+"""
+    ex = FitzgeraldDipole(;
+            embedding   = Medium(ε0, μ0),
+            frequency   = error("missing argument `frequency`"),
+            amplitude   = 1.0,
+            center      = SVector{3,typeof(frequency)}(0.0, 0.0, 0.0),
+            orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
+    )
+"""
 FitzgeraldDipole(;
     embedding   = Medium(ε0, μ0),
     frequency   = error("missing argument `frequency`"),

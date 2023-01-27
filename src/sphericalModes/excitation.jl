@@ -23,6 +23,19 @@ struct SphericalModeTM{T,R,C,In<:Integer} <: SphericalMode
     orientation::SVector{3,R}
 end
 
+
+"""
+    ex = SphericalModeTE(;
+            embedding   = Medium(ε0, μ0),
+            frequency   = error("missing argument `frequency`"),
+            amplitude   = 1.0,
+            m           = 0,
+            n           = 1,
+            c           = 1,
+            center      = SVector{3,typeof(frequency)}(0.0, 0.0, 0.0),
+            orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
+    )
+"""
 SphericalModeTE(;
     embedding   = Medium(ε0, μ0),
     frequency   = error("missing argument `frequency`"),
@@ -34,6 +47,19 @@ SphericalModeTE(;
     orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
 ) = SphericalModeTE(embedding, frequency, amplitude, m, n, c, center, orientation)
 
+
+"""
+    ex = SphericalModeTM(;
+            embedding   = Medium(ε0, μ0),
+            frequency   = error("missing argument `frequency`"),
+            amplitude   = 1.0,
+            m           = 0,
+            n           = 1,
+            c           = 1,
+            center      = SVector{3,typeof(frequency)}(0.0, 0.0, 0.0),
+            orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
+    )
+"""
 SphericalModeTM(;
     embedding   = Medium(ε0, μ0),
     frequency   = error("missing argument `frequency`"),

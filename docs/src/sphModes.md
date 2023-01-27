@@ -54,30 +54,10 @@ form the ``\mathrm{TM}_{mn}`` modes.
 ## [API](@id modesAPI)
 
 The API provides the following constructors with default values:
-```julia
-ex = SphericalModeTE(
-        embedding   = Medium(ε0, μ0),
-        wavenumber  = error("missing argument `wavenumber`"),
-        amplitude   = 1.0,
-        m           = 0,
-        n           = 1,
-        c           = 1,
-        center      = SVector{3,typeof(wavenumber)}(0.0, 0.0, 0.0),
-        orientation = SVector{3,typeof(wavenumber)}(0.0, 0.0, 1.0),
-)
-
-ex = SphericalModeTM(
-        embedding   = Medium(ε0, μ0),
-        wavenumber  = error("missing argument `wavenumber`"),
-        amplitude   = 1.0,
-        m           = 0,
-        n           = 1,
-        c           = 1,
-        center      = SVector{3,typeof(wavenumber)}(0.0, 0.0, 0.0),
-        orientation = SVector{3,typeof(wavenumber)}(0.0, 0.0, 1.0),
-)
+```@docs
+SphericalModeTE
+SphericalModeTM
 ```
-
 
 ---
 ## Incident Field

@@ -28,12 +28,8 @@ The static electric field with amplitude ``a`` and direction ``\hat{\bm p}`` is 
 ## [API](@id uniformAPI)
 
 The API provides the following constructor with default values:
-```julia
-ex = UniformField(
-        embedding    = Medium(ε0, μ0),
-        amplitude    = 1.0,
-        direction    = SVector{3,Float64}(1.0,0.0,0.0)
-)
+```@docs
+UniformField
 ```
 
 !!! warning

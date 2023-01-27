@@ -19,6 +19,17 @@ struct MagneticRingCurrent{T,R,C} <: RingCurrent
     rotation::SVector{2,R}
 end
 
+
+"""
+    ex = electricRingCurrent(;
+            embedding = Medium(ε0, μ0),
+            frequency = error("missing argument `frequency`"),
+            amplitude = 1.0,
+            radius    = error("missing argument `radius`"),
+            center    = SVector{3,typeof(frequency)}(0.0, 0.0, 0.0),
+            rotation  = SVector{2,typeof(frequency)}(0.0, 0.0),
+    )
+"""
 electricRingCurrent(;
     embedding = Medium(ε0, μ0),
     frequency = error("missing argument `frequency`"),
@@ -28,6 +39,17 @@ electricRingCurrent(;
     rotation  = SVector{2,typeof(frequency)}(0.0, 0.0),
 ) = ElectricRingCurrent(embedding, frequency, amplitude, radius, center, rotation)
 
+
+"""
+    ex = magneticRingCurrent(;
+            embedding = Medium(ε0, μ0),
+            frequency = error("missing argument `frequency`"),
+            amplitude = 1.0,
+            radius    = error("missing argument `radius`"),
+            center    = SVector{3,typeof(frequency)}(0.0, 0.0, 0.0),
+            rotation  = SVector{2,typeof(frequency)}(0.0, 0.0),
+    )
+"""
 magneticRingCurrent(;
     embedding = Medium(ε0, μ0),
     frequency = error("missing argument `frequency`"),

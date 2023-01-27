@@ -28,26 +28,9 @@ The plane wave with amplitude ``a``, wave vector ``\bm k``, and polarization ``\
 ## [API](@id pwAPI)
 
 The API provides the following constructor with default values:
-```julia
-ex = planeWave(
-        embedding    = Medium(ε0, μ0),
-        frequency    = error("missing argument `frequency`"),
-        amplitude    = 1.0,
-        direction    = SVector{3,typeof(wavenumber)}(0.0, 0.0, -1.0),
-        polarization = SVector{3,typeof(wavenumber)}(1.0, 0.0, 0.0),
-)
+```@docs
+planeWave
 ```
-and
-```julia
-ex = planeWave(
-        sphere::Sphere,
-        frequency    = error("missing argument `frequency`"),
-        amplitude    = 1.0,
-        direction    = SVector{3,typeof(wavenumber)}(0.0, 0.0, -1.0),
-        polarization = SVector{3,typeof(wavenumber)}(1.0, 0.0, 0.0),
-)
-```
-
 
 ---
 ## Incident Field

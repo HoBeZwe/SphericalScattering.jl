@@ -39,22 +39,9 @@ The Fitzgerald (magnetic) dipole with dipole length ``l``, magnetic current ``M`
 ## [API](@id dipolesAPI)
 
 The API provides the following constructors with default values:
-```julia
-ex = HertzianDipole(
-        embedding   = Medium(ε0, μ0),
-        wavenumber  = error("missing argument `wavenumber`"),
-        amplitude   = 1.0,
-        center      = SVector{3,typeof(wavenumber)}(0.0, 0.0, 0.0),
-        orientation = SVector{3,typeof(wavenumber)}(0.0, 0.0, 1.0),
-)
-
-ex = FitzgeraldDipole(
-        embedding   = Medium(ε0, μ0),
-        wavenumber  = error("missing argument `wavenumber`"),
-        amplitude   = 1.0,
-        center      = SVector{3,typeof(wavenumber)}(0.0, 0.0, 0.0),
-        orientation = SVector{3,typeof(wavenumber)}(0.0, 0.0, 1.0),
-)
+```@docs
+HertzianDipole
+FitzgeraldDipole
 ```
 
 !!! warning
