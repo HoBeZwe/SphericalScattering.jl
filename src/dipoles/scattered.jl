@@ -8,7 +8,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; 
 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
 
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
@@ -43,7 +43,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     T  = typeof(k)
     Il = excitation.amplitude
     z0 = norm(excitation.center)   # distance Dipole-origin
@@ -115,7 +115,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     T  = typeof(k)
     Il = excitation.amplitude
     z0 = norm(excitation.center)    # distance Dipole-origin
@@ -174,7 +174,7 @@ function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, qu
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     T  = typeof(k)
     Il = excitation.amplitude
     z0 = norm(excitation.center)    # distance dipole-origin
@@ -232,7 +232,7 @@ function scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, point, 
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     T  = typeof(k)
     Ul = excitation.amplitude
     z0 = norm(excitation.center)    # distance dipole-origin

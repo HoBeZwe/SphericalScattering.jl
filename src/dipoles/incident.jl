@@ -6,7 +6,7 @@ Compute the electric field radiated by a magnetic/electric ring current at some 
 """
 function field(excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
 
     F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
 
@@ -40,7 +40,7 @@ The point and the returned field are in Cartesian coordinates.
 function field(excitation::Dipole, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     Il = excitation.amplitude
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     ε  = excitation.embedding.ε
     μ  = excitation.embedding.μ
 
@@ -68,7 +68,7 @@ The point and the returned field are in Cartesian coordinates.
 function field(excitation::Dipole, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
     Il = excitation.amplitude
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
 
     r0 = excitation.center
     p  = excitation.orientation
@@ -92,7 +92,7 @@ The point and the returned field are in Cartesian coordinates.
 function field(excitation::HertzianDipole, point, quantity::FarField; parameter::Parameter=Parameter())
 
     Il = excitation.amplitude
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     ε  = excitation.embedding.ε
     μ  = excitation.embedding.μ
 
@@ -117,7 +117,7 @@ The point and the returned field are in Cartesian coordinates.
 function field(excitation::FitzgeraldDipole, point, quantity::FarField; parameter::Parameter=Parameter())
 
     Il = excitation.amplitude
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
 
     r0 = excitation.center
     p  = excitation.orientation
@@ -134,7 +134,7 @@ end
 
 #     point_sph = cart2sph(point) # [r ϑ φ]
 
-#     k  = excitation.wavenumber
+#     k  = wavenumber(excitation)
 #     I0 = excitation.amplitude
 #     R  = norm(excitation.center)
 

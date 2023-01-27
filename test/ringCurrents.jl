@@ -5,7 +5,7 @@
     κ = 2π * f / c   # Wavenumber
 
 
-    ex = electricRingCurrent(; wavenumber=κ, center=SVector(0.0, 0.0, 2.0), radius=0.5)
+    ex = electricRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
 
     @testset "Incident fields" begin
 
@@ -73,7 +73,7 @@ end
     κ = 2π * f / c   # Wavenumber
 
 
-    ex = magneticRingCurrent(; wavenumber=κ, center=SVector(0.0, 0.0, 2.0), radius=0.5)
+    ex = magneticRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
 
     @testset "Incident fields" begin
 

@@ -6,7 +6,7 @@ Compute the electric field of a spherical mode.
 """
 function field(excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
     F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
 
     # --- distinguish electric/magnetic field
@@ -33,7 +33,7 @@ function field(excitation::SphericalModeTE, point, quantity::ElectricField; para
 
     m = excitation.m
     n = excitation.n
-    k = excitation.wavenumber
+    k = wavenumber(excitation)
 
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε
@@ -94,7 +94,7 @@ function field(excitation::SphericalModeTM, point, quantity::ElectricField; para
 
     m = excitation.m
     n = excitation.n
-    k = excitation.wavenumber
+    k = wavenumber(excitation)
 
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε
@@ -159,7 +159,7 @@ function field(excitation::SphericalModeTE, point, quantity::FarField; parameter
 
     m = excitation.m
     n = excitation.n
-    k = excitation.wavenumber
+    k = wavenumber(excitation)
 
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε
@@ -209,7 +209,7 @@ function field(excitation::SphericalModeTM, point, quantity::FarField; parameter
 
     m = excitation.m
     n = excitation.n
-    k = excitation.wavenumber
+    k = wavenumber(excitation)
 
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε

@@ -8,7 +8,7 @@ function scatteredfield(sphere::PECSphere, excitation::SphericalMode, quantity::
 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
 
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
@@ -41,7 +41,7 @@ The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(sphere::PECSphere, excitation::SphericalMode, point, quantity::Field; parameter::Parameter=Parameter())
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     ka = k * sphere.radius
 
     T = typeof(excitation)
@@ -50,7 +50,7 @@ function scatteredfield(sphere::PECSphere, excitation::SphericalMode, point, qua
     # outward travelling wave
     Escat = T(
         excitation.embedding,
-        excitation.wavenumber,
+        excitation.frequency,
         excitation.amplitude,
         excitation.m,
         excitation.n,

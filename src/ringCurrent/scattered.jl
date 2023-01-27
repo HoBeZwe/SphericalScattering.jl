@@ -9,7 +9,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Fi
 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
 
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
@@ -44,7 +44,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
     θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
@@ -110,7 +110,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
     θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
@@ -183,7 +183,7 @@ function scatteredfield(
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
     θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
@@ -245,7 +245,7 @@ function scatteredfield(
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
     θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
@@ -300,7 +300,7 @@ Compute scattering coefficient for electric ring current.
 """
 function scatterCoeff(sphere::PECSphere, excitation::ElectricRingCurrent, n::Int, ka)
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
 
     Jka = besselj(n + T(0.5), ka)  # Bessel function 1st kind
     Hka = hankelh2(n + T(0.5), ka) # Hankel function 2nd kind
@@ -317,7 +317,7 @@ Compute scattering coefficient for magnetic ring current.
 """
 function scatterCoeff(sphere::PECSphere, excitation::MagneticRingCurrent, n::Int, ka)
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
 
     Jka = (n + 1) * besselj(n + T(0.5), ka) - ka * besselj(n + T(1.5), ka)  # derivative spherical Bessel function 1st kind (without sqrt factor)
     Hka = (n + 1) * hankelh2(n + T(0.5), ka) - ka * hankelh2(n + T(1.5), ka) # derivative spherical Hankel function 2nd kind (without sqrt factor)

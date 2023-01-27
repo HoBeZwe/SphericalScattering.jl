@@ -4,7 +4,7 @@
     f = 1e8
     κ = 2π * f / c   # Wavenumber
 
-    ex = HertzianDipole(; wavenumber=κ, center=SVector(0.0, 0.0, 2.0))
+    ex = HertzianDipole(; frequency=f, center=SVector(0.0, 0.0, 2.0))
 
 
     @testset "Incident fields" begin
@@ -73,7 +73,7 @@ end
     κ = 2π * f / c   # Wavenumber
 
 
-    ex = FitzgeraldDipole(; wavenumber=κ, center=SVector(0.0, 0.0, 2.0))
+    ex = FitzgeraldDipole(; frequency=f, center=SVector(0.0, 0.0, 2.0))
 
     @testset "Incident fields" begin
 

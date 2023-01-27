@@ -7,7 +7,7 @@ Compute the electric field radiated by a magnetic/electric ring current at some 
 """
 function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
-    T = typeof(excitation.wavenumber)
+    T = typeof(excitation.frequency)
     F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
 
     # --- distinguish electric/magnetic current
@@ -39,7 +39,7 @@ function field(excitation::RingCurrent, point, quantity::ElectricField; paramete
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = excitation.radius
 
@@ -115,7 +115,7 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     T  = typeof(k)
     I0 = excitation.amplitude
     R  = excitation.radius
@@ -200,7 +200,7 @@ function field(excitation::RingCurrent, point, quantity::FarField; parameter::Pa
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
-    k  = excitation.wavenumber
+    k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = excitation.radius
 

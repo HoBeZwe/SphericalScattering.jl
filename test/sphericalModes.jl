@@ -5,7 +5,7 @@
     κ = 2π * f / c   # Wavenumber
 
 
-    ex = SphericalModeTE(; wavenumber=κ, m=0, n=1, c=2)
+    ex = SphericalModeTE(; frequency=f, m=0, n=1, c=2)
 
     @testset "Incident fields" begin
 
@@ -18,13 +18,13 @@
 
         point_cart = [SVector(0.0, 0.0, 3.2), SVector(0.0, 0.0, -3.2)]
 
-        ex2 = SphericalModeTE(; wavenumber=κ, m=1, n=1, c=1)
+        ex2 = SphericalModeTE(; frequency=f, m=1, n=1, c=1)
 
         @test_nowarn EF = field(ex2, ElectricField(point_cart))
         @test_nowarn HF = field(ex2, MagneticField(point_cart))
         @test_nowarn FF = field(ex2, FarField(point_cart))
 
-        ex3 = SphericalModeTE(; wavenumber=κ, m=0, n=1, c=3)
+        ex3 = SphericalModeTE(; frequency=f, m=0, n=1, c=3)
 
         @test_throws ErrorException("Type can only be 1 or 2.") EF = field(ex3, ElectricField(point_cart))
         @test_throws ErrorException("Type can only be 1 or 2.") HF = field(ex3, MagneticField(point_cart))
@@ -89,7 +89,7 @@ end
     κ = 2π * f / c   # Wavenumber
 
 
-    ex = SphericalModeTM(; wavenumber=κ, m=0, n=1, c=2)
+    ex = SphericalModeTM(; frequency=f, m=0, n=1, c=2)
 
     @testset "Incident fields" begin
 
@@ -100,7 +100,7 @@ end
         @test_nowarn HF = field(ex, MagneticField(point_cart))
         @test_nowarn FF = field(ex, FarField(point_cart))
 
-        ex2 = SphericalModeTM(; wavenumber=κ, m=1, n=1, c=1)
+        ex2 = SphericalModeTM(; frequency=f, m=1, n=1, c=1)
 
         point_cart = [SVector(0.0, 0.0, 3.2), SVector(0.0, 0.0, -3.2)]
 
@@ -108,7 +108,7 @@ end
         @test_nowarn HF = field(ex2, MagneticField(point_cart))
         @test_nowarn FF = field(ex2, FarField(point_cart))
 
-        ex3 = SphericalModeTM(; wavenumber=κ, m=0, n=1, c=3)
+        ex3 = SphericalModeTM(; frequency=f, m=0, n=1, c=3)
 
         @test_throws ErrorException("Type can only be 1 or 2.") EF = field(ex3, ElectricField(point_cart))
         @test_throws ErrorException("Type can only be 1 or 2.") HF = field(ex3, MagneticField(point_cart))
