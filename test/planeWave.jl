@@ -7,6 +7,7 @@
     ex = planeWave(sp; frequency=f)
 
     @testset "Planewave excitation" begin
+        @test planeWave(; frequency=f) isa PlaneWave{Float64,Float64,Float64}
         @test planeWave(sp; frequency=f) isa PlaneWave{Float64,Float64,Float64}
     end
 
@@ -16,6 +17,8 @@
 
         @test_nowarn E = field(ex, ElectricField(point_cart))
         @test_nowarn H = field(ex, MagneticField(point_cart))
+
+        @test_throws ErrorException("The far-field of a plane wave is not defined.") field(ex, FarField(point_cart))
 
     end
 
@@ -60,5 +63,31 @@
         @test maximum(20 * log10.(abs.(diff_HF₂))) < -25 # dB
         @test norm(HF₁) == 0.0
         @test maximum(20 * log10.(abs.(diff_FF))) < -25 # dB
+    end
+
+    @testset "Total fields" begin
+
+        # define an observation point
+        point_cart = [SVector(2.0, 2.0, 3.2), SVector(3.1, 4, 2)]
+
+        # compute scattered fields
+        Es = scatteredfield(sp, ex, ElectricField(point_cart))
+        Hs = scatteredfield(sp, ex, MagneticField(point_cart))
+        #FFs = scatteredfield(sp, ex, FarField(point_cart))
+
+        Ei = field(ex, ElectricField(point_cart))
+        Hi = field(ex, MagneticField(point_cart))
+        #FFi = field(ex, FarField(point_cart))
+
+        # total field
+        E = field(sp, ex, ElectricField(point_cart))
+        H = field(sp, ex, MagneticField(point_cart))
+        @test_throws ErrorException("The total far-field for a plane-wave excitation is not defined") field(
+            sp, ex, FarField(point_cart)
+        )
+
+        # is it the sum?
+        @test E[1] == Es[1] .+ Ei[1]
+        @test H[1] == Hs[1] .+ Hi[1]
     end
 end

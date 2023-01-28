@@ -2,7 +2,7 @@
 """
     scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
 
-Compute the electric field scattered by a dipole at some position and orientation.
+Compute the field scattered by a PEC sphere excited by a dipole at some position and orientation.
 """
 function scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
 
@@ -278,9 +278,9 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::ElectricRingCurrent, n::Int, ka)
+    scatterCoeff(sphere::PECSphere, excitation::FitzgeraldDipole, n::Int, ka)
 
-Compute scattering coefficient for electric ring current.
+Compute scattering coefficient for Fitzgerald dipole.
 """
 function scatterCoeff(sphere::PECSphere, excitation::FitzgeraldDipole, n::Int, ka)
 
@@ -294,9 +294,9 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::MagneticRingCurrent, n::Int, ka)
+    scatterCoeff(sphere::PECSphere, excitation::HertzianDipole, n::Int, ka)
 
-Compute scattering coefficient for magnetic ring current.
+Compute scattering coefficient for Hertzian dipole.
 """
 function scatterCoeff(sphere::PECSphere, excitation::HertzianDipole, n::Int, ka)
 

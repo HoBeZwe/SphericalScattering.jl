@@ -1,9 +1,13 @@
 
+f = 1e8
+κ = 2π * f / c   # Wavenumber
+
+# BEAST impedance matrix
+𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+T = assemble(𝑇, RT, RT)
+
+
 @testset "Electric ring current" begin
-
-    f = 1e8
-    κ = 2π * f / c   # Wavenumber
-
 
     ex = electricRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
 
@@ -35,10 +39,10 @@
         𝐸 = ex
 
         𝑒 = n × 𝐸 × n
-        𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+        #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
 
         e = assemble(𝑒, RT)
-        T = assemble(𝑇, RT, RT)
+        #T = assemble(𝑇, RT, RT)
 
         u = T \ e
 
@@ -69,8 +73,8 @@ end
 
 @testset "Magnetic ring current" begin
 
-    f = 1e8
-    κ = 2π * f / c   # Wavenumber
+    #f = 1e8
+    #κ = 2π * f / c   # Wavenumber
 
 
     ex = magneticRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
@@ -103,10 +107,10 @@ end
         𝐸 = ex
 
         𝑒 = n × 𝐸 × n
-        𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+        #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
 
         e = assemble(𝑒, RT)
-        T = assemble(𝑇, RT, RT)
+        #T = assemble(𝑇, RT, RT)
 
         u = T \ e
 

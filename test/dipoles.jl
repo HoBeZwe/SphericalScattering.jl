@@ -1,11 +1,15 @@
 
+f = 1e8
+κ = 2π * f / c   # Wavenumber
+
+# BEAST impedance matrix
+𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+T = assemble(𝑇, RT, RT)
+
+
 @testset "Hertzian dipole" begin
 
-    f = 1e8
-    κ = 2π * f / c   # Wavenumber
-
     ex = HertzianDipole(; frequency=f, center=SVector(0.0, 0.0, 2.0))
-
 
     @testset "Incident fields" begin
 
@@ -35,10 +39,7 @@
         𝐸 = ex
 
         𝑒 = n × 𝐸 × n
-        𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
-
         e = assemble(𝑒, RT)
-        T = assemble(𝑇, RT, RT)
 
         u = T \ e
 
@@ -69,8 +70,8 @@ end
 
 @testset "Fitzgerald dipole" begin
 
-    f = 1e8
-    κ = 2π * f / c   # Wavenumber
+    #f = 1e8
+    #κ = 2π * f / c   # Wavenumber
 
 
     ex = FitzgeraldDipole(; frequency=f, center=SVector(0.0, 0.0, 2.0))
@@ -103,10 +104,9 @@ end
         𝐸 = ex
 
         𝑒 = n × 𝐸 × n
-        𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
-
+        #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
         e = assemble(𝑒, RT)
-        T = assemble(𝑇, RT, RT)
+        #T = assemble(𝑇, RT, RT)
 
         u = T \ e
 

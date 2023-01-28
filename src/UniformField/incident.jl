@@ -28,11 +28,11 @@ The point and the returned field are in Cartesian coordinates.
 function field(excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     a = excitation.amplitude
-
     p = excitation.direction
 
     return a * p
 end
+
 
 """
     field(excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())

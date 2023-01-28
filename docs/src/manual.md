@@ -12,7 +12,7 @@ The basic building blocks are introduced in the following simple example; more d
 using SphericalScattering, StaticArrays
 
 # define excitation: plane wave travelling in negative z-direction with x-polarization
-ex = planeWave(wavenumber=30.0) # ≈ 10 MHz
+ex = planeWave(frequency=10e6) # Hz
 
 # define scatterer: PEC sphere
 sp = PECSphere(radius = 1.0)

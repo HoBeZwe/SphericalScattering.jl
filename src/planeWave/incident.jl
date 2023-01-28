@@ -60,3 +60,15 @@ function field(excitation::PlaneWave, point, quantity::MagneticField; parameter:
 
     return a * sqrt(ε / μ) * exp(-im * k * dot(d, point)) * (d × p)
 end
+
+
+
+"""
+    field(excitation::PlaneWave, point, quantity::FarField; parameter::Parameter=Parameter())
+
+Throw error since the far-field of a plane wave is not defined.
+"""
+function field(excitation::PlaneWave, point, quantity::FarField; parameter::Parameter=Parameter())
+
+    error("The far-field of a plane wave is not defined.")
+end

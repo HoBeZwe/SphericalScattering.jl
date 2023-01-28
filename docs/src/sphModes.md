@@ -86,7 +86,6 @@ and
 
 
 
-
 #### API
 
 The general API is employed:
@@ -97,6 +96,10 @@ H  = field(ex, MagneticField(point_cart))
 
 FF = field(ex, FarField(point_cart))
 ```
+
+!!! note
+    The far-field for a spherical mode makes only sense when travelling outwards.
+
 
 ---
 ## Scattered Field
@@ -134,9 +137,6 @@ FF = scatteredfield(sp, ex, FarField(point_cart))
 ---
 ## Total Field
 
-!!! warning
-    Not fully implemented yet.
-
 #### API
 
 The general API is employed:
@@ -144,6 +144,7 @@ The general API is employed:
 E  = field(sp, ex, ElectricField(point_cart))
 
 H  = field(sp, ex, MagneticField(point_cart))
-
-FF = field(sp, ex, FarField(point_cart))
 ```
+
+!!! note
+    The total far-field for a spherical mode excitation is not defined.

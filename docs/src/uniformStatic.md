@@ -70,9 +70,6 @@ E = scatteredfield(sp, ex, ElectricField(point_cart))
 ---
 ## Total Field
 
-!!! warning
-    Not fully implemented yet.
-
 #### API
 
 The following API is employed:

@@ -1,9 +1,16 @@
 
+f = 1e8
+κ = 2π * f / c   # Wavenumber
+
+# BEAST impedance matrix
+𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+T = assemble(𝑇, RT, RT)
+
+
 @testset "TE modes" begin
 
-    f = 1e8
-    κ = 2π * f / c   # Wavenumber
-
+    #f = 1e8
+    #κ = 2π * f / c   # Wavenumber
 
     ex = SphericalModeTE(; frequency=f, m=0, n=1, c=2)
 
@@ -48,10 +55,10 @@
         𝐸 = ex
 
         𝑒 = n × 𝐸 × n
-        𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+        #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
 
         e = assemble(𝑒, RT)
-        T = assemble(𝑇, RT, RT)
+        #T = assemble(𝑇, RT, RT)
 
         u = T \ e
 
@@ -80,14 +87,40 @@
         @test maximum(20 * log10.(abs.(diff_HF))) < -25 # dB
         @test maximum(20 * log10.(abs.(diff_FF))) < -25 # dB
     end
+
+    @testset "Total fields" begin
+
+        sp = PECSphere(; radius=spRadius)
+
+        # define an observation point
+        point_cart = [SVector(2.0, 2.0, 3.2), SVector(3.1, 4, 2)]
+
+        # compute scattered fields
+        Es = scatteredfield(sp, ex, ElectricField(point_cart))
+        Hs = scatteredfield(sp, ex, MagneticField(point_cart))
+
+        Ei = field(ex, ElectricField(point_cart))
+        Hi = field(ex, MagneticField(point_cart))
+
+        # total field
+        E = field(sp, ex, ElectricField(point_cart))
+        H = field(sp, ex, MagneticField(point_cart))
+
+        @test_throws ErrorException("The total far-field for a spherical mode excitation is not defined") field(
+            sp, ex, FarField(point_cart)
+        )
+
+        # is it the sum?
+        @test E[1] == Es[1] .+ Ei[1]
+        @test H[1] == Hs[1] .+ Hi[1]
+    end
 end
 
 
 @testset "TM modes" begin
 
-    f = 1e8
-    κ = 2π * f / c   # Wavenumber
-
+    #f = 1e8
+    #κ = 2π * f / c   # Wavenumber
 
     ex = SphericalModeTM(; frequency=f, m=0, n=1, c=2)
 
@@ -132,10 +165,10 @@ end
         𝐸 = ex
 
         𝑒 = n × 𝐸 × n
-        𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+        #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
 
         e = assemble(𝑒, RT)
-        T = assemble(𝑇, RT, RT)
+        #T = assemble(𝑇, RT, RT)
 
         u = T \ e
 
@@ -164,5 +197,32 @@ end
         @test maximum(20 * log10.(abs.(diff_EF))) < -25 # dB 
         @test maximum(20 * log10.(abs.(diff_HF))) < -25 # dB
         @test maximum(20 * log10.(abs.(diff_FF))) < -25 # dB
+    end
+
+    @testset "Total fields" begin
+
+        sp = PECSphere(; radius=spRadius)
+
+        # define an observation point
+        point_cart = [SVector(2.0, 2.0, 3.2), SVector(3.1, 4, 2)]
+
+        # compute scattered fields
+        Es = scatteredfield(sp, ex, ElectricField(point_cart))
+        Hs = scatteredfield(sp, ex, MagneticField(point_cart))
+
+        Ei = field(ex, ElectricField(point_cart))
+        Hi = field(ex, MagneticField(point_cart))
+
+        # total field
+        E = field(sp, ex, ElectricField(point_cart))
+        H = field(sp, ex, MagneticField(point_cart))
+
+        @test_throws ErrorException("The total far-field for a spherical mode excitation is not defined") field(
+            sp, ex, FarField(point_cart)
+        )
+
+        # is it the sum?
+        @test E[1] == Es[1] .+ Ei[1]
+        @test H[1] == Hs[1] .+ Hi[1]
     end
 end

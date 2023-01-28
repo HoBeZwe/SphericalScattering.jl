@@ -105,9 +105,6 @@ FF = scatteredfield(sp, ex, FarField(point_cart))
 ---
 ## Total Field
 
-!!! warning
-    Not fully implemented yet.
-
 #### API
 
 The general API is employed:

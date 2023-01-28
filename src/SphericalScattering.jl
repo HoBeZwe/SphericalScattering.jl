@@ -70,4 +70,6 @@ include("sphericalModes/scattered.jl")
 include("UniformField/excitation.jl")
 include("UniformField/incident.jl")
 include("UniformField/scattered.jl")
+
+include("totalFields.jl")
 end

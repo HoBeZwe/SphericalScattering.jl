@@ -51,9 +51,10 @@ The general API is employed:
 E  = field(ex, ElectricField(point_cart))
 
 H  = field(ex, MagneticField(point_cart))
-
-FF = field(ex, FarField(point_cart))
 ```
+
+!!! note
+    The far-field of a plane wave is not defined.
 
 ---
 ## Scattered Field
@@ -77,9 +78,6 @@ FF = scatteredfield(sp, ex, FarField(point_cart))
 ---
 ## Total Field
 
-!!! warning
-    Not fully implemented yet.
-
 #### API
 
 The general API is employed:
@@ -87,6 +85,7 @@ The general API is employed:
 E  = field(sp, ex, ElectricField(point_cart))
 
 H  = field(sp, ex, MagneticField(point_cart))
-
-FF = field(sp, ex, FarField(point_cart))
 ```
+
+!!! note
+    The total far-field is not defined (since the incident far-field is not defined).
