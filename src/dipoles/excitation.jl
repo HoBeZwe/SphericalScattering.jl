@@ -7,6 +7,14 @@ struct HertzianDipole{T,R,C} <: Dipole
     amplitude::T
     center::SVector{3,R}
     orientation::SVector{3,R}
+
+    # inner constructor: normalize orientation
+    function HertzianDipole(
+        embedding::Medium{C}, frequency::R, amplitude::T, center::SVector{3,R}, orientation::SVector{3,R}
+    ) where {T,R,C}
+        or_normalized = normalize(orientation)
+        new{T,R,C}(embedding, frequency, amplitude, center, or_normalized)
+    end
 end
 
 struct FitzgeraldDipole{T,R,C} <: Dipole
@@ -15,6 +23,13 @@ struct FitzgeraldDipole{T,R,C} <: Dipole
     amplitude::T
     center::SVector{3,R}
     orientation::SVector{3,R}
+
+    function FitzgeraldDipole(
+        embedding::Medium{C}, frequency::R, amplitude::T, center::SVector{3,R}, orientation::SVector{3,R}
+    ) where {T,R,C}
+        or_normalized = normalize(orientation)
+        new{T,R,C}(embedding, frequency, amplitude, center, or_normalized)
+    end
 end
 
 """

@@ -32,6 +32,9 @@ The API provides the following constructor with default values:
 planeWave
 ```
 
+!!! note
+    The `direction` and the `polarization` are each automatically normalized.
+
 ---
 ## Incident Field
 

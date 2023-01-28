@@ -2,16 +2,18 @@ using StaticArrays
 
 const μ0 = 4pi * 1e-7        # default permeability
 const ε0 = 8.8541878176e-12  # default permittivity
-ex = UniformField(; direction=SVector(1.0, 5.0, -3.0))
+
+dir = SVector(1.0, 5.0, -3.0)
+ex = UniformField(; direction=dir, amplitude=norm(dir))
 
 @testset "Incident field" begin
     # define an observation point
     point_cart = [SVector(2.0, 2.0, 3.2)]
 
     E = field(ex, ElectricField(point_cart))
-    @test E[1][1] == 1.0
-    @test E[1][2] == 5.0
-    @test E[1][3] == -3.0
+    @test E[1][1] ≈ 1.0
+    @test E[1][2] ≈ 5.0
+    @test E[1][3] ≈ -3.0
 end
 
 @testset "Scattered fields" begin

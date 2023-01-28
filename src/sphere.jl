@@ -29,7 +29,7 @@ struct DielectricSphere{C,R} <: Sphere
 end
 
 function DielectricSphere(r::R, embedding::Medium{C1}, filling::Medium{C2}) where {R,C1,C2}
-    
+
     C = promote_type(C1, C2)
 
     DielectricSphere(r, Medium{C}(embedding), Medium{C}(filling))

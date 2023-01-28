@@ -1,7 +1,14 @@
+
 struct UniformField{R,C,T} <: Excitation
     embedding::Medium{C}
     amplitude::T
     direction::SVector{3,R}
+
+    # inner constructor: normalize direction
+    function UniformField(embedding::Medium{C}, amplitude::T, direction::SVector{3,R}) where {T,R,C}
+        dir_normalized = normalize(direction)
+        new{T,R,C}(embedding, amplitude, dir_normalized)
+    end
 end
 
 

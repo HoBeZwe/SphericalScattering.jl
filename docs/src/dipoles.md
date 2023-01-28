@@ -44,8 +44,8 @@ HertzianDipole
 FitzgeraldDipole
 ```
 
-!!! warning
-    The orientation is so far not automatically normalized!
+!!! note
+    The `orientation` is automatically normalized.
 
 
 ---

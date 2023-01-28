@@ -5,6 +5,15 @@ struct PlaneWave{T,R,C} <: Excitation
     amplitude::T
     direction::SVector{3,R}
     polarization::SVector{3,R}
+
+    # inner constructor: normalize direction and polarization
+    function PlaneWave(
+        embedding::Medium{C}, frequency::R, amplitude::T, direction::SVector{3,R}, polarization::SVector{3,R}
+    ) where {T,R,C}
+        dir_normalized = normalize(direction)
+        pol_normalized = normalize(polarization)
+        new{T,R,C}(embedding, frequency, amplitude, dir_normalized, pol_normalized)
+    end
 end
 
 

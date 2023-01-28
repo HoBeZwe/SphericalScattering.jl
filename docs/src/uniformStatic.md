@@ -32,8 +32,8 @@ The API provides the following constructor with default values:
 UniformField
 ```
 
-!!! warning
-    The direction is so far not automatically normalized!
+!!! note
+    The direction is automatically normalized.
 
 
 ---
