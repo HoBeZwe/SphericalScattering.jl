@@ -122,8 +122,12 @@ Compute the electric field scattered by a layered dielectric sphere, for an inci
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::LayeredSphere, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter()
-)
+    sphere::LayeredSphere{LN,LR,LC},
+    excitation::UniformField{FC,FT,FR},
+    point,
+    quantity::ElectricField;
+    parameter::Parameter=Parameter(),
+) where {LN,LR,LC,FC,FT,FR}
     # using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`
 
     E0 = excitation.amplitude
@@ -134,7 +138,9 @@ function scatteredfield(
     n = length(a)
     perms = getfield.(vcat(sphere.embedding, sphere.filling), 1)
 
-    Bk = zeros(SMatrix{2,2,Float64}, n)
+    T = promote_type(LR, LC, FC, FT, FR)
+
+    Bk = zeros(SMatrix{2,2,T}, n)
     B = Matrix(I, 2, 2)
 
     for k in range(n; stop=1, step=-1)
@@ -147,8 +153,8 @@ function scatteredfield(
         B = Bk[k] * B
     end
 
-    Ck = zeros(Float64, n + 1)
-    Dk = zeros(Float64, n + 1)
+    Ck = zeros(T, n + 1)
+    Dk = zeros(T, n + 1)
 
     Ck[1] = 1
     Dk[n + 1] = 0
@@ -183,8 +189,12 @@ Compute the scalar potential scattered by a layered dielectric sphere, for an in
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::LayeredSphere, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter()
-)
+    sphere::LayeredSphere{LN,LR,LC},
+    excitation::UniformField{FC,FT,FR},
+    point,
+    quantity::ScalarPotential;
+    parameter::Parameter=Parameter(),
+) where {LN,LR,LC,FC,FT,FR}
     # using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`
 
     Φ0 = field(excitation, point, quantity)
@@ -195,7 +205,9 @@ function scatteredfield(
     n = length(a)
     perms = getfield.(vcat(sphere.embedding, sphere.filling), 1)
 
-    Bk = zeros(SMatrix{2,2,Float64}, n)
+    T = promote_type(LR, LC, FC, FT, FR)
+
+    Bk = zeros(SMatrix{2,2,T}, n)
     B = Matrix(I, 2, 2)
 
     for k in range(n; stop=1, step=-1)
@@ -208,8 +220,8 @@ function scatteredfield(
         B = Bk[k] * B
     end
 
-    Ck = zeros(Float64, n + 1)
-    Dk = zeros(Float64, n + 1)
+    Ck = zeros(T, n + 1)
+    Dk = zeros(T, n + 1)
 
     Ck[1] = 1
     Dk[n + 1] = 0
@@ -233,18 +245,23 @@ function scatteredfield(
 
     C = Ck[pos + 1]
     D = Dk[pos + 1]
+
     return C * Φ0 - D * Φ0 / r^3 - Φ0
 end
 
 """
-    scatteredfield(sphere::LayeredSpherePEC, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
+    scatteredfield(sphere::LayeredSpherePEC, excitation::UniformField{FC,FT,FR}, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
 
 Compute the scalar potential scattered by a layered dielectric sphere with PEC core, for an incident uniform field with polarization in x-direction.
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::LayeredSpherePEC, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter()
-)
+    sphere::LayeredSpherePEC{LN,LD,LR,LC},
+    excitation::UniformField{FC,FT,FR},
+    point,
+    quantity::ScalarPotential;
+    parameter::Parameter=Parameter(),
+) where {LN,LD,LR,LC,FC,FT,FR}
     # using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`
 
     Φ0 = field(excitation, point, quantity)
@@ -255,7 +272,9 @@ function scatteredfield(
     n = length(a) - 1
     perms = getfield.(vcat(sphere.embedding, sphere.filling), 1)
 
-    Bk = zeros(SMatrix{2,2,Float64}, n)
+    T = promote_type(LR, LC, FC, FT, FR)
+
+    Bk = zeros(SMatrix{2,2,T}, n)
     B = Matrix(I, 2, 2)
 
     for k in range(n; stop=1, step=-1)
@@ -267,8 +286,8 @@ function scatteredfield(
         Bk[k] = 1 / (3 * perms[k]) * ([B11 B12; B21 B22])
         B = Bk[k] * B
     end
-    Ck = zeros(Float64, n + 1)
-    Dk = zeros(Float64, n + 1)
+    Ck = zeros(T, n + 1)
+    Dk = zeros(T, n + 1)
 
     Ck[1] = 1
     Dk[1] = (B[2, 1] + B[2, 2] * a[end]^3) / (B[1, 1] + B[1, 2] * a[end]^3)
@@ -310,8 +329,12 @@ Compute the electric field scattered by a layered dielectric sphere with PEC cor
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::LayeredSpherePEC, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter()
-)
+    sphere::LayeredSpherePEC{LN,LD,LR,LC},
+    excitation::UniformField{FC,FT,FR},
+    point,
+    quantity::ElectricField;
+    parameter::Parameter=Parameter(),
+) where {LN,LD,LR,LC,FC,FT,FR}
     # using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`
 
     E0 = excitation.amplitude
@@ -321,7 +344,9 @@ function scatteredfield(
     n = length(a) - 1
     perms = getfield.(vcat(sphere.embedding, sphere.filling), 1)
 
-    Bk = zeros(SMatrix{2,2,Float64}, n)
+    T = promote_type(LR, LC, FC, FT, FR)
+
+    Bk = zeros(SMatrix{2,2,T}, n)
     B = Matrix(I, 2, 2)
 
     for k in range(n; stop=1, step=-1)
@@ -334,8 +359,8 @@ function scatteredfield(
         B = Bk[k] * B
     end
 
-    Ck = zeros(Float64, n + 1)
-    Dk = zeros(Float64, n + 1)
+    Ck = zeros(T, n + 1)
+    Dk = zeros(T, n + 1)
 
     Ck[1] = 1
     Dk[1] = (B[2, 1] + B[2, 2] * a[end]^3) / (B[1, 1] + B[1, 2] * a[end]^3)
