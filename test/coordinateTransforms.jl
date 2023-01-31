@@ -5,6 +5,11 @@
     vec = SVector(1.0, π / 4, π / 4)
     xyz = SphericalScattering.sph2cart(vec)
 
+    ẑ = SVector(0.0, 0.0, 1.0)
+    rθϕ = SphericalScattering.cart2sph(-ẑ)
+
+    @test rθϕ[2] ≈ π
+
     @test xyz[1] ≈ 0.5
     @test xyz[2] ≈ 0.5
     @test xyz[3] ≈ 1 / √2

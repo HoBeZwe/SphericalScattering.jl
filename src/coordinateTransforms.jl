@@ -104,11 +104,19 @@ function cart2sph(vec)
     y = vec[2]
     z = vec[3]
 
-    T = typeof(x)
+    T = eltype(x)
 
     r = sqrt(x^2 + y^2 + z^2)
-    t = (atan(sqrt(x^2 + y^2), z) + π) % π  # map to range [0, π]
-    p = (atan(y, x) + 2 * π) % 2π                  # map to range [0, 2π]
+    if x ≈ T(0) && y ≈ T(0)
+        if z >= 0
+            t = T(0)
+        else
+            t = T(π)
+        end
+    else
+        t = (atan(sqrt(x^2 + y^2), z) + π) % π  # map to range [0, π]
+    end
+    p = (atan(y, x) + 2 * π) % 2π               # map to range [0, 2π]
 
     return SVector{3,T}(r, t, p)
 end
