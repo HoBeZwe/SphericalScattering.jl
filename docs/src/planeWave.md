@@ -18,11 +18,15 @@
 ---
 ## Definition
 
-The plane wave with amplitude ``a``, wave vector ``\bm k``, and polarization ``\hat{\bm p}`` is assumed to have the field
+A plane wave with amplitude ``a``, wave vector ``\bm k = k \hat{\bm k}``, and polarization ``\hat{\bm p}`` (vectors with a hat denote unit vectors) is defined by the field
 ```math
-\bm e_\mathrm{PW}(\bm r) = a \hat{\bm p}  \, \mathrm{e}^{-\mathrm{j} \bm k \cdot \bm r}  \,.
+\bm e_\mathrm{PW}(\bm r) = a \hat{\bm p}  \, \mathrm{e}^{-\mathrm{j} \bm k \cdot \bm r}  \,,
 ```
-
+where the ploarization and wave vector are orthogonal, that is,
+```math
+\bm k \cdot \hat{\bm p} = 0
+```
+holds.
 
 ---
 ## [API](@id pwAPI)
@@ -33,7 +37,10 @@ planeWave
 ```
 
 !!! note
-    The `direction` and the `polarization` are each automatically normalized.
+    The provided `direction` and the `polarization` vectors have to be orthogonal. This is checked during initialization.
+
+!!! tip
+    The `direction` and the `polarization` vectors are each automatically normalized to unit vectors during the initialization.
 
 ---
 ## Incident Field
@@ -42,7 +49,7 @@ The electric field of the plane wave is as given above. The magnetic field is gi
 ```math
 \bm h_\mathrm{PW}(\bm r) = \cfrac{a}{Z_\mathrm{F}} (\hat{\bm k} \times \hat{\bm p})  \mathrm{e}^{-\mathrm{j} \bm k \cdot \bm r}
 ```
-with ``Z_\mathrm{F} = \sqrt{\mu / \varepsilon}``
+with ``Z_\mathrm{F} = \sqrt{\mu / \varepsilon}``.
 
 #### API
 
@@ -61,8 +68,8 @@ H  = field(ex, MagneticField(point_cart))
 
 The scattered field computation follows [[1, pp. 347ff]](@ref refs). 
 
-!!! warning
-    So far the plane wave is assumed to travel in positive ``z``-axis direction and to have a polarization along the ``x``-axis! This is planned to be generalized.
+!!! note
+    Internal details of the computations: Following [[1, pp. 347ff]](@ref refs) the plane wave is initially assumed to travel in positive ``z``-axis direction and to have a polarization along the positive ``x``-axis. Arbitrary directions and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails). 
 
 #### API
 

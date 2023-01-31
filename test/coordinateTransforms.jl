@@ -22,8 +22,4 @@
     @test F_sph[1] ≈ +1.0
     @test F_sph[2] ≈ -1.0
     @test F_sph[3] ≈ -1.0
-
-    # ----- rotate
-    point = SVector(2.0, 2.2, 3.1)
-    @test_nowarn SphericalScattering.rotate!(point, SVector(1.0, 2.3))
 end

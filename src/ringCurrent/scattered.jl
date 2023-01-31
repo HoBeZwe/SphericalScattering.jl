@@ -1,5 +1,4 @@
 
-
 """
     field(excitation::ElectricRingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
@@ -7,9 +6,11 @@ Compute the electric field radiated by an electric ring current at some position
 """
 function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
-    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
-
     T = typeof(excitation.frequency)
+
+    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
+    excitation.orientation × excitation.center == SVector{3,T}(0, 0, 0) ||
+        error("The ring current is not perpendicular to the sphere.")
 
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
@@ -17,8 +18,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Fi
     fieldType, exc = getFieldType(excitation, quantity)
 
     # --- translate/rotate coordinates
-    points = quantity.locations #translate(quantity.locations, -excitation.center)
-    #rotate!(points, -excitation.rotation)
+    points = rotate(excitation, quantity.locations; inverse=true)
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
@@ -26,7 +26,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Fi
     end
 
     # --- rotate resulting field
-    #rotate!(F, excitation.rotation)
+    rotate!(excitation, F; inverse=false)
 
     return F
 end

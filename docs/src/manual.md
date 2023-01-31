@@ -11,7 +11,7 @@ The basic building blocks are introduced in the following simple example; more d
 ```julia
 using SphericalScattering, StaticArrays
 
-# define excitation: plane wave travelling in negative z-direction with x-polarization
+# define excitation: plane wave travelling in positive z-direction with x-polarization
 ex = planeWave(frequency=10e6) # Hz
 
 # define scatterer: PEC sphere
@@ -24,7 +24,6 @@ point_cart = [SVector(2.0, 2.0, 3.2)]
 E  = scatteredfield(sp, ex, ElectricField(point_cart))
 H  = scatteredfield(sp, ex, MagneticField(point_cart))
 FF = scatteredfield(sp, ex, FarField(point_cart))
-
 ```
 
 ---
@@ -54,7 +53,7 @@ For all available excitations a simple constructor with keyword arguments and de
 - [Dipoles](@ref dipolesAPI)
 - [Ring currents](@ref rcAPI)
 - [Spherical modes](@ref modesAPI)
-- [Uniform Static Field](@ref uniformAPI)
+- [Uniform static field](@ref uniformAPI)
 
 
 ---

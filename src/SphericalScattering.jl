@@ -47,7 +47,6 @@ export field, scatteredfield
 
 
 # -------- included files
-include("coordinateTransforms.jl")
 include("dataHandling.jl")
 include("sphere.jl")
 
@@ -72,4 +71,5 @@ include("UniformField/incident.jl")
 include("UniformField/scattered.jl")
 
 include("totalFields.jl")
+include("coordinateTransforms.jl")
 end

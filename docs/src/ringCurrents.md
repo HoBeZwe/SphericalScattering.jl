@@ -23,7 +23,7 @@ The ring currents are defined by a circular loop of radius ``a`` carrying a unif
 
 #### Electric Ring Current
 
-The electric ring current with amplitude ``I``, and orientation ``\hat{\bm e}_z`` at position ``\bm r_0`` is assumed to have the current density
+The electric ring current with amplitude ``I``, and orientation ``\hat{\bm p} = \hat{\bm e}_z`` with its center at position ``\bm r_0 = (0,0,z_0)`` is assumed to have the current density
 ```math
 \bm{j}_\mathrm{rc} = I \hat{\bm e}_{\varphi'} \delta (r - R_0) \delta (\vartheta - \vartheta_0)\,,
 ```
@@ -31,10 +31,15 @@ where ``\delta`` denotes the Dirac delta distribution and ``R_0 = \sqrt{z_0^2 + 
 
 #### Magnetic Ring Current
 
-The magnetic ring current with amplitude ``M``, and orientation ``\hat{\bm e}_z`` at position ``\bm r_0`` is assumed to have the current density
+The magnetic ring current with amplitude ``M``, and orientation ``\hat{\bm p} = \hat{\bm e}_z`` at position ``\bm r_0 = (0,0,z_0)`` is assumed to have the current density
 ```math
 \bm{m}_\mathrm{rc} = M \hat{\bm e}_{\varphi'} \delta (r - R_0) \delta (\vartheta - \vartheta_0)\,.
 ```
+
+!!! note
+    Arbitrary center positions ``\bm r_0`` and orientations ``\hat{\bm p}`` are computed by [rotations](@ref rotationDetails) and translations of the corresponding fields.
+
+
 
 ---
 ## [API](@id rcAPI)
@@ -73,13 +78,20 @@ FF = field(ex, FarField(point_cart))
 
 The scattered field computation follows [[1, pp. 368ff]](@ref refs). For the magnetic ring current [duality relations](@ref dualityRelations) are employed. 
 
+!!! tip
+    For the scattered field computation the orientation of the ring current is restricted: the orientation vector has to be perpendicular to the surface of the sphere. 
+
+    This can be achieved, e.g., by defining the orientation first
+    ```julia
+    orientation = normalize(SVector(0.0,1.0,1.0))
+    ```
+    and then setting the center position as a multiple of the orientaion:
+    ```julia
+    center = 2.0 * orientation
+    ```
+
 !!! note
-    Orientation and location of the ring currents are restricted for the scattered field computation!
-
-The ring current has to be oriented such that it is normal to the sphere surface and located outside of the sphere.
-
-!!! warning
-    So far the ring current is assumed to be along the ``z``-axis! This is planned to be generalized.
+    Internal details of the computations: Following [[1, pp. 368ff]](@ref refs) the orientation vectors of the ring currents are initially assumed to be aligned with the ``z``-axis. Arbitrary centers and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails).
 
 #### API
 

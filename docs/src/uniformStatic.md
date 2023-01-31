@@ -32,14 +32,14 @@ The API provides the following constructor with default values:
 UniformField
 ```
 
-!!! note
-    The direction is automatically normalized.
+!!! tip
+    The `direction` vector is automatically normalized to a unit vector during the initialization.
 
 
 ---
 ## Incident Field
 
-The electric field of the plane wave is as given above. 
+The electric field is as given above. 
 
 #### API
 
@@ -55,8 +55,6 @@ E = field(ex, ElectricField(point_cart))
 
 The scattered field computation follows [[3]](@ref refs). 
 
-!!! warning
-    So far the static electric field is assumed to point in ``x``-direction. This is planned to be generalized.
 
 #### API
 

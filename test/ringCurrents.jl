@@ -9,9 +9,9 @@ T = assemble(𝑇, RT, RT)
 
 @testset "Electric ring current" begin
 
-    ex = electricRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
-
     @testset "Incident fields" begin
+
+        ex = electricRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
 
         # define an observation point
         point_cart = [SVector(4.0, 2.0, 3.2), SVector(0.2, 0.1, 2.3)]
@@ -35,51 +35,85 @@ T = assemble(𝑇, RT, RT)
 
     @testset "Scattered fields" begin
 
-        # ----- BEAST solution
-        𝐸 = ex
+        @testset "Standard orientation" begin
 
-        𝑒 = n × 𝐸 × n
-        #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+            ex = electricRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
 
-        e = assemble(𝑒, RT)
-        #T = assemble(𝑇, RT, RT)
+            # ----- BEAST solution
+            𝐸 = ex
+            𝑒 = n × 𝐸 × n
+            #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
 
-        u = T \ e
+            e = assemble(𝑒, RT)
+            #T = assemble(𝑇, RT, RT)
 
-        EF_MoM = +potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        HF_MoM = -potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
+            u = T \ e
 
+            EF_MoM = +potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            HF_MoM = -potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
 
-        # ----- this package
-        sp = PECSphere(; radius=spRadius)
+            # ----- this package
+            sp = PECSphere(; radius=spRadius)
 
-        EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
-        HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
-        FF = scatteredfield(sp, ex, FarField(points_cartFF))
+            EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+            HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
 
+            # ----- compare
+            diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
+            diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+            diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
 
-        # ----- compare
-        diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
-        diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
-        diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+            @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
+            @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
+            @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+        end
 
-        @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
-        @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
-        @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+        @testset "General orientation" begin
+
+            ori = normalize(SVector(0.0, -1.0, -1.0))
+            ex = electricRingCurrent(; frequency=f, radius=0.5, center=ori * 2, orientation=ori)
+
+            # ----- BEAST solution
+            𝐸 = ex
+            𝑒 = n × 𝐸 × n
+            #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+
+            e = assemble(𝑒, RT)
+            #T = assemble(𝑇, RT, RT)
+
+            u = T \ e
+
+            EF_MoM = +potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            HF_MoM = -potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
+
+            # ----- this package
+            sp = PECSphere(; radius=spRadius)
+
+            EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+            HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
+
+            # ----- compare
+            diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
+            diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+            diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+
+            @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
+            @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
+            @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+        end
     end
 end
 
 
 @testset "Magnetic ring current" begin
 
-    #f = 1e8
-    #κ = 2π * f / c   # Wavenumber
-
-
-    ex = magneticRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
-
     @testset "Incident fields" begin
+
+        ex = magneticRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
 
         # define an observation point
         point_cart = [SVector(4.0, 2.0, 3.2), SVector(0.2, 0.1, 2.3)]
@@ -103,37 +137,75 @@ end
 
     @testset "Scattered fields" begin
 
-        # ----- BEAST solution
-        𝐸 = ex
+        @testset "Standard orientation" begin
 
-        𝑒 = n × 𝐸 × n
-        #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+            ex = magneticRingCurrent(; frequency=f, center=SVector(0.0, 0.0, 2.0), radius=0.5)
 
-        e = assemble(𝑒, RT)
-        #T = assemble(𝑇, RT, RT)
+            # ----- BEAST solution
+            𝐸 = ex
+            𝑒 = n × 𝐸 × n
+            #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
 
-        u = T \ e
+            e = assemble(𝑒, RT)
+            #T = assemble(𝑇, RT, RT)
 
-        EF_MoM = -potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        HF_MoM = +potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        FF_MoM = +im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
+            u = T \ e
 
+            EF_MoM = -potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            HF_MoM = +potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            FF_MoM = +im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
 
-        # ----- this package
-        sp = PECSphere(; radius=spRadius)
+            # ----- this package
+            sp = PECSphere(; radius=spRadius)
 
-        EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
-        HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
-        FF = scatteredfield(sp, ex, FarField(points_cartFF))
+            EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+            HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
 
+            # ----- compare
+            diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
+            diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+            diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
 
-        # ----- compare
-        diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
-        diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
-        diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+            @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
+            @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
+            @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+        end
 
-        @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
-        @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
-        @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+        @testset "General orientation" begin
+
+            ori = normalize(SVector(0.0, -1.0, -1.0))
+            ex = magneticRingCurrent(; frequency=f, radius=0.5, center=ori * 2, orientation=ori)
+
+            # ----- BEAST solution
+            𝐸 = ex
+            𝑒 = n × 𝐸 × n
+            #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+
+            e = assemble(𝑒, RT)
+            #T = assemble(𝑇, RT, RT)
+
+            u = T \ e
+
+            EF_MoM = -potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            HF_MoM = +potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            FF_MoM = +im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
+
+            # ----- this package
+            sp = PECSphere(; radius=spRadius)
+
+            EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+            HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
+
+            # ----- compare
+            diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
+            diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+            diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+
+            @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
+            @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
+            @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+        end
     end
 end

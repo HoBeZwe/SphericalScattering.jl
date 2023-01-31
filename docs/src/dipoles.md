@@ -44,8 +44,8 @@ HertzianDipole
 FitzgeraldDipole
 ```
 
-!!! note
-    The `orientation` is automatically normalized.
+!!! tip
+    The `orientation` vector is automatically normalized to a unit vector during the initialization.
 
 
 ---
@@ -64,7 +64,7 @@ where
 \hat{\bm n} = \cfrac{\bm r - \bm r_0}{|\bm r - \bm r_0|}\,.
 ```
 !!! note
-    The fields of the Fitzgerald dipole are computed via [duality relations](@ref dualityRelations).
+    The fields of the Fitzgerald dipole follow from the [duality relations](@ref dualityRelations).
 
 
 #### API
@@ -81,15 +81,22 @@ FF = field(ex, FarField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation is a generalization of the analysis in [[1, pp. 374ff]](@ref refs). For the magnetic ring current [duality relations](@ref dualityRelations) are employed.
+The scattered field computation is a generalization of the analysis in [[1, pp. 374ff]](@ref refs). For the magnetic dipole [duality relations](@ref dualityRelations) are employed.
+
+!!! tip
+    For the scattered field computation the orientation of the dipole is restricted: the dipole has to be perpendicular to the surface of the sphere. 
+
+    This can be achieved, e.g., by defining the orientation first
+    ```julia
+    orientation = normalize(SVector(0.0,1.0,1.0))
+    ```
+    and then setting the position as a multiple of the orientaion:
+    ```julia
+    position = 2.0 * orientation
+    ```
 
 !!! note
-    Orientation and location of the dipole are restricted for the scattered field computation!
-
-The dipole has to be oriented such that it is normal to the sphere surface and located outside of the sphere.
-
-!!! warning
-    So far the dipole is assumed to be along the ``z``-axis! This is planned to be generalized.
+    Internal details of the computations: Following [[1, pp. 347ff]](@ref refs) the dipoles are initially assumed to be aligned with the ``z``-axis. Arbitrary positions and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails).
 
 #### API
 

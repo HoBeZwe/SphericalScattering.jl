@@ -9,19 +9,18 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, quantity::Field; 
     sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
 
     T = typeof(excitation.frequency)
-
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- rotate coordinates
-    # rotate!(points, -excitation.rotation)
+    points = rotate(excitation, quantity.locations; inverse=true)
 
     # --- compute field in Cartesian representation
-    for (ind, point) in enumerate(quantity.locations)
+    for (ind, point) in enumerate(points)
         F[ind] = scatteredfield(sphere, excitation, point, quantity; parameter=parameter)
     end
 
     # --- rotate resulting field
-    # rotate!(F, excitation.rotation)
+    rotate!(excitation, F; inverse=false)
 
     return F
 end

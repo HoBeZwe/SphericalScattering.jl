@@ -1,5 +1,4 @@
 
-
 """
     field(excitation::RingCurrent, quantity::ElectricField; parameter::Parameter=Parameter())
 
@@ -14,8 +13,8 @@ function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Pa
     fieldType, exc = getFieldType(excitation, quantity)
 
     # --- translate/rotate coordinates
-    points = translate(quantity.locations, excitation.center)
-    rotate!(points, -excitation.rotation)
+    points = translate(quantity.locations, -excitation.center)
+    rotate!(excitation, points; inverse=true)
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
@@ -23,7 +22,7 @@ function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Pa
     end
 
     # --- rotate resulting field
-    rotate!(F, excitation.rotation)
+    rotate!(excitation, F; inverse=false)
 
     return F
 end

@@ -9,7 +9,7 @@ T = assemble(𝑇, RT, RT)
 
 @testset "Hertzian dipole" begin
 
-    ex = HertzianDipole(; frequency=f, center=SVector(0.0, 0.0, 2.0))
+    ex = HertzianDipole(; frequency=f, position=SVector(0.0, 0.0, 2.0))
 
     @testset "Incident fields" begin
 
@@ -35,35 +35,74 @@ T = assemble(𝑇, RT, RT)
 
     @testset "Scattered fields" begin
 
-        # ----- BEAST solution
-        𝐸 = ex
+        @testset "Standard orientation" begin
 
-        𝑒 = n × 𝐸 × n
-        e = assemble(𝑒, RT)
+            ex = HertzianDipole(; frequency=f, position=SVector(0.0, 0.0, 2.0))
 
-        u = T \ e
+            # ----- BEAST solution
+            𝐸 = ex
 
-        EF_MoM = +potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        HF_MoM = -potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
+            𝑒 = n × 𝐸 × n
+            e = -assemble(𝑒, RT)
 
+            u = T \ e
 
-        # ----- this package
-        sp = PECSphere(; radius=spRadius)
+            EF_MoM = potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            HF_MoM = 1 / (c * 𝜇) * potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
 
-        EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
-        HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
-        FF = scatteredfield(sp, ex, FarField(points_cartFF))
+            # ----- this package
+            sp = PECSphere(; radius=spRadius)
 
+            EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+            HF = scatteredfield(sp, ex, MagneticField(points_cartNF))
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
 
-        # ----- compare
-        diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
-        diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
-        diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+            # ----- compare
+            diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
+            diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+            diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
 
-        @test maximum(20 * log10.(abs.(diff_EF))) < -25 # dB 
-        @test maximum(20 * log10.(abs.(diff_HF))) < -25 # dB
-        @test maximum(20 * log10.(abs.(diff_FF))) < -25 # dB
+            @test maximum(20 * log10.(abs.(diff_EF))) < -25 # dB 
+            @test maximum(20 * log10.(abs.(diff_HF))) < -25 # dB
+            @test maximum(20 * log10.(abs.(diff_FF))) < -25 # dB
+
+        end
+
+        @testset "General orientation" begin
+
+            ori = normalize(SVector(0.0, -1.0, -1.0))
+            ex = HertzianDipole(; frequency=f, orientation=ori, position=ori * 2)
+
+            # ----- BEAST solution
+            𝐸 = ex
+
+            𝑒 = n × 𝐸 × n
+            e = -assemble(𝑒, RT)
+
+            u = T \ e
+
+            EF_MoM = potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            HF_MoM = 1 / (c * 𝜇) * potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
+
+            # ----- this package
+            sp = PECSphere(; radius=spRadius)
+
+            EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+            HF = scatteredfield(sp, ex, MagneticField(points_cartNF))
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
+
+            # ----- compare
+            diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
+            diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+            diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+
+            @test maximum(20 * log10.(abs.(diff_EF))) < -25 # dB 
+            @test maximum(20 * log10.(abs.(diff_HF))) < -25 # dB
+            @test maximum(20 * log10.(abs.(diff_FF))) < -25 # dB
+
+        end
     end
 end
 
@@ -74,7 +113,7 @@ end
     #κ = 2π * f / c   # Wavenumber
 
 
-    ex = FitzgeraldDipole(; frequency=f, center=SVector(0.0, 0.0, 2.0))
+    ex = FitzgeraldDipole(; frequency=f, position=SVector(0.0, 0.0, 2.0))
 
     @testset "Incident fields" begin
 
@@ -100,36 +139,79 @@ end
 
     @testset "Scattered fields" begin
 
-        # ----- BEAST solution
-        𝐸 = ex
+        @testset "Standard orientation" begin
 
-        𝑒 = n × 𝐸 × n
-        #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
-        e = assemble(𝑒, RT)
-        #T = assemble(𝑇, RT, RT)
+            ex = FitzgeraldDipole(; frequency=f, position=SVector(0.0, 0.0, 2.0))
 
-        u = T \ e
+            # ----- BEAST solution
+            𝐸 = ex
 
-        EF_MoM = -potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        HF_MoM = +potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
-        FF_MoM = +im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
+            𝑒 = n × 𝐸 × n
+            #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+            e = assemble(𝑒, RT)
+            #T = assemble(𝑇, RT, RT)
 
+            u = T \ e
 
-        # ----- this package
-        sp = PECSphere(; radius=spRadius)
-
-        EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
-        HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
-        FF = scatteredfield(sp, ex, FarField(points_cartFF))
+            EF_MoM = -potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            HF_MoM = -potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            FF_MoM = +im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
 
 
-        # ----- compare
-        diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
-        diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
-        diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+            # ----- this package
+            sp = PECSphere(; radius=spRadius)
 
-        @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
-        @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
-        @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+            EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+            HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
+
+
+            # ----- compare
+            diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
+            diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+            diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+
+            @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
+            @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
+            @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+        end
+
+        @testset "General orientation" begin
+
+            ori = normalize(SVector(0.0, -1.0, -1.0))
+            ex = FitzgeraldDipole(; frequency=f, orientation=ori, position=ori * 2)
+
+            # ----- BEAST solution
+            𝐸 = ex
+
+            𝑒 = n × 𝐸 × n
+            #𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+            e = assemble(𝑒, RT)
+            #T = assemble(𝑇, RT, RT)
+
+            u = T \ e
+
+            EF_MoM = -potential(MWSingleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            HF_MoM = -potential(BEAST.MWDoubleLayerField3D(; wavenumber=κ), points_cartNF, u, RT)
+            FF_MoM = +im * f / (2 * c) * potential(MWFarField3D(; gamma=𝑇.gamma), points_cartFF, u, RT)
+
+
+            # ----- this package
+            sp = PECSphere(; radius=spRadius)
+
+            EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+            HF = scatteredfield(sp, ex, MagneticField(points_cartNF)) * c * 𝜇
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
+
+
+            # ----- compare
+            diff_EF = norm.(EF - EF_MoM) ./ maximum(norm.(EF))  # worst case error
+            diff_HF = norm.(HF - HF_MoM) ./ maximum(norm.(HF))  # worst case error
+            diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
+
+            @test maximum(20 * log10.(abs.(diff_EF))) < -24 # dB 
+            @test maximum(20 * log10.(abs.(diff_HF))) < -24 # dB
+            @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
+        end
     end
 end

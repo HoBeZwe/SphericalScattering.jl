@@ -13,17 +13,10 @@ function field(excitation::Dipole, quantity::Field; parameter::Parameter=Paramet
     # --- distinguish electric/magnetic current
     fieldType, exc = getFieldType(excitation, quantity)
 
-    # --- translate/rotate coordinates
-    #points = translate(quantity.locations, excitation.center)
-    # rotate!(points, -excitation.rotation)
-
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)
         F[ind] = field(exc, point, fieldType; parameter=parameter)
     end
-
-    # --- rotate resulting field
-    # rotate!(F, excitation.rotation)
 
     return F
 end
@@ -44,7 +37,7 @@ function field(excitation::Dipole, point, quantity::ElectricField; parameter::Pa
     ε  = excitation.embedding.ε
     μ  = excitation.embedding.μ
 
-    r0 = excitation.center
+    r0 = excitation.position
     p  = excitation.orientation
 
     d = point - r0
@@ -70,7 +63,7 @@ function field(excitation::Dipole, point, quantity::MagneticField; parameter::Pa
     Il = excitation.amplitude
     k  = wavenumber(excitation)
 
-    r0 = excitation.center
+    r0 = excitation.position
     p  = excitation.orientation
 
     d = point - r0
@@ -96,7 +89,7 @@ function field(excitation::HertzianDipole, point, quantity::FarField; parameter:
     ε  = excitation.embedding.ε
     μ  = excitation.embedding.μ
 
-    r0 = excitation.center
+    r0 = excitation.position
     p  = excitation.orientation
 
     n = point / norm(point)
@@ -119,7 +112,7 @@ function field(excitation::FitzgeraldDipole, point, quantity::FarField; paramete
     Il = excitation.amplitude
     k  = wavenumber(excitation)
 
-    r0 = excitation.center
+    r0 = excitation.position
     p  = excitation.orientation
 
     n = point / norm(point)
@@ -136,7 +129,7 @@ end
 
 #     k  = wavenumber(excitation)
 #     I0 = excitation.amplitude
-#     R  = norm(excitation.center)
+#     R  = norm(excitation.position)
 
 #     μ  = excitation.embedding.μ
 #     ε  = excitation.embedding.ε

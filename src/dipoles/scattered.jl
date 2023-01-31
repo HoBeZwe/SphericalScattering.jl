@@ -6,18 +6,18 @@ Compute the field scattered by a PEC sphere excited by a dipole at some position
 """
 function scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
 
-    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
-
     T = typeof(excitation.frequency)
+
+    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
+    excitation.orientation × excitation.position == SVector{3,T}(0, 0, 0) || error("The dipole is not perpendicular to the sphere.")
 
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- distinguish electric/magnetic current
     fieldType, exc = getFieldType(excitation, quantity)
 
-    # --- translate/rotate coordinates
-    points = quantity.locations # translate(quantity.locations, -excitation.center)
-    # rotate!(points, -excitation.rotation)
+    # --- rotate coordinates
+    points = rotate(excitation, quantity.locations; inverse=true)
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
@@ -25,7 +25,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; 
     end
 
     # --- rotate resulting field
-    # rotate!(F, excitation.rotation)
+    rotate!(excitation, F; inverse=false)
 
     return F
 end
@@ -46,7 +46,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
     k  = wavenumber(excitation)
     T  = typeof(k)
     Il = excitation.amplitude
-    z0 = norm(excitation.center)   # distance Dipole-origin
+    z0 = norm(excitation.position)   # distance Dipole-origin
 
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε
@@ -96,8 +96,8 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
 
     ZF = sqrt(μ / ε)
 
-    Er *= -im * Il / 8 / k / z0 * sqrt(r / z0) / r / r * ZF
-    Eϑ *= im * Il / 8 / k / z0 / z0 * sinϑ / r * ZF
+    Er *= +im * Il / 8 / k / z0 * sqrt(r / z0) / r / r * ZF
+    Eϑ *= -im * Il / 8 / k / z0 / z0 * sinϑ / r * ZF
 
     return convertSpherical2Cartesian(SVector{3,Complex{T}}(Er, Eϑ, 0.0), point_sph)
 end
@@ -118,7 +118,7 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
     k  = wavenumber(excitation)
     T  = typeof(k)
     Il = excitation.amplitude
-    z0 = norm(excitation.center)    # distance Dipole-origin
+    z0 = norm(excitation.position)    # distance Dipole-origin
 
     eps = parameter.relativeAccuracy
 
@@ -177,7 +177,7 @@ function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, qu
     k  = wavenumber(excitation)
     T  = typeof(k)
     Il = excitation.amplitude
-    z0 = norm(excitation.center)    # distance dipole-origin
+    z0 = norm(excitation.position)    # distance dipole-origin
 
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε
@@ -212,7 +212,7 @@ function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, qu
         # print("did not converge: n=$n") # if Hankel function throws overflow error -> result still agrees with small argument approximation (verified)
     end
 
-    Eϑ *= Il / k * sinϑ / z0 / 4 * sqrt(k / z0 / 2 / π) * sqrt(μ / ε)
+    Eϑ *= -Il / k * sinϑ / z0 / 4 * sqrt(k / z0 / 2 / π) * sqrt(μ / ε)
 
     return SVector{3,Complex{T}}(
         Eϑ * cos(point_sph[2]) * cos(point_sph[3]), Eϑ * cos(point_sph[2]) * sin(point_sph[3]), -Eϑ * sin(point_sph[2])
@@ -235,7 +235,7 @@ function scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, point, 
     k  = wavenumber(excitation)
     T  = typeof(k)
     Ul = excitation.amplitude
-    z0 = norm(excitation.center)    # distance dipole-origin
+    z0 = norm(excitation.position)    # distance dipole-origin
 
     μ = excitation.embedding.μ
     ε = excitation.embedding.ε
