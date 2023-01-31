@@ -41,6 +41,24 @@ DielectricSphere
 ```
 Here `radius` is a Float and `filling` of type [`Medium(εᵢ, μᵢ)`](@ref).
 
+---
+## Dielectric Sphere with Thin Impedance Layer
+
+The dielectric sphere with a thin impedance layer has radius $r$ and is assumed to be located in the origin. It is defined by [`DielectricSphereThinImpedanceLayer`](@ref). Unlike the LayeredSphere model, the solution is obtained by using an approximation: it is assumed that the impedance is so high that the displacement field is purely radial (see [[6, pp. 230ff]](@ref refs)). This leads to a potential drop across the thin layer, while the displacement field is constant in radial direction. In addition to the embedding [`Medium(ε, μ)`](@ref) and  filling [`Medium(εᵢ, μᵢ)`](@ref), the impedance layer must be specified, both the [`Medium`](@ref) and its `thickness`.  
+```@raw html
+<div align="center">
+<img src="../assets/DielectricSphere.svg" width="300"/>
+</div>
+<br/>
+```
+
+#### [API](@id dielecimpedAPI)
+
+```@docs
+DielectricSphereThinImpedanceLayer
+```
+Here `radius` and `thickness` are a Floats, `embedding`, `filling` and `thinlayer` are of type [`Medium`](@ref).
+
 
 ---
 ## Layered Dielectric Sphere

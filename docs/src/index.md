@@ -46,3 +46,4 @@ The implementation is based on
 - [3] Sihvola, Ari & Lindell, Ismo., *Transmission Line Analogy for Calculating the Effective Permittivity of Mixtures with Spherical Multilayer Scatterers*, Journal of Electromagnetic Waves and Applications, Volume 2, Pages 741-756, 1988.
 - [4] J. D. Jackson, *Classical Electrodynamics*, New York: Wiley, 3rd ed., 1999.
 - [5] J. E. Hansen, ed., *Spherical Near-field Antenna Measurements*, The Institution of Engineering and Technology, Michael Faraday House, Six Hills Way, Stevenage SG1 2AY, UK: IET, 1988.
+- [6] T. B. Jones, Ed., *Models for layered spherical particles*, in Electromechanics of Particles, Cambridge: Cambridge University Press, 1995, pp. 227–235. doi: 10.1017/CBO9780511574498.012.

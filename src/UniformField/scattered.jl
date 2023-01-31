@@ -71,6 +71,151 @@ function scatteredfield(
 
 end
 
+
+
+"""
+    scatteredfield(sphere::DielectricSphereThinImpedanceLayer, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
+
+Compute the electric field scattered by a dielectric sphere with a thin coating,
+where the displacement field in the coating is only in radial direction.
+We assume an an incident uniform field with polarization in z-direction.
+
+The point and the returned field are in Cartesian coordinates.
+"""
+function scatteredfield(
+    sphere::DielectricSphereThinImpedanceLayer,
+    excitation::UniformField,
+    point,
+    quantity::ElectricField;
+    parameter::Parameter=Parameter(),
+)
+
+    ẑ = SVector(0.0, 0.0, 1.0)
+    # Currently, we only support a constant field in z-direction
+    @assert excitation.direction == ẑ
+
+    point_sph = cart2sph(point)
+    θ = point_sph[2]
+
+    cosθ = dot(ẑ, point) / norm(point)
+
+    r = norm(point)
+
+    A, K = scatterCoeff(sphere, excitation)
+
+    if r > sphere.radius
+        E = -SVector((-2 * A / r^3) * cosθ, (+A / r^3) * (-sin(θ)), 0.0)
+    else
+        E = -SVector((-K * cosθ, K * sin(θ), 0.0))
+    end
+
+    return convertSpherical2Cartesian(E, point_sph)
+end
+
+function scatteredfield(
+    sphere::DielectricSphereThinImpedanceLayer,
+    excitation::UniformField,
+    point,
+    quantity::DisplacementField;
+    parameter::Parameter=Parameter(),
+)
+
+    E = scatteredfield(sphere, excitation, point, ElectricField(quantity.locations); parameter=parameter)
+
+    if norm(point) > sphere.radius
+        D = sphere.embedding.ε * E
+    else
+        D = sphere.filling.ε * E
+    end
+
+    return D
+end
+
+"""
+    scatteredfield(sphere::DielectricSphereThinImpedanceLayer, excitation::UniformField, point, quantity::ScalarPotentialJump; parameter::Parameter=Parameter())
+
+Compute the jump of the scalar potential for a dielectric sphere with a thin
+coating, where the displacement field in the coating is only in radial direction.
+We assume an an incident uniform field with polarization in z-direction.
+
+More precisely, we compute the difference Δ = Φ_i - Φ_e, where
+Φ_i is the potential on the inner side and ϕ_e the exterior potential.
+
+The point and the returned field are in Cartesian coordinates.
+"""
+function scatteredfield(
+    sphere::DielectricSphereThinImpedanceLayer,
+    excitation::UniformField,
+    point,
+    quantity::ScalarPotentialJump;
+    parameter::Parameter=Parameter(),
+)
+
+    ẑ = SVector(0.0, 0.0, 1.0)
+    # Currently, we only support a constant field in z-direction
+    @assert excitation.direction == ẑ
+
+    point_sph = cart2sph(point)
+    θ = point_sph[2]
+
+    cosθ = dot(ẑ, point) / norm(point)
+    #@assert cosθ ≈ cos(point_sph[2]) atol = 1e-6
+
+    ~, K = scatterCoeff(sphere, excitation)
+
+    return sphere.thickness * (sphere.filling.ε / sphere.thinlayer.ε) * K * cosθ
+
+end
+
+"""
+    scatteredfield(sphere::DielectricSphereThinImpedanceLayer, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
+
+Compute the scalar potential scattered by a dielectric sphere with a thin coating,
+where the displacement field in the coating is only in radial direction.
+We assume an an incident uniform field with polarization in z-direction.
+
+The point and the returned field are in Cartesian coordinates.
+"""
+function scatteredfield(
+    sphere::DielectricSphereThinImpedanceLayer,
+    excitation::UniformField,
+    point,
+    quantity::ScalarPotential;
+    parameter::Parameter=Parameter(),
+)
+
+    ẑ = SVector(0.0, 0.0, 1.0)
+    # Currently, we only support a constant field in z-direction
+    @assert excitation.direction == ẑ
+
+    cosθ = dot(ẑ, point) / norm(point)
+    r = norm(point)
+
+    R = sphere.radius
+
+    A, K = scatterCoeff(sphere, excitation)
+
+    if r >= R
+        return (+A / r^2) * cosθ # Jones 1995, (C.1a)
+    else
+        return (-K * r * cosθ)
+    end
+end
+
+function scatterCoeff(sp::DielectricSphereThinImpedanceLayer, ex::UniformField)
+    R = sp.radius
+    Δ = sp.thickness
+    εₘ = sp.thinlayer.ε
+    εₑ = sp.embedding.ε
+    εᵢ = sp.filling.ε
+    E₀ = ex.amplitude
+
+    A = E₀ * R^3 * (-R * εₑ * εₘ + R * εᵢ * εₘ - Δ * εₑ * εᵢ) / (2R * εₑ * εₘ + R * εᵢ * εₘ + 2Δ * εₑ * εᵢ)
+    K = 3E₀ * R * εₑ * εₘ / (2 * R * εₘ * εₑ + R * εᵢ * εₘ + 2Δ * εₑ * εᵢ)
+
+    return A, K
+end
+
 """
     scatteredfield(sphere::PECSphere, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
@@ -394,4 +539,6 @@ function scatteredfield(
 end
 
 fieldType(F::ElectricField) = SVector{3,Complex{eltype(F.locations[1])}}
+fieldType(F::DisplacementField) = SVector{3,Complex{eltype(F.locations[1])}}
 fieldType(F::ScalarPotential) = Complex{eltype(F.locations[1])}
+fieldType(F::ScalarPotentialJump) = Complex{eltype(F.locations[1])}
