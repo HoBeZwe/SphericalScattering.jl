@@ -9,7 +9,7 @@ using LinearAlgebra
 
 
 # ----- points on spherical grid
-ϑ = range(0.0 + 0.001; stop=π - 0.0001, length=18)  # 10° steps
+ϑ = range(0.0; stop=π, length=18)  # 10° steps
 ϕ = range(0.0; stop=2π, length=36) # 10° steps
 
 function getDefaultPoints(r::Float64)

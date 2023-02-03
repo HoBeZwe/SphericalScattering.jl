@@ -4,7 +4,7 @@
 !!! info
     At the user interface a Cartesian basis is used for all coordinates and field components. Internally, spherical coordinates are used as well.
 
-The employed coordinate system uses the following convention for the spherical coordinates everywhere in the code.
+The employed coordinate system uses the following convention for the spherical coordinates everywhere in the code with ``\vartheta \in [0, \pi]`` and ``\varphi \in [-\pi, \pi]``.
 
 ```@raw html
 <div align="center">

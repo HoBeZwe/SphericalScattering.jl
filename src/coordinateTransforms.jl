@@ -226,19 +226,11 @@ function cart2sph(vec)
 
     T = eltype(x)
 
-    r = sqrt(x^2 + y^2 + z^2)
-    if x ≈ T(0) && y ≈ T(0)
-        if z >= 0
-            t = T(0)
-        else
-            t = T(π)
-        end
-    else
-        t = (atan(sqrt(x^2 + y^2), z) + π) % π  # map to range [0, π]
-    end
-    p = (atan(y, x) + 2 * π) % 2π               # map to range [0, 2π]
+    r = hypot(x, y, z)
+    ϑ = r ≈ T(0) ? T(0) : acos(z / r)   # ∈ [0, π] with ϑ = 0 for x = y = z = 0 case
+    φ = atan(y, x)                      # ∈ [-π, π]
 
-    return SVector{3,T}(r, t, p)
+    return SVector{3,T}(r, ϑ, φ)
 end
 
 
