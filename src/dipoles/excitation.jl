@@ -112,3 +112,7 @@ function getFieldType(excitation::FitzgeraldDipole, quantity::Field)
         return quantity, exc
     end
 end
+
+function orientation(ex::Dipole)
+    return ex.orientation
+end

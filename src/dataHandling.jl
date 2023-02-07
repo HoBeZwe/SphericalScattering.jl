@@ -10,11 +10,19 @@ struct ElectricField <: Field
     locations#::Vector
 end
 
+struct DisplacementField <: Field
+    locations#::Vector
+end
+
 struct MagneticField <: Field
     locations#::Vector
 end
 
 struct ScalarPotential <: Field
+    locations
+end
+
+struct ScalarPotentialJump <: Field
     locations
 end
 

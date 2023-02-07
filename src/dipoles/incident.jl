@@ -8,7 +8,7 @@ function field(excitation::Dipole, quantity::Field; parameter::Parameter=Paramet
 
     T = typeof(excitation.frequency)
 
-    F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
+    F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- distinguish electric/magnetic current
     fieldType, exc = getFieldType(excitation, quantity)
