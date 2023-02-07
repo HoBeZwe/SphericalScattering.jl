@@ -91,9 +91,9 @@ end
 
 Determine rotation matrix for a dipole or a ring-current excitation via the Rodrigues formula. 
 """
-function rotationMatrix(excitation::Union{Dipole,RingCurrent})
+function rotationMatrix(excitation::Union{Dipole,RingCurrent,UniformField})
 
-    p = excitation.orientation # unit vector
+    p = orientation(excitation) # unit vector
     T = eltype(p)
 
     # --- p == ez  => no rotation
@@ -123,43 +123,6 @@ function rotationMatrix(excitation::Union{Dipole,RingCurrent})
     return R
 end
 
-
-# """
-#     rotationMatrix(excitation::UniformField)
-
-# Determine rotation matrix for a uniform field excitation via the Rodrigues formula. 
-# """
-# function rotationMatrix(excitation::UniformField)
-
-#     p = excitation.direction # unit vector
-#     T = eltype(p)
-
-#     # --- p == ex  => no rotation
-#     p == SVector{3,T}(1, 0, 0) && return nothing
-
-#     # --- rotation axis
-#     aux = SVector{3,T}(1, 0, 0) × p
-#     if norm(aux) == T(0) # rotation to -ex         
-#         rotAxis = SVector{3,T}(0, 1, 0) # rotate around y-axis
-#     else # all other cases
-#         rotAxis = normalize(aux)
-#     end
-
-#     cosϑ = p[1]                     # inner product of unit vectors:  ex ⋅ p  = p[1] = cos(ϑ)
-#     sinϑ = sqrt(p[2]^2 + p[3]^2)    # cross product of unit vectors: |ex × p| = sin(ϑ)
-
-#     # --- auxiliary matrix
-#     K = SMatrix{3,3,T}([
-#          0          -rotAxis[3]  rotAxis[2]
-#          rotAxis[3]  0          -rotAxis[1]
-#         -rotAxis[2]  rotAxis[1]  0
-#     ])
-
-#     # --- put it together
-#     R = I + sinϑ * K + (1 - cosϑ) * K * K  # Rodriguez rotation formula
-
-#     return R
-# end
 
 
 """

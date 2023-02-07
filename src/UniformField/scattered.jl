@@ -90,26 +90,27 @@ function scatteredfield(
     parameter::Parameter=Parameter(),
 )
 
-    ẑ = SVector(0.0, 0.0, 1.0)
-    # Currently, we only support a constant field in z-direction
-    @assert excitation.direction == ẑ
-
+    point = rotate(excitation, [point]; inverse=true)[1]
     point_sph = cart2sph(point)
-    θ = point_sph[2]
-
-    cosθ = dot(ẑ, point) / norm(point)
 
     r = norm(point)
+
+    ẑ = SVector(0.0, 0.0, 1.0) #excitation.direction
+    cosθ = dot(ẑ, point) / r
+    sinθ = norm(cross(ẑ, point)) / r
 
     A, K = scatterCoeff(sphere, excitation)
 
     if r > sphere.radius
-        E = -SVector((-2 * A / r^3) * cosθ, (+A / r^3) * (-sin(θ)), 0.0)
+        E = -SVector((-2 * A / r^3) * cosθ, (+A / r^3) * (-sinθ), 0.0)
     else
-        E = -SVector((-K * cosθ, K * sin(θ), 0.0))
+        E = -SVector((-K * cosθ, K * sinθ, 0.0))
     end
 
-    return convertSpherical2Cartesian(E, point_sph)
+    E_cart = convertSpherical2Cartesian(E, point_sph)
+
+    return rotate(excitation, [E_cart]; inverse=false)[1]
+
 end
 
 function scatteredfield(
@@ -151,15 +152,7 @@ function scatteredfield(
     parameter::Parameter=Parameter(),
 )
 
-    ẑ = SVector(0.0, 0.0, 1.0)
-    # Currently, we only support a constant field in z-direction
-    @assert excitation.direction == ẑ
-
-    point_sph = cart2sph(point)
-    θ = point_sph[2]
-
-    cosθ = dot(ẑ, point) / norm(point)
-    #@assert cosθ ≈ cos(point_sph[2]) atol = 1e-6
+    cosθ = dot(excitation.direction, point) / norm(point)
 
     ~, K = scatterCoeff(sphere, excitation)
 
@@ -184,11 +177,7 @@ function scatteredfield(
     parameter::Parameter=Parameter(),
 )
 
-    ẑ = SVector(0.0, 0.0, 1.0)
-    # Currently, we only support a constant field in z-direction
-    @assert excitation.direction == ẑ
-
-    cosθ = dot(ẑ, point) / norm(point)
+    cosθ = dot(excitation.direction, point) / norm(point)
     r = norm(point)
 
     R = sphere.radius

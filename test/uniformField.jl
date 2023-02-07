@@ -143,29 +143,19 @@ end
 
         #
         sp = LayeredSphere(;
-            radii=SVector(R_c, R_c - Δ), # Radius of total cell, then radius of core of cell (or should we do it differently?)
-            embedding=md_s, # Suspension
+            radii=SVector(R_c, R_c - Δ),
+            embedding=md_s,
             filling=SVector(md_m, md_c), # From outer to inner layer
         )
 
 
-        spj = DielectricSphereThinImpedanceLayer(;
-            radius=R_c, # Radius of total cell, then radius of core of cell (or should we do it differently?)
-            thickness=Δ,
-            embedding=md_s, # Suspension
-            thinlayer=md_m,
-            filling=md_c, # From outer to inner layer
-        )
+        spj = DielectricSphereThinImpedanceLayer(; radius=R_c, thickness=Δ, embedding=md_s, thinlayer=md_m, filling=md_c)
 
         # We compare against Jones, 1995, Appendix, he uses E₀ẑ
         # So potential points (i.e., grows) into ẑ direction
-        potential_direction = SVector{3,Float64}(0.0, 0.0, -1.0)
+        potential_direction = dir
 
-        ex = UniformField(;
-            embedding = md_s,
-            amplitude = E₀,
-            direction = -potential_direction, # field will point in opposite direction
-        )
+        ex = UniformField(; embedding=md_s, amplitude=E₀, direction=-potential_direction)
 
         Φsca_ana_3l(pts) = scatteredfield(sp, ex, ScalarPotential(pts))
         Φtot_ana_3l(pts) = field(sp, ex, ScalarPotential(pts))

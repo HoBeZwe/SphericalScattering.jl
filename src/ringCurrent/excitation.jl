@@ -125,3 +125,6 @@ function getFieldType(excitation::MagneticRingCurrent, quantity::Field)
     end
 end
 
+function orientation(ex::RingCurrent)
+    return ex.orientation
+end
