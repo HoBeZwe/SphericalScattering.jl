@@ -7,7 +7,7 @@ Compute the electric field radiated by a magnetic/electric ring current at some 
 function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
     T = typeof(excitation.frequency)
-    F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
+    F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- distinguish electric/magnetic current
     fieldType, exc = getFieldType(excitation, quantity)

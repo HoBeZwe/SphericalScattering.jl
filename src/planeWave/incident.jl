@@ -8,7 +8,7 @@ function field(excitation::PlaneWave, quantity::Field; parameter::Parameter=Para
 
     T = typeof(excitation.frequency)
 
-    F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
+    F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)

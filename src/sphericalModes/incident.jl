@@ -7,7 +7,7 @@ Compute the electric field of a spherical mode.
 function field(excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
 
     T = typeof(excitation.frequency)
-    F = zeros(SVector{3,Complex{T}}, length(quantity.locations))
+    F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
     # --- distinguish electric/magnetic field
     fieldType, exc = getFieldType(excitation, quantity)

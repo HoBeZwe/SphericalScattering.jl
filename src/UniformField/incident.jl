@@ -6,7 +6,7 @@ Compute the field or potential of a uniform field.
 """
 function field(excitation::UniformField, quantity::Field; parameter::Parameter=Parameter())
 
-    F = zeros(fieldType(quantity), length(quantity.locations))
+    F = zeros(fieldType(quantity), size(quantity.locations))
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)
