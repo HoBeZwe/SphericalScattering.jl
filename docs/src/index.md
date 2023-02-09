@@ -1,32 +1,12 @@
 
 # SphericalScattering.jl
 
-This package provides semi-analytical solutions to the scattering of time harmonic and static electromagnetic fields from spherical objects. 
+This package provides semi-analytical solutions to the scattering of time harmonic and static electromagnetic fields from spherical objects (amongst others known as Mie solutions or Mie scattering). 
 To this end, series expansions are evaluated. Special care is taken to obtain accurate solutions down to the static limit.
 
-
----
-## Overview
-
-The following scenarios are implemented (✓) and planned (⌛):
-
-##### Available incident fields:
-- ✓ Plane wave
-- ✓ Field of electric/magnetic ring current
-- ✓ Field of electric/magnetic dipole
-- ✓ TE/TM spherical vector waves
-- ✓ Uniform static electric field
-
-##### Available scattering objects:
-- ✓ PEC sphere
-- ⌛ PMC sphere
-- ⌛ Dielectric sphere (so far only for uniform field and the plane-wave)
-- ⌛ Multilayer dielectric sphere (so far only for uniform field)
-- ⌛ Multilayer dielectric sphere with PEC core (so far only for uniform field)
-
-
 !!! note
-    A time convention of ``\mathrm{e}^{\,\mathrm{j}\omega t}`` is used everywhere.
+    A time convention of ``\mathrm{e}^{\,\mathrm{j}\omega t}`` and SI units are used everywhere.
+
 
 ---
 ## Installation
@@ -36,6 +16,52 @@ Installing SphericalScattering is done by entering the package manager (enter `]
 ```
 pkg> add SphericalScattering 
 ```
+
+
+---
+## Overview
+
+The following aspects are implemented (✔) and planned (⌛):
+
+##### Available incident fields:
+- ✔ Plane wave
+- ✔ Field of electric/magnetic ring current
+- ✔ Field of electric/magnetic dipole
+- ✔ TE/TM spherical vector waves
+- ✔ Uniform static electric field
+- ⌛ Static charge(s)
+
+##### Available scattering objects:
+- ✔ PEC sphere
+- ⌛ PMC sphere
+- ⌛ Dielectric sphere 
+- ⌛ Multilayer dielectric sphere 
+- ⌛ Multilayer dielectric sphere with PEC core 
+- ✔ Dielectric sphere with thin impedance layer
+
+##### Available quantities (where applicable):
+- ✔ Far-fields
+- ✔ Near-fields (electric & magnetic)
+- ⌛ Radar cross section (RCS)
+- ⌛ Surface currents
+- ✔ Scalar potentials 
+- ✔ Displacement fields 
+- ✔ Scalar potential jump 
+
+---
+##### Detailed implementation status:
+
+| spheres                              | plane wave | el. ring current | mag. ring current | el. dipole | mag. dipole | TE/TM modes | uniform static field | static charge(s) |
+|--------------------------------------|------------|------------------|-------------------|------------|-------------|-------------|----------------------|------------------|
+| PEC                                  |      ✔     |        ✔         |         ✔         |      ✔     |       ✔     |      ✔      |           ✔          |        ⌛         |
+| PMC                                  |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ⌛          |        ⌛        |
+| Dielectric                           |      ✔     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
+| Multilayer dielectric                |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
+| Multilayer dielectric with PEC core  |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
+| Dielectric with thin impedance layer |      ➖     |        ➖         |         ➖         |      ➖     |       ➖    |      ➖      |           ✔          |        ➖        |
+
+
+
 
 ---
 ## [References](@id refs)

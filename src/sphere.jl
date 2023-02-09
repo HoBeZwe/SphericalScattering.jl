@@ -92,6 +92,8 @@ DielectricSphereThinImpedanceLayer(;
     filling=error("missing argument `filling`"),
 ) = DielectricSphereThinImpedanceLayer(radius, thickness, embedding, thinlayer, filling)
 
+
+
 struct PECSphere{C,R} <: Sphere
     radius::R
     embedding::Medium{C}

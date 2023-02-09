@@ -13,29 +13,42 @@
 
 ## Introduction
 
-This package provides semi-analytical solutions to the scattering of time harmonic and static electromagnetic fields from spherical objects. 
+This package provides semi-analytical solutions to the scattering of time harmonic and static electromagnetic fields from spherical objects (amongst others known as Mie solutions or Mie scattering). 
 To this end, series expansions are evaluated. Special care is taken to obtain accurate solutions down to the static limit.
 
-
+The following aspects are implemented (✔) and planned (⌛):
 
 ##### Available incident fields:
-- :heavy_check_mark: Plane wave
-- :heavy_check_mark: Field of electric/magnetic ring current
-- :heavy_check_mark: Field of electric/magnetic dipole
-- :heavy_check_mark: TE/TM spherical vector waves
-- :heavy_check_mark: Uniform static electric field
+- ✔ Plane wave
+- ✔ Field of electric/magnetic ring current
+- ✔ Field of electric/magnetic dipole
+- ✔ TE/TM spherical vector waves
+- ✔ Uniform static electric field
+- ⌛ Static charge(s)
 
 ##### Available scattering objects:
-- :heavy_check_mark: PEC sphere
-- :hourglass_flowing_sand: PMC sphere
-- :hourglass_flowing_sand: Dielectric sphere (so far only for uniform static field and the plane-wave)
-- :hourglass_flowing_sand: Multilayer dielectric sphere (so far only for uniform static field)
-- :hourglass_flowing_sand: Multilayer dielectric sphere with PEC core (so far only for uniform static field)
+- ✔ PEC sphere
+- ⌛ PMC sphere
+- ⌛ Dielectric sphere                          (✔ for uniform static field & plane-wave)
+- ⌛ Multilayer dielectric sphere               (✔ for uniform static field)
+- ⌛ Multilayer dielectric sphere with PEC core (✔ for uniform static field)
+- ✔ Dielectric sphere with thin impedance layer
+
+##### Available quantities (where applicable):
+- ✔ Far-fields
+- ✔ Near-fields (electric & magnetic)
+- ⌛ Radar cross section (RCS)
+- ⌛ Surface currents
+- ✔ Scalar potentials 
+- ✔ Displacement fields 
+- ✔ Scalar potential jump 
+
 
 
 ## Citation
 
 Please cite this package following the information on [Zenodo](https://zenodo.org/badge/latestdoi/375493054).
+
 
 
 ## Documentation

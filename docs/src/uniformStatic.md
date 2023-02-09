@@ -1,5 +1,5 @@
 
-# Uniform Static Field
+# [Uniform Static Field](@id uniformEx)
 
 ```@raw html
 <figure>
@@ -63,6 +63,13 @@ The following API is employed:
 Φ = scatteredfield(sp, ex, ScalarPotential(point_cart))
 
 E = scatteredfield(sp, ex, ElectricField(point_cart))
+```
+
+For the [dielectric sphere with thin impedance layer](@ref dielecimped) two additional quantities are available:
+```julia
+Φ = scatteredfield(sp, ex, ScalarPotentialJump(point_cart))
+
+E = scatteredfield(sp, ex, DisplacementField(point_cart))
 ```
 
 ---

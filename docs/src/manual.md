@@ -66,6 +66,7 @@ For all available scatteres a simple constructor with keyword arguments and defa
 - [Dielectric sphere](@ref dielecAPI)
 - [Multilayer dielectric sphere](@ref mlDielecAPI)
 - [Multilayer dielectric sphere with PEC core](@ref mlDielecPecAPI)
+- [Dielectric sphere with thin impedance layer](@ref dielecimped) 
 
 
 ---
@@ -107,10 +108,17 @@ H  = scatteredfield(sp, ex, MagneticField(point_cart))
 FF = scatteredfield(sp, ex, FarField(point_cart))
 
 ```
-For the uniform field excitation, only the electric field as well as the scalar potential can be calculated:
+For the [uniform static field](@ref uniformAPI) excitation, only the electric field as well as the scalar potential can be calculated:
 ```julia
 Φ = scatteredfield(sp, ex, ScalarPotential(point_cart))
 ```
+For the [dielectric sphere with thin impedance layer](@ref dielecimped) two additional quantities are available:
+```julia
+Φ = scatteredfield(sp, ex, ScalarPotentialJump(point_cart))
+
+E = scatteredfield(sp, ex, DisplacementField(point_cart))
+```
+
 ```@raw html
 <br/>
 ```
