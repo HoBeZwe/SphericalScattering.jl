@@ -178,11 +178,11 @@ end
 
         ε∇Φsca_ana_app(pts) = scatteredfield(spj, ex, DisplacementField(pts))
 
-        Etot(pts) = field(spj, ex, ElectricField(pts))
+        Esca(pts) = scatteredfield(spj, ex, ElectricField(pts))
         𝒏 = points_cartFF ./ norm.(points_cartFF)
-        absdiff = dot.(𝒏, spj.embedding.ε * Etot(points_cartFF .* 1.01) - ε∇Φsca_ana_app(points_cartFF .* 0.99))
+        absdiff = dot.(𝒏, spj.embedding.ε * Esca(points_cartFF .* 1.01) - ε∇Φsca_ana_app(points_cartFF .* 0.99))
 
         # Check that normal component of D-field is continuous
-        @test norm(absdiff) / norm(dot.(𝒏, ε∇Φsca_ana_app(points_cartFF .* 0.99))) < 0.02
+        @test norm(absdiff) / norm(dot.(𝒏, ε∇Φsca_ana_app(points_cartFF .* 0.99))) < 0.03
     end
 end

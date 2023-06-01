@@ -99,12 +99,14 @@ function scatteredfield(
     cosθ = dot(ẑ, point) / r
     sinθ = norm(cross(ẑ, point)) / r
 
+    E₀ = excitation.amplitude
+
     A, K = scatterCoeff(sphere, excitation)
 
     if r > sphere.radius
         E = -SVector((-2 * A / r^3) * cosθ, (+A / r^3) * (-sinθ), 0.0)
     else
-        E = -SVector((-K * cosθ, K * sinθ, 0.0))
+        E = -SVector(((E₀ - K) * cosθ, (-E₀ + K) * sinθ, 0.0))
     end
 
     E_cart = convertSpherical2Cartesian(E, point_sph)
@@ -191,12 +193,13 @@ function scatteredfield(
 
     R = sphere.radius
 
+    E₀ = excitation.amplitude
     A, K = scatterCoeff(sphere, excitation)
 
     if r >= R
         return (+A / r^2) * cosθ # Jones 1995, (C.1a)
     else
-        return (-K * r * cosθ)
+        return ((E₀ - K) * r * cosθ)
     end
 end
 
