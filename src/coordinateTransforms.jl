@@ -4,7 +4,7 @@
 
 Translate the points in the direction of the translation vector. 
 
-All inputs are assumed do be in Cartesian coordinates.
+All inputs are assumed to be in Cartesian coordinates.
 """
 function translate(points, translation::SVector{3,T}) where {T}
 
@@ -25,7 +25,7 @@ end
 
 Determine rotation matrix and perform rotation for general excitations. 
 
-The points are assumed do be in Cartesian coordinates.
+The points are assumed to be in Cartesian coordinates.
 
 The vectors_list is NOT modified.
 """
@@ -43,7 +43,7 @@ end
 
 Determine rotation matrix and perform rotation for a general excitation. 
 
-The points are assumed do be in Cartesian coordinates.
+The points are assumed to be in Cartesian coordinates.
 
 The vectors_list IS modified (overwritten).
 """

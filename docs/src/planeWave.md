@@ -1,4 +1,3 @@
-
 # Plane Wave
 
 ```@raw html
@@ -22,7 +21,7 @@ A plane wave with amplitude ``a``, wave vector ``\bm k = k \hat{\bm k}``, and po
 ```math
 \bm e_\mathrm{PW}(\bm r) = a \hat{\bm p}  \, \mathrm{e}^{-\mathrm{j} \bm k \cdot \bm r}  \,,
 ```
-where the ploarization and wave vector are orthogonal, that is,
+where the polarization and wave vector are orthogonal, that is,
 ```math
 \bm k \cdot \hat{\bm p} = 0
 ```
