@@ -6,22 +6,28 @@ version = "0.5.0"
 [deps]
 LegendrePolynomials = "3db4a2ba-fc88-11e8-3e01-49c72059a882"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
+[weakdeps]
+PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
+
+[extensions]
+SphericalScatteringExt = "PlotlyJS"
+
 [compat]
 LegendrePolynomials = "0.3, 0.4"
-Requires = "1"
 SpecialFunctions = "1, 2"
 StaticArrays = "1"
 julia = "1.7"
 
 [extras]
-JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 BEAST = "bb4162c7-ba94-5a20-af32-d8ec4428bdd1"
 CompScienceMeshes = "3e66a162-7b8c-5da0-b8f8-124ecd2c3ae1"
+JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 
 [targets]
-test = ["Test", "JuliaFormatter", "BEAST", "CompScienceMeshes"]
+test = ["Test", "JuliaFormatter", "BEAST", "CompScienceMeshes", "PlotlyJS"]

@@ -19,9 +19,7 @@ const ε0 = 8.8541878176e-12  # default permittivity
 # -------- used packages
 using SpecialFunctions, LegendrePolynomials
 using LinearAlgebra
-#using Combinatorics
 using StaticArrays
-using Requires
 
 
 
@@ -46,6 +44,12 @@ export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export DielectricSphereThinImpedanceLayer
 export field, scatteredfield
 
+
+
+# -------- extensions
+function plotFF end
+
+export plotFF
 
 
 # -------- included files
@@ -74,4 +78,9 @@ include("UniformField/scattered.jl")
 
 include("totalFields.jl")
 include("coordinateTransforms.jl")
+
+if !isdefined(Base, :get_extension)
+    include("../ext/SphericalScatteringExt.jl") # for backwards compatibility with julia versions below 1.9
+end
+
 end
