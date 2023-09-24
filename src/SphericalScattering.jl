@@ -43,13 +43,16 @@ export SphericalMode, SphericalModeTE, SphericalModeTM
 export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export DielectricSphereThinImpedanceLayer
 export field, scatteredfield
-
+export sphericalGridPoints
 
 
 # -------- extensions
-function plotFF end
+function plotff end
+function plotnf end
+function plotffcut end
+function plotnfcut end
 
-export plotFF
+export plotff, plotnf, plotffcut, plotnfcut
 
 
 # -------- included files
@@ -78,6 +81,7 @@ include("UniformField/scattered.jl")
 
 include("totalFields.jl")
 include("coordinateTransforms.jl")
+include("utils.jl")
 
 if !isdefined(Base, :get_extension)
     include("../ext/SphericalScatteringExt.jl") # for backwards compatibility with julia versions below 1.9

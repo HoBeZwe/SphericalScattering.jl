@@ -3,14 +3,8 @@ module SphericalScatteringExt
 # -------- used packages
 using SphericalScattering
 using PlotlyJS
-
-
-# -------- exportet parts
-# types
-
-# functions
-#export SphericalScattering.plotFF
-
+using StaticArrays
+using LinearAlgebra
 
 # -------- included files
 include("plotting.jl")

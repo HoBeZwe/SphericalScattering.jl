@@ -12,7 +12,7 @@ makedocs(;
     ),
     pages=[
         "Introduction" => "index.md",
-        "Manual" => "manual.md",
+        "Manual" => Any["General Usage" => "manual.md", "Application Examples" => "application.md"],
         "Geometry" => Any["Coordinate System" => "coordinateSys.md", "Sphere Dimensions" => "scatterer.md"],
         "Excitations" => Any[
             "Plane Wave" => "planeWave.md",

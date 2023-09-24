@@ -28,7 +28,7 @@ Add documentation for any changes or new features following the style of the exi
 
 
 ---
-## Tests
+## [Tests](@id tests)
 
 Write tests for your code changes and verify that no errors occur, e.g., by running
 ```julia

@@ -1,5 +1,5 @@
 
-# Manual
+# General Usage
 
 The basic building blocks are introduced in the following simple example; more details are provided afterwards:
 
