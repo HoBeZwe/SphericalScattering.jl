@@ -1,7 +1,14 @@
 
 
 """
+    plotff(F, points_sph; scale="log", normalize=true, type="abs")
 
+Plot the 3D far-field pattern in F at the given spherical points (lying on a sphercial grid).
+
+Optional arguments:
+ - scale: "log" or "linear"
+ - normalization: true or false
+ - type: "abs" or "theta" or "phi"
 """
 function SphericalScattering.plotff(F, points_sph; scale="log", normalize=true, type="abs")
 
@@ -74,16 +81,61 @@ function SphericalScattering.plotff(F, points_sph; scale="log", normalize=true, 
 end
 
 
+"""
+
+"""
 function SphericalScattering.plotnf()
 
 end
 
 
-function SphericalScattering.plotffcut()
+"""
+    plotffcut(F, points; scale="log", normalize=true, format="polar")
 
+Plot a cut of the far-field in a rectangular or a polar plot.
+
+The format can be "polar" or "rectangular".
+"""
+function SphericalScattering.plotffcut(F, points; scale="log", normalize=true, format="polar")
+
+    traces = PlotlyJS.GenericTrace[]
+
+    if scale == "log"
+         
+        if format == "polar" 
+
+            FF = F
+            FF[FF .< 1e-3] .= 1e-3 # avoid -Inf
+            FF = 20 * log10.(FF / minimum(FF))
+        else
+            FF = 20 * log10.(F)
+        end
+
+        if normalize
+            FF .-= maximum(FF)
+        end
+    else
+        FF = F
+        if normalize
+            FF /= maximum(FF)
+        end
+    end    
+
+    if format == "polar"
+        t = scatterpolar(r=FF, theta=rad2deg.(points), mode="lines+markers", marker=attr(size=5, sizeref=0.03))
+    else
+        t = PlotlyJS.scatter(x=rad2deg.(points), y=FF, mode="lines+markers", marker=attr(size=5, sizeref=0.03))
+    end
+    push!(traces, t)
+
+    # --- plot it
+    PlotlyJS.plot(traces)
 end
 
 
+"""
+
+"""
 function SphericalScattering.plotnfcut()
 
 end

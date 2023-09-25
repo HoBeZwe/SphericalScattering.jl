@@ -86,7 +86,7 @@ print("H-field error: $diff_HF %\n")
 print("Far-field error: $diff_FF %\n")
 ```
 
-!!! note
+!!! tip
     When [testing this package](@ref tests), the packages [BEAST](https://github.com/krcools/BEAST.jl) and 
     [CompScienceMeshes](https://github.com/krcools/CompScienceMeshes.jl) are used to define several functional tests.
 
@@ -150,4 +150,40 @@ savefig(t, "plotPatternHDtot.html"); nothing # hide
 
 ```@raw html
 <object data="plotPatternHDtot.html" type="text/html"  style="width:100%;height:50vh;"> </object>
+```
+
+
+
+### Plot Field cuts
+
+Sphercial cuts can be conveniently obtained by:
+
+```@example plotcuts
+using SphericalScattering
+using LinearAlgebra, StaticArrays
+
+# --- excite PEC sphere by magnetic ring current
+orient = normalize(SVector(0.0,1.0,1.0))
+ex = magneticRingCurrent(frequency=1e8, orientation=orient, center=2*orient, radius=0.2)
+
+sp = PECSphere(radius = 1.0)
+
+# --- evaluate fields at φ = 5° cut
+points_cart, points_sph = phiCutPoints(5) # analogously, thetaCutPoints can be used
+
+FF = scatteredfield(sp, ex, FarField(points_cart))
+nothing # hide
+```
+
+The cut can then be plotted as:
+
+```@example plotcuts
+using PlotlyJS
+plotffcut(norm.(FF), points_sph, normalize=true, scale="log", format="polar")
+t = plotffcut(norm.(FF), points_sph, normalize=true, scale="log", format="polar") # hide
+savefig(t, "plotcut.html"); nothing # hide
+```
+
+```@raw html
+<object data="plotcut.html" type="text/html"  style="width:100%;height:50vh;"> </object>
 ```

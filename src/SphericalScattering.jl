@@ -43,7 +43,7 @@ export SphericalMode, SphericalModeTE, SphericalModeTM
 export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export DielectricSphereThinImpedanceLayer
 export field, scatteredfield
-export sphericalGridPoints
+export sphericalGridPoints, phiCutPoints, thetaCutPoints
 
 
 # -------- extensions
