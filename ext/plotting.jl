@@ -82,14 +82,6 @@ end
 
 
 """
-
-"""
-function SphericalScattering.plotnf()
-
-end
-
-
-"""
     plotffcut(F, points; scale="log", normalize=true, format="polar")
 
 Plot a cut of the far-field in a rectangular or a polar plot.
@@ -101,8 +93,8 @@ function SphericalScattering.plotffcut(F, points; scale="log", normalize=true, f
     traces = PlotlyJS.GenericTrace[]
 
     if scale == "log"
-         
-        if format == "polar" 
+
+        if format == "polar"
 
             FF = F
             FF[FF .< 1e-3] .= 1e-3 # avoid -Inf
@@ -119,23 +111,15 @@ function SphericalScattering.plotffcut(F, points; scale="log", normalize=true, f
         if normalize
             FF /= maximum(FF)
         end
-    end    
+    end
 
     if format == "polar"
-        t = scatterpolar(r=FF, theta=rad2deg.(points), mode="lines+markers", marker=attr(size=5, sizeref=0.03))
+        t = scatterpolar(; r=FF, theta=rad2deg.(points), mode="lines+markers", marker=attr(; size=5, sizeref=0.03))
     else
-        t = PlotlyJS.scatter(x=rad2deg.(points), y=FF, mode="lines+markers", marker=attr(size=5, sizeref=0.03))
+        t = PlotlyJS.scatter(; x=rad2deg.(points), y=FF, mode="lines+markers", marker=attr(; size=5, sizeref=0.03))
     end
     push!(traces, t)
 
     # --- plot it
     PlotlyJS.plot(traces)
-end
-
-
-"""
-
-"""
-function SphericalScattering.plotnfcut()
-
 end
