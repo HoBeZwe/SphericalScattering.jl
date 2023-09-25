@@ -94,7 +94,7 @@ print("Far-field error: $diff_FF %\n")
 
 
 ---
-## Visualization of Fields 
+## [Visualization of Fields](@id visualize) 
 
 This package provides several means to directly visualize quantities of the scattering setup.
 
@@ -134,7 +134,7 @@ savefig(t, "plotPatternHDPEC.html"); nothing # hide
 ```
 
 ```@raw html
-<object data="plotPatternHDPEC.html" type="text/html"  style="width:100%;height:50vh;"> </object>
+<object data="../plotPatternHDPEC.html" type="text/html"  style="width:100%;height:50vh;"> </object>
 ```
 
 Alternatively, the field of the dipole itself or the total field can be plotted:
@@ -149,7 +149,7 @@ savefig(t, "plotPatternHDtot.html"); nothing # hide
 ```
 
 ```@raw html
-<object data="plotPatternHDtot.html" type="text/html"  style="width:100%;height:50vh;"> </object>
+<object data="../plotPatternHDtot.html" type="text/html"  style="width:100%;height:50vh;"> </object>
 ```
 
 
@@ -185,7 +185,7 @@ savefig(t, "plotcut.html"); nothing # hide
 ```
 
 ```@raw html
-<object data="plotcut.html" type="text/html"  style="width:100%;height:50vh;"> </object>
+<object data="../plotcut.html" type="text/html"  style="width:100%;height:50vh;"> </object>
 ```
 
 
@@ -240,7 +240,7 @@ savefig(t, "plotNF.html"); nothing # hide
 ```
 
 ```@raw html
-<object data="plotNF.html" type="text/html"  style="width:60%;height:50vh;"> </object>
+<object data="../plotNF.html" type="text/html"  style="width:60%;height:50vh;"> </object>
 ```
 
 Or instead of the magnitude a snapshot can be plotted
@@ -261,5 +261,5 @@ savefig(t, "plotNF2.html"); nothing # hide
 ```
 
 ```@raw html
-<object data="plotNF2.html" type="text/html"  style="width:60%;height:50vh;"> </object>
+<object data="../plotNF2.html" type="text/html"  style="width:60%;height:50vh;"> </object>
 ```

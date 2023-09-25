@@ -22,4 +22,10 @@
     @test F_sph[1] ≈ +1.0
     @test F_sph[2] ≈ -1.0
     @test F_sph[3] ≈ -1.0
+
+    # ----- rotation matrix corner case
+    orient = normalize(SVector(0.0, 0.0, -1.0))
+    ex = HertzianDipole(; frequency=1e8, orientation=orient, position=2 * orient)
+
+    @test_nowarn SphericalScattering.rotationMatrix(ex)
 end

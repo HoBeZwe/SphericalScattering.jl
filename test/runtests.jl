@@ -78,6 +78,10 @@ points_cartNF_inside, ~ = getDefaultPoints(0.5)
         include("coordinateTransforms.jl")
     end
 
+    @testset "Test utils" begin
+        include("utils.jl")
+    end
+
     @testset "Test formatting of files" begin
         pkgpath = pkgdir(SphericalScattering)   # path of this package including name
         @test format(pkgpath, overwrite=false)  # check whether files are formatted according to the .JuliaFormatter.toml 

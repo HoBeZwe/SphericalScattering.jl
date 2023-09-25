@@ -159,3 +159,26 @@ F_cart = SphericalScattering.convertSpherical2Cartesian.(F_sph,  point_sph)
 
 F_sph  = SphericalScattering.convertCartesian2Spherical.(F_cart, point_sph)
 ```
+
+
+---
+## Plotting Fields
+
+To visualize far-fields and near-fields the functions
+
+```@docs
+sphericalGridPoints
+phiCutPoints
+thetaCutPoints
+```
+
+as well as the functions
+
+```julia
+plotff(F, points_sph; scale="log", normalize=true, type="abs")
+
+plotffcut(F, points; scale="log", normalize=true, format="polar")
+```
+
+are provided (after loading the [PlotlyJS](https://github.com/JuliaPlots/PlotlyJS.jl/tree/master) package). 
+For more details see the [visualization of fields](@ref visualize) examples.
