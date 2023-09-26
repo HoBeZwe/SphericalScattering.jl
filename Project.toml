@@ -18,6 +18,7 @@ SphericalScatteringExt = "PlotlyJS"
 
 [compat]
 LegendrePolynomials = "0.3, 0.4"
+PlotlyJS = "0.18"
 SpecialFunctions = "1, 2"
 StaticArrays = "1"
 julia = "1.7"
