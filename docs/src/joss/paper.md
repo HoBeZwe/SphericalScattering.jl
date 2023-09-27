@@ -49,7 +49,7 @@ The latter allow to analyze the scattering from real-world objects, for instance
 To this end, series expansions are evaluated with special care to obtain accurate solutions down to the static limit.
 The series expansions are based on expressing the incident and scattered fields in terms of spherical wave functions such that the boundary conditions can be enforced at interfaces of different materials yielding the expansion coefficients of the spherical wave functions of the scattered field [@jinTheoryComputationElectromagnetic2015;@ruckRadarCrossSection1970]. 
 
-Other available implementations have a different focus, that is, specific 2D scenarios are addressed [@Blankrot2018], T-matrices are employed for general shaped objects [@art_gower_2018_1213225], ensemble averaged waves are obtained [@fidgit2020], light scattering is considered employing only plane waves as excitations [@Prahl_miepython_Pure_python;@konstantin_ladutenko_2017_248729], or only far-field quantities are computed.
+Other available implementations have a different focus, that is, specific 2D scenarios are addressed [@Blankrot2018], T-matrices are employed for general shaped objects [@art_gower_2018_1213225;@schebarchov2021;@miepy2022;@Egel2017], ensemble averaged waves are obtained [@fidgit2020], spontaneous decay rates of a dipole are studied [@Rasskazov20], light scattering is considered employing only plane waves as excitations [@Prahl_miepython_Pure_python;@konstantin_ladutenko_2017_248729;@matscat2023;@matmie2023;@piemiecoated2016;@miescatwu2023;@cppmie2022], or only far-field quantities are computed. 
 
 In contrast, in `SphericalScattering` a variety of excitations is available, that is,
 
@@ -67,7 +67,7 @@ The scattered far- and near-fields are then obtained following [@jinTheoryComput
 
 all via a unified interface.
 In consequence, `SphericalScattering` facilitates a reproducible and comparable verification of approaches to solve electromagnetic scattering problems.
-For this purpose, it has already been employed in scientific puplications [@hofmannExcitationAwareSelfAdaptiveFrequency2023;@hofmannLowFrequencyStableExcitation2023;@hofmannInvestigationsLowFrequencyStability2023].
+For this purpose, it has already been employed in scientific puplications [@hofmannLowFrequencyStableDiscretization2021;@hofmannLowFrequencyStabilizedElectricField2022;@hofmannEfficientCombinationScalarPotential2022a;@hofmannExcitationAwareSelfAdaptiveFrequency2023;@hofmannLowFrequencyStableExcitation2023;@hofmannInvestigationsLowFrequencyStability2023;@hofmannSelfAdaptiveFrequencyNormalization2023].
 
 
 # Acknowledgments
