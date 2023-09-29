@@ -39,8 +39,9 @@ When electromagnetic fields are impinging on objects of various kinds, determini
 For example, when monitoring the position of an airplane by a radar, the scattering behavior of the airplane plays a pivotal role and, thus, needs to be studied.
 Analytical approaches, however, to characterize such scattering behavior are rarely known.
 Some of the few exceptions where at least semi-analytical descriptions are available are metallic or dielectric spherical objects excited by time-harmonic or static fields [@ruckRadarCrossSection1970;@jinTheoryComputationElectromagnetic2015].
-While there are some applications where canonical scattering problems are the study subject of interest, in other areas solutions to the scattering from spherical objects rather serve as a means to verify the correctness of more involved numerical techniques.
-The latter allow to analyze the scattering from real-world objects, for instance, via finite element or integral equation methods [@raoElectromagneticScatteringSurfaces1982;@harringtonFieldComputationMoment1993;@jinTheoryComputationElectromagnetic2015;@adrianElectromagneticIntegralEquations2021].
+In some applications these canonical scattering problems are the study subject of interest.
+In other areas, solutions to the scattering from spherical objects rather serve as a means to verify the correctness of more involved numerical techniques, which allow to analyze the scattering from real-world objects, for instance, via finite element or integral equation methods [@raoElectromagneticScatteringSurfaces1982;@harringtonFieldComputationMoment1993;@jinTheoryComputationElectromagnetic2015;@adrianElectromagneticIntegralEquations2021].
+Hence, semi-analytical descriptions for the scattering from spherical objects facilitate a reproducible and comparable verification of approaches to solve electromagnetic scattering problems.
 
 
 # Statement of need
@@ -66,7 +67,7 @@ The scattered far- and near-fields are then obtained following [@jinTheoryComput
 - dielectric spheres
 
 all via a unified interface.
-In consequence, `SphericalScattering` facilitates a reproducible and comparable verification of approaches to solve electromagnetic scattering problems.
+In consequence, `SphericalScattering` is a useful (code-) verification tool in the area of electromagnetic scattering for a wide range of scenarios.
 For this purpose, it has already been employed in scientific puplications [@hofmannLowFrequencyStableDiscretization2021;@hofmannLowFrequencyStabilizedElectricField2022;@hofmannEfficientCombinationScalarPotential2022a;@hofmannExcitationAwareSelfAdaptiveFrequency2023;@hofmannLowFrequencyStableExcitation2023;@hofmannInvestigationsLowFrequencyStability2023;@hofmannSelfAdaptiveFrequencyNormalization2023].
 
 

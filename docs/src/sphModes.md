@@ -77,11 +77,11 @@ and
 
 The magnetic field is given by
 ```math
-\bm e^\mathrm{TE,inc}_{mn} = \cfrac{\mathrm{j} k}{\sqrt{Z_\mathrm{F}}} \bm{f}_{2mn}^{(1)}
+\bm h^\mathrm{TE,inc}_{mn} = \cfrac{\mathrm{j} k}{\sqrt{Z_\mathrm{F}}} \bm{f}_{1mn}^{(1)}
 ```
 and 
 ```math
-\bm e^\mathrm{TM,inc}_{mn} = \cfrac{\mathrm{j} k}{\sqrt{Z_\mathrm{F}}} \bm{f}_{1mn}^{(1)}
+\bm h^\mathrm{TM,inc}_{mn} = \cfrac{\mathrm{j} k}{\sqrt{Z_\mathrm{F}}} \bm{f}_{2mn}^{(1)}
 ```
 
 
