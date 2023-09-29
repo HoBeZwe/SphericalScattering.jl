@@ -20,6 +20,8 @@ T = assemble(𝑇, RT, RT)
         HF = field(ex, MagneticField(point_cart))
         FF = field(ex, FarField(point_cart))
 
+        # rather poor test: values are checked against values determined by this package
+        #                   only to see whether future changes result in the same values
         @test FF[1][1] ≈ 7.942044920729696 - 3.1030988210509873im
         @test FF[1][2] ≈ -15.88408984145939 + 6.206197642101974im
         @test FF[1][3] ≈ 0.0 + 0.0im
@@ -122,6 +124,8 @@ end
         HF = field(ex, MagneticField(point_cart))
         FF = field(ex, FarField(point_cart))
 
+        # rather poor test: values are checked against values determined by this package
+        #                   only to see whether future changes result in the same values
         @test FF[1][1] ≈ -5.595916238822697e-5 + 2.186424435609382e-5im
         @test FF[1][2] ≈ 0.00011191832477645392 - 4.3728488712187633e-5im
         @test FF[1][3] ≈ 0.0 + 0.0im
