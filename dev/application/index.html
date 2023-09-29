@@ -27,26 +27,26 @@ T = assemble(𝑇, RT, RT)
 
 # --- solve the LSE
 u = T \ e</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">942-element Vector{ComplexF64}:
-  -0.041079777027430965 - 0.2760859364393453im
-    -0.0692848533741856 - 0.27708976870410745im
-    0.09785418511652051 + 0.21879174094409973im
-  0.0026789444528342726 + 0.01512788670817192im
-   0.035308607699798884 - 0.4319712103722348im
-   0.025758577496158563 - 0.430587602830542im
- -0.0018068618933923858 - 0.032413425898131856im
-     0.0841404144835878 - 0.4114158979521347im
-  0.0074420353583246664 + 0.04632137249409358im
-    0.06488963152452942 + 0.20307900872734722im
+   -0.04107977702743138 - 0.2760859364393434im
+     -0.069284853374185 - 0.27708976870410695im
+     0.0978541851165232 + 0.21879174094410014im
+   0.002678944452833196 + 0.015127886708173385im
+   0.035308607699798045 - 0.4319712103722347im
+   0.025758577496155163 - 0.43058760283054365im
+ -0.0018068618933933104 - 0.03241342589813153im
+    0.08414041448358536 - 0.41141589795213707im
+   0.007442035358324857 + 0.04632137249409418im
+    0.06488963152452923 + 0.2030790087273467im
                         ⋮
-  -0.014169421871696121 - 0.03425354522211555im
-  -0.036987426507240684 + 0.1600123339087802im
-  -0.009500592345480032 + 0.10529002576023458im
-  -0.049467496220382254 - 0.07935593382383643im
-    0.13395756079688656 + 0.0827934823102311im
-    0.05905764297862547 + 0.03248677592667797im
-    0.08027615813591764 - 0.1719566524115184im
-    -0.0620322502264467 + 0.06686227253332527im
-   -0.03179965597036758 - 0.07451277281293643im</code></pre><p>Now that we know the expansion coefficients for the basis functions we can compute the scattered fields:</p><pre><code class="language-julia hljs"># --- define points where the fields are computed
+    -0.0141694218716968 - 0.03425354522211806im
+   -0.03698742650724048 + 0.1600123339087741im
+  -0.009500592345482776 + 0.10529002576023715im
+    -0.0494674962203798 - 0.07935593382383616im
+    0.13395756079688592 + 0.0827934823102302im
+    0.05905764297862533 + 0.032486775926675im
+    0.08027615813591807 - 0.17195665241151664im
+   -0.06203225022644849 + 0.06686227253332434im
+   -0.03179965597036891 - 0.07451277281293525im</code></pre><p>Now that we know the expansion coefficients for the basis functions we can compute the scattered fields:</p><pre><code class="language-julia hljs"># --- define points where the fields are computed
 using SphericalScattering # use this package to get points on a spherical grid
 points_cartFF, points_sphFF = sphericalGridPoints()
 points_cartNF, points_sphNF = sphericalGridPoints(r=5.0)
@@ -144,4 +144,4 @@ layout = Layout(
     xaxis=attr(title_text=&quot;x/λ&quot;)
 )
 
-plot(heatmap(x=-5:1/15:5,y=-5:1/15:5,z=data, colorscale=&quot;Jet&quot;), layout)</code></pre><object data="../plotNF2.html" type="text/html"  style="width:60%;height:50vh;"> </object></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../manual/">« General Usage</a><a class="docs-footer-nextpage" href="../coordinateSys/">Coordinate System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.0.1 on <span class="colophon-date" title="Wednesday 27 September 2023 15:32">Wednesday 27 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+plot(heatmap(x=-5:1/15:5,y=-5:1/15:5,z=data, colorscale=&quot;Jet&quot;), layout)</code></pre><object data="../plotNF2.html" type="text/html"  style="width:60%;height:50vh;"> </object></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../manual/">« General Usage</a><a class="docs-footer-nextpage" href="../coordinateSys/">Coordinate System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.0 on <span class="colophon-date" title="Friday 29 September 2023 18:49">Friday 29 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
