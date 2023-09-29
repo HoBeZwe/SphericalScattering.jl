@@ -15,14 +15,14 @@
 <br/>
 ```
 
-!!! danger
-    This excitation needs substantial revision. So far only the low order modes are stable. Also, the superposition of multiple modes should be included.
+!!! info
+    So far only single modes (not their superposition) are implemented.
 
 
 ---
 ## Definition
 
-The spherical modes are defined following the conventions of [[5]](@ref refs).
+The spherical modes are defined following the conventions of [[5]](@ref refs), however adapted to the time convention ``\mathrm{e}^{\,\mathrm{j}\omega t}``.
 
 #### TE Modes
 
@@ -30,8 +30,8 @@ The functions
 ```math
 \begin{aligned}
 \bm{f}_{1mn}^{(c)}(r,\vartheta, \varphi) = \cfrac{1}{2\pi} \cfrac{1}{n(n+1)}{\left(-\frac{m}{|m|}\right)}^m 
-													&\left(-\mathrm{h}_n^{(c)}(kr)\frac{\mathrm{j}m\bar{\mathrm{P}}_n^{|m|}(\cos\vartheta)}{\sin\vartheta}\mathrm{e}^{-\mathrm{j}m\varphi} \bm{e}_\vartheta   	\right.	 \\	
-													&~~\left. -\mathrm{h}_n^{(c)}(kr)\cfrac{\mathrm{d} \bar{\mathrm{P}}_n^{|m|}(\cos\vartheta) }{\mathrm{d}\vartheta} \mathrm{e}^{-\mathrm{j}m\varphi} \bm{e}_\varphi  	~\right)
+													&\left(\mathrm{h}_n^{(c)}(kr)\frac{\mathrm{j}m\bar{\mathrm{P}}_n^{|m|}(\cos\vartheta)}{\sin\vartheta}\mathrm{e}^{\mathrm{j}m\varphi} \bm{e}_\vartheta   	\right.	 \\	
+													&~~\left. -\mathrm{h}_n^{(c)}(kr)\cfrac{\mathrm{d} \bar{\mathrm{P}}_n^{|m|}(\cos\vartheta) }{\mathrm{d}\vartheta} \mathrm{e}^{\mathrm{j}m\varphi} \bm{e}_\varphi  	~\right)
 \end{aligned}
 ```
 form the ``\mathrm{TE}_{mn}`` modes, where ``\mathrm{P}_n^m`` denote the associated Legendre polynomials and ``\mathrm{h}_n^{(c)}(x)`` denote the spherical Hankel functions.
@@ -42,13 +42,17 @@ form the ``\mathrm{TE}_{mn}`` modes, where ``\mathrm{P}_n^m`` denote the associa
 The functions
 ```math
 \begin{aligned}
-\bm{f}_{2mn}^{(c)}(r,\vartheta, \varphi) = \cfrac{1}{2\pi} \cfrac{1}{n(n+1)}{\left(-\frac{m}{|m|}\right)}^m \Bigg(&\cfrac{n(n+1)}{kr}\mathrm{h}_n^{(c)}   \bar{\mathrm{P}}_n^{|m|}(\cos\vartheta)	\mathrm{e}^{-\mathrm{j}m\varphi} \bm{e}_r \Bigg. \\	
-					&+ \cfrac{1}{kr} \cfrac{\mathrm{d}\left( kr \mathrm{h}_n^{(c)}(kr)\right)}{\mathrm{d}(kr)} \cfrac{\mathrm{d} \bar{\mathrm{P}}_n^{|m|}(\cos\vartheta) }{\mathrm{d}\vartheta} \mathrm{e}^{-\mathrm{j}m\varphi} \bm{e}_\vartheta  \\
-					&\Bigg.- \frac{1}{kr} \cfrac{\mathrm{d}\left( kr \mathrm{h}_n^{(c)}(kr)\right)}{\mathrm{d}(kr)}\cfrac{\mathrm{j}m\bar{\mathrm{P}}_n^{|m|}(\cos\vartheta)}{\sin\vartheta}\mathrm{e}^{-\mathrm{j}m\varphi} \bm{e}_\varphi	\Bigg) \,\text{.}
+\bm{f}_{2mn}^{(c)}(r,\vartheta, \varphi) = \cfrac{1}{2\pi} \cfrac{1}{n(n+1)}{\left(-\frac{m}{|m|}\right)}^m \Bigg(&\cfrac{n(n+1)}{kr}\mathrm{h}_n^{(c)}   \bar{\mathrm{P}}_n^{|m|}(\cos\vartheta)	\mathrm{e}^{\mathrm{j}m\varphi} \bm{e}_r \Bigg. \\	
+					&+ \cfrac{1}{kr} \cfrac{\mathrm{d}\left( kr \mathrm{h}_n^{(c)}(kr)\right)}{\mathrm{d}(kr)} \cfrac{\mathrm{d} \bar{\mathrm{P}}_n^{|m|}(\cos\vartheta) }{\mathrm{d}\vartheta} \mathrm{e}^{\mathrm{j}m\varphi} \bm{e}_\vartheta  \\
+					&\Bigg. \frac{1}{kr} \cfrac{\mathrm{d}\left( kr \mathrm{h}_n^{(c)}(kr)\right)}{\mathrm{d}(kr)}\cfrac{\mathrm{j}m\bar{\mathrm{P}}_n^{|m|}(\cos\vartheta)}{\sin\vartheta}\mathrm{e}^{\mathrm{j}m\varphi} \bm{e}_\varphi	\Bigg) \,\text{.}
 \end{aligned}
 ```
 form the ``\mathrm{TM}_{mn}`` modes.
 
+!!! note
+    By ``c=1`` inward travelling waves and by ``c=2`` outward travelling waves are denoted.
+    
+    The change of time convention from [[5]](@ref refs) to the one of this package is achieved solely by interchanging these values. 
 
 ---
 ## [API](@id modesAPI)
@@ -64,20 +68,20 @@ SphericalModeTM
 
 The electric field is given by
 ```math
-\bm e^\mathrm{TE,inc}_{mn} = k Z_\mathrm{F} \bm{f}_{1mn}^{(1)}
+\bm e^\mathrm{TE,inc}_{mn} = k \sqrt{Z_\mathrm{F}} \bm{f}_{1mn}^{(1)}
 ```
 and 
 ```math
-\bm e^\mathrm{TM,inc}_{mn} = k Z_\mathrm{F} \bm{f}_{2mn}^{(1)}
+\bm e^\mathrm{TM,inc}_{mn} = k \sqrt{Z_\mathrm{F}} \bm{f}_{2mn}^{(1)}
 ```
 
 The magnetic field is given by
 ```math
-\bm e^\mathrm{TE,inc}_{mn} = \cfrac{\mathrm{j} k}{Z_\mathrm{F}} \bm{f}_{2mn}^{(1)}
+\bm e^\mathrm{TE,inc}_{mn} = \cfrac{\mathrm{j} k}{\sqrt{Z_\mathrm{F}}} \bm{f}_{2mn}^{(1)}
 ```
 and 
 ```math
-\bm e^\mathrm{TM,inc}_{mn} = \cfrac{\mathrm{j} k}{Z_\mathrm{F}} \bm{f}_{1mn}^{(1)}
+\bm e^\mathrm{TM,inc}_{mn} = \cfrac{\mathrm{j} k}{\sqrt{Z_\mathrm{F}}} \bm{f}_{1mn}^{(1)}
 ```
 
 
@@ -116,11 +120,11 @@ where ``\mathrm{H}^{(\nu)}_{n}(x)`` denotes the Hankel function of ``\nu``-th ki
 
 The scattered fields ``\bm e^\mathrm{sc}`` are then given by
 ```math
-\bm e_\mathrm{TM}^\mathrm{sc} = \xi_\mathrm{TM} \bm e_\mathrm{TM}^\mathrm{inc} 
+\bm e_\mathrm{TE}^\mathrm{sc} = \xi_\mathrm{TE} k \sqrt{Z_\mathrm{F}} \bm{f}_{1mn}^{(2)}
 ```
 and
 ```math
-\bm e_\mathrm{TE}^\mathrm{sc} = \xi_\mathrm{TE} \bm e_\mathrm{TM}^\mathrm{inc} \,.
+\bm e_\mathrm{TM}^\mathrm{sc} = \xi_\mathrm{TM} k \sqrt{Z_\mathrm{F}} \bm{f}_{2mn}^{(2)} \,.
 ```
 
 #### API
