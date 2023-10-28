@@ -64,7 +64,7 @@ function field(excitation::SphericalModeTE, point, quantity::ElectricField; para
     end
 
     # --- factors Eϑ and Eϕ have in common
-    aux = excitation.amplitude * k * sqrt(ZF) * H * pf * exp(im * m * ϕ)
+    aux = excitation.amplitude * k * sqrt(ZF) * H * pf * cis(m * ϕ)
 
     # --- put things together
     Eϑ = aux * im * associatedLegendre(n, m, ϑ)
@@ -123,7 +123,7 @@ function field(excitation::SphericalModeTM, point, quantity::ElectricField; para
 
     # --- factors Er, Eϑ, and Eϕ have in common
     mabs = abs(m)
-    aux = excitation.amplitude * sqrt(ZF) * pf * exp(im * m * ϕ) / r
+    aux = excitation.amplitude * sqrt(ZF) * pf * cis(m * ϕ) / r
 
     # --- put things together
     Er = aux * n * (n + 1) * H * Plm(cos(ϑ), n, mabs; norm=Val(:normalized))
@@ -166,7 +166,7 @@ function field(excitation::SphericalModeTE, point, quantity::FarField; parameter
     ZF = sqrt(ε / μ)
 
     # --- factors Eϑ and Eϕ have in common
-    aux = excitation.amplitude * (im)^(n + 1) * T(1.0) * sqrt(ZF) * pf * exp(im * m * ϕ)
+    aux = excitation.amplitude * (im)^(n + 1) * T(1.0) * sqrt(ZF) * pf * cis(m * ϕ)
 
     # --- put things together
     Eϑ = aux * im * associatedLegendre(n, m, ϑ)
@@ -207,7 +207,7 @@ function field(excitation::SphericalModeTM, point, quantity::FarField; parameter
     ZF = sqrt(ε / μ)
 
     # --- factors Er, Eϑ, and Eϕ have in common
-    aux = excitation.amplitude * (im)^n * T(1.0) * sqrt(ZF) * pf * exp(im * m * ϕ)
+    aux = excitation.amplitude * (im)^n * T(1.0) * sqrt(ZF) * pf * cis(m * ϕ)
 
     # --- put things together
     Eϑ = aux * derivatieAssociatedLegendre(n, m, ϑ)

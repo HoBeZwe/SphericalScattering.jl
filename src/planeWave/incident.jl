@@ -35,7 +35,7 @@ function field(excitation::PlaneWave, point, quantity::ElectricField; parameter:
     d = excitation.direction
     p = excitation.polarization
 
-    return a * exp(-im * k * dot(d, point)) * p
+    return a * cis(-k * dot(d, point)) * p
 end
 
 
@@ -58,7 +58,7 @@ function field(excitation::PlaneWave, point, quantity::MagneticField; parameter:
     ε = excitation.embedding.ε
     μ = excitation.embedding.μ
 
-    return a * sqrt(ε / μ) * exp(-im * k * dot(d, point)) * (d × p)
+    return a * sqrt(ε / μ) * cis(-k * dot(d, point)) * (d × p)
 end
 
 

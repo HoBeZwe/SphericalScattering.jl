@@ -46,7 +46,7 @@ function field(excitation::Dipole, point, quantity::ElectricField; parameter::Pa
 
     # r < 0.9 && return SVector(NaN, NaN, NaN)
 
-    return Il / (4 * π) * sqrt(μ / ε) * exp(-im * k * r) * (k / r * ((n × p) × n) + (1 / k / r^3 + im / r^2) * (3 * n * dot(n, p) - p))
+    return Il / (4 * π) * sqrt(μ / ε) * cis(-k * r) * (k / r * ((n × p) × n) + (1 / k / r^3 + im / r^2) * (3 * n * dot(n, p) - p))
 end
 
 
@@ -70,7 +70,7 @@ function field(excitation::Dipole, point, quantity::MagneticField; parameter::Pa
     r = norm(d)
     n = d / r
 
-    return Il / (4 * π) * (n × p) * exp(-im * k * r) / r * (k + 1 / (im * r))
+    return Il / (4 * π) * (n × p) * cis(-k * r) / r * (k + 1 / (im * r))
 end
 
 
@@ -95,7 +95,7 @@ function field(excitation::HertzianDipole, point, quantity::FarField; parameter:
     n = point / norm(point)
     kd = k * r0 ⋅ point         # phase correction if dipole is not placed in origin
 
-    return Il / (4 * π) * sqrt(μ / ε) * k * ((n × p) × n) * exp(im * kd)
+    return Il / (4 * π) * sqrt(μ / ε) * k * ((n × p) × n) * cis(kd)
 end
 
 
@@ -118,7 +118,7 @@ function field(excitation::FitzgeraldDipole, point, quantity::FarField; paramete
     n = point / norm(point)
     kd = k * r0 ⋅ point         # phase correction if dipole is not placed in origin
 
-    return Il / (4 * π) * (n × p) * k * exp(im * kd)
+    return Il / (4 * π) * (n × p) * k * cis(kd)
 end
 
 
