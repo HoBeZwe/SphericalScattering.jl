@@ -1,8 +1,29 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
 authors:
   - family-names: Hofmann
     given-names: Bernd
     orcid: https://orcid.org/0000-0003-1435-6203
+  - family-names: Respondek
+    given-names: Paula
+    orcid: https://orcid.org/0009-0005-4892-2711
+  - family-names: Adrian
+    given-names: Simon B.
+    orcid: https://orcid.org/0000-0001-8008-6235
 title: "SphericalScattering"
 url: "https://github.com/HoBeZwe/SphericalScattering"
+message: "If you use this software, please cite our article in the Journal of Open Source Software (JOSS)."
+preferred-citation:
+  authors:
+  - family-names: Hofmann
+    given-names: Bernd
+    orcid: https://orcid.org/0000-0003-1435-6203
+  - family-names: Respondek
+    given-names: Paula
+    orcid: https://orcid.org/0009-0005-4892-2711
+  - family-names: Adrian
+    given-names: Simon B.
+    orcid: https://orcid.org/0000-0001-8008-6235
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  title: "SphericalScattering: A Julia Package for Electromagnetic Scattering from Spherical Objects"
