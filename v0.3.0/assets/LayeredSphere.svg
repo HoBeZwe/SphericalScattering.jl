@@ -5,33 +5,9 @@
    viewBox="0 0 109.836 131.148"
    version="1.1"
    id="svg747"
-   sodipodi:docname="LayeredSphere.svg"
-   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
-  <sodipodi:namedview
-     id="namedview387"
-     pagecolor="#505050"
-     bordercolor="#eeeeee"
-     borderopacity="1"
-     inkscape:showpageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#505050"
-     inkscape:document-units="pt"
-     showgrid="false"
-     inkscape:zoom="4.7865772"
-     inkscape:cx="51.393718"
-     inkscape:cy="98.922462"
-     inkscape:window-width="1920"
-     inkscape:window-height="1012"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg747" />
   <defs
      id="defs567">
     <g
@@ -1434,18 +1410,6 @@
          d="M 105 83 L 109.835938 83 L 109.835938 91 L 105 91 Z M 105 83 "
          id="path564" />
     </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath605">
-      <rect
-         style="fill:#ff0000;stroke-width:0.75"
-         id="rect607"
-         width="47.451336"
-         height="32.323879"
-         x="-18.274586"
-         y="-4.9707313"
-         transform="matrix(0.98717928,0.15961536,0.15961536,-0.98717928,0,0)" />
-    </clipPath>
   </defs>
   <path
      fill-rule="nonzero"
@@ -1522,8 +1486,18 @@
      stroke-miterlimit="10"
      d="M 31.183094 -0.00046875 C 31.183094 -6.387187 25.237781 -12.293437 15.589344 -15.48875 C 8.429188 -17.859844 -0.0825312 -18.504375 -8.070812 -17.273906 L -0.0005 -0.00046875 "
      transform="matrix(1, 0, 0, -1, 39.188, 77.23)"
-     id="path585"
-     clip-path="url(#clipPath605)" />
+     id="path585" />
+  <path
+     fill="none"
+     stroke-width="0.3985"
+     stroke-linecap="round"
+     stroke-linejoin="miter"
+     stroke="rgb(0%, 0%, 100%)"
+     stroke-opacity="1"
+     stroke-miterlimit="10"
+     d="M 31.183094 -0.00046875 C 31.183094 -1.562969 30.823719 -3.121562 30.120594 -4.629375 "
+     transform="matrix(1, 0, 0, -1, 39.188, 77.23)"
+     id="path587" />
   <path
      fill-rule="nonzero"
      fill="rgb(0%, 67.83905%, 93.728638%)"
@@ -2042,4 +2016,12 @@
      style="fill:#00adef;fill-opacity:1;stroke:#00adef;stroke-width:0.109;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:0.0749168;stroke-opacity:1"
      d="m 58.221277,79.006533 c -0.0174,-0.266873 -0.07169,-0.731745 -0.128966,-1.104435 -0.03135,-0.203978 -0.106578,-0.628313 -0.116753,-0.658583 -0.0032,-0.0096 0.055,-0.01223 0.269783,-0.01223 h 0.273897 l -4.5e-5,0.10038 c -1.62e-4,0.35607 -0.06234,0.868988 -0.155219,1.280453 -0.03359,0.14877 -0.124426,0.488587 -0.132872,0.497032 -0.0016,0.0015 -0.0061,-0.04455 -0.0098,-0.102607 z"
      id="path2138" />
+  <path
+     style="fill:#7a3d00;fill-opacity:1;stroke:#7a3d00;stroke-width:0.105;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:0.0749168;stroke-opacity:1"
+     d="m 69.486435,80.551677 c -0.05176,-1.016257 -0.19603,-2.177355 -0.398879,-3.210172 -0.01858,-0.09457 -0.03377,-0.177203 -0.03377,-0.183623 0,-0.0088 0.133345,-0.01162 0.559704,-0.01162 h 0.559704 l -0.0062,0.28644 c -0.02217,1.03443 -0.225552,2.1147 -0.598743,3.180285 -0.03113,0.08887 -0.05956,0.164858 -0.06319,0.168855 -0.0036,0.0038 -0.01204,-0.09955 -0.01869,-0.23013 z"
+     id="path2485" />
+  <path
+     style="fill:#7a3d00;fill-opacity:1;stroke:#7a3d00;stroke-width:0.105;stroke-linecap:round;stroke-dasharray:none;stroke-dashoffset:0.0749168;stroke-opacity:1"
+     d="m 69.54889,81.645487 c -0.02281,-0.006 -0.02577,-0.04635 -0.03224,-0.438953 l -0.0055,-0.332962 0.06913,-0.19455 c 0.375053,-1.05549 0.58017,-2.151008 0.605609,-3.234518 l 0.0072,-0.3051 0.02932,-0.04748 c 0.08373,-0.135502 0.281841,-0.122092 0.343263,0.02325 0.01622,0.0384 0.01772,0.279008 0.0035,0.56097 -0.05617,1.112798 -0.273885,2.176035 -0.665766,3.25128 -0.06757,0.185393 -0.209708,0.541673 -0.262956,0.659108 -0.03062,0.0675 -0.03889,0.07282 -0.09154,0.05895 z"
+     id="path2487" />
 </svg>
