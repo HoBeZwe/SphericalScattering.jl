@@ -68,7 +68,7 @@ The scattered far- and near-fields are then obtained following [@jinTheoryComput
 
 all via a unified interface.
 In consequence, `SphericalScattering` is a useful (code-) verification tool in the area of electromagnetic scattering for a wide range of scenarios.
-For this purpose, it has already been employed in scientific puplications [@hofmannLowFrequencyStableDiscretization2021;@hofmannLowFrequencyStabilizedElectricField2022;@hofmannEfficientCombinationScalarPotential2022a;@hofmannExcitationAwareSelfAdaptiveFrequency2023;@hofmannLowFrequencyStableExcitation2023;@hofmannInvestigationsLowFrequencyStability2023;@hofmannSelfAdaptiveFrequencyNormalization2023].
+For this purpose, it has already been employed in scientific publications [@hofmannLowFrequencyStableDiscretization2021;@hofmannLowFrequencyStabilizedElectricField2022;@hofmannEfficientCombinationScalarPotential2022a;@hofmannExcitationAwareSelfAdaptiveFrequency2023;@hofmannLowFrequencyStableExcitation2023;@hofmannInvestigationsLowFrequencyStability2023;@hofmannSelfAdaptiveFrequencyNormalization2023].
 
 
 # Acknowledgments

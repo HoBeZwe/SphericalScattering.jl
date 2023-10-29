@@ -8,7 +8,7 @@ The basic building blocks are introduced in the following simple example; more d
 
 
 
-```julia
+```@example introductory
 using SphericalScattering, StaticArrays
 
 # define excitation: plane wave travelling in positive z-direction with x-polarization
@@ -24,13 +24,14 @@ point_cart = [SVector(2.0, 2.0, 3.2)]
 E  = scatteredfield(sp, ex, ElectricField(point_cart))
 H  = scatteredfield(sp, ex, MagneticField(point_cart))
 FF = scatteredfield(sp, ex, FarField(point_cart))
+nothing # hide
 ```
 
 ---
 ## Defining Observation Points
 
 In order to define points the [StaticArrays](https://github.com/JuliaArrays/StaticArrays.jl) package has to be used.
-```julia
+```@example introductory
 using StaticArrays
 
 # defining a single point
@@ -38,6 +39,7 @@ point_cart = [SVector(2.0, 2.0, 3.2)]
 
 # defining multiple points (along a line)
 point_cart = [SVector(5.0, 5.0, z) for z in -2:0.2:2]
+nothing # hide
 ```
 
 !!! info
