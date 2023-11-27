@@ -3,9 +3,12 @@ name: Documentation
 on:
   push:
     branches:
-      - master # update to match your development branch (master, main, dev, trunk, ...)
+      - 'master'
+      - 'release-'
     tags: '*'
   pull_request:
+  release:
+    types: [published]
 
 jobs:
   build:
