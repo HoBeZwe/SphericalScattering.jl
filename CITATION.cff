@@ -9,7 +9,7 @@ authors:
   - family-names: Adrian
     given-names: Simon B.
     orcid: https://orcid.org/0000-0001-8008-6235
-title: "SphericalScattering"
+title: "SphericalScattering: A Julia Package for Electromagnetic Scattering from Spherical Objects"
 url: "https://github.com/HoBeZwe/SphericalScattering"
 message: "If you use this software, please cite our article in the Journal of Open Source Software (JOSS)."
 preferred-citation:

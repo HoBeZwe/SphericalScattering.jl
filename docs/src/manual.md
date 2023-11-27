@@ -184,3 +184,7 @@ plotffcut(F, points; scale="log", normalize=true, format="polar")
 
 are provided (after loading the [PlotlyJS](https://github.com/JuliaPlots/PlotlyJS.jl/tree/master) package). 
 For more details see the [visualization of fields](@ref visualize) examples.
+
+!!! warning
+    Issues have been reported with PlotlyJS if an installation via [Conda](https://docs.conda.io/en/latest/) is employed.
+    See, e.g., [this thread](https://discourse.julialang.org/t/missing-shared-library-file-when-pre-compiling/104575) for issues with Julia and Conda.

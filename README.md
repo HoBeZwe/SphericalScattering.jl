@@ -55,4 +55,4 @@ Please cite this package following the information on [Zenodo](https://zenodo.or
 ## Documentation
 
 - Documentation for the [latest stable version](https://hobezwe.github.io/SphericalScattering.jl/stable/).
-- Documentation for the [development version](https://hobezwe.github.io/SphericalScattering.jl/stable/).
+- Documentation for the [development version](https://hobezwe.github.io/SphericalScattering.jl/dev/).
