@@ -39,7 +39,7 @@ When electromagnetic fields are impinging on objects of various kinds, determini
 For example, when monitoring the position of an airplane by a radar, the scattering behavior of the airplane plays a pivotal role and, thus, needs to be studied.
 Analytical approaches, however, to characterize such scattering behavior are rarely known.
 Some of the few exceptions where at least semi-analytical descriptions are available are metallic or dielectric spherical objects excited by time-harmonic or static fields [@ruckRadarCrossSection1970;@jinTheoryComputationElectromagnetic2015].
-In some applications these canonical scattering problems are the study subject of interest.
+In some applications, these canonical scattering problems are the study subject of interest.
 In other areas, solutions to the scattering from spherical objects rather serve as a means to verify the correctness of more involved numerical techniques, which allow to analyze the scattering from real-world objects, for instance, via finite element or integral equation methods [@raoElectromagneticScatteringSurfaces1982;@harringtonFieldComputationMoment1993;@jinTheoryComputationElectromagnetic2015;@adrianElectromagneticIntegralEquations2021].
 Hence, semi-analytical descriptions for the scattering from spherical objects facilitate a reproducible and comparable verification of approaches to solve electromagnetic scattering problems.
 
