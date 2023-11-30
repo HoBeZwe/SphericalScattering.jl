@@ -1,29 +1,44 @@
-cff-version: 1.2.0
+cff-version: "1.2.0"
 authors:
-  - family-names: Hofmann
-    given-names: Bernd
-    orcid: https://orcid.org/0000-0003-1435-6203
-  - family-names: Respondek
-    given-names: Paula
-    orcid: https://orcid.org/0009-0005-4892-2711
-  - family-names: Adrian
-    given-names: Simon B.
-    orcid: https://orcid.org/0000-0001-8008-6235
-title: "SphericalScattering: A Julia Package for Electromagnetic Scattering from Spherical Objects"
-url: "https://github.com/HoBeZwe/SphericalScattering"
-message: "If you use this software, please cite our article in the Journal of Open Source Software (JOSS)."
+- family-names: Hofmann
+  given-names: Bernd
+  orcid: "https://orcid.org/0000-0003-1435-6203"
+- family-names: Respondek
+  given-names: Paula
+  orcid: "https://orcid.org/0009-0005-4892-2711"
+- family-names: Adrian
+  given-names: Simon B.
+  orcid: "https://orcid.org/0000-0001-8008-6235"
+contact:
+- family-names: Hofmann
+  given-names: Bernd
+  orcid: "https://orcid.org/0000-0003-1435-6203"
+doi: 10.5281/zenodo.7017219
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
 preferred-citation:
   authors:
   - family-names: Hofmann
     given-names: Bernd
-    orcid: https://orcid.org/0000-0003-1435-6203
+    orcid: "https://orcid.org/0000-0003-1435-6203"
   - family-names: Respondek
     given-names: Paula
-    orcid: https://orcid.org/0009-0005-4892-2711
+    orcid: "https://orcid.org/0009-0005-4892-2711"
   - family-names: Adrian
     given-names: Simon B.
-    orcid: https://orcid.org/0000-0001-8008-6235
+    orcid: "https://orcid.org/0000-0001-8008-6235"
+  date-published: 2023-11-30
+  doi: 10.21105/joss.05820
+  issn: 2475-9066
+  issue: 91
   journal: Journal of Open Source Software
   publisher:
     name: Open Journals
-  title: "SphericalScattering: A Julia Package for Electromagnetic Scattering from Spherical Objects"
+  start: 5820
+  title: "SphericalScattering: A Julia Package for Electromagnetic
+    Scattering from Spherical Objects"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.05820"
+  volume: 8
+title: "SphericalScattering: A Julia Package for Electromagnetic
+  Scattering from Spherical Objects"

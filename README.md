@@ -11,6 +11,8 @@
 [![CI](https://github.com/HoBeZwe/SphericalScattering.jl/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/HoBeZwe/SphericalScattering.jl/actions/workflows/CI.yml)
 [![codecov](https://codecov.io/gh/HoBeZwe/SphericalScattering.jl/branch/master/graph/badge.svg?token=4F9NUNRC1K)](https://codecov.io/gh/HoBeZwe/SphericalScattering.jl)
 [![DOI](https://zenodo.org/badge/375493054.svg)](https://zenodo.org/badge/latestdoi/375493054)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.05820/status.svg)](https://doi.org/10.21105/joss.05820)
+
 
 ## Introduction
 
@@ -48,7 +50,7 @@ The following aspects are implemented (✔) and planned (⌛):
 
 ## Citation
 
-Please cite this package following the information on [Zenodo](https://zenodo.org/badge/latestdoi/375493054).
+If you use this software, please cite our [JOSS article](https://doi.org/10.21105/joss.05820).
 
 
 

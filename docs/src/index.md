@@ -73,3 +73,8 @@ The implementation is based on
 - [4] J. D. Jackson, *Classical Electrodynamics*, New York: Wiley, 3rd ed., 1999.
 - [5] J. E. Hansen, ed., *Spherical Near-field Antenna Measurements*, The Institution of Engineering and Technology, Michael Faraday House, Six Hills Way, Stevenage SG1 2AY, UK: IET, 1988.
 - [6] T. B. Jones, Ed., *Models for layered spherical particles*, in Electromechanics of Particles, Cambridge: Cambridge University Press, 1995, pp. 227–235. doi: 10.1017/CBO9780511574498.012.
+
+!!! note
+    If you use this software, please cite our [JOSS article](https://doi.org/10.21105/joss.05820):
+
+    B. Hofmann, P. Respondek, and S. B. Adrian, *Sphericalscattering: a Julia package for electromagnetic scattering from spherical objects*, Journal of Open Source Software, vol. 8, no. 91, Nov. 2023, doi: 10.21105/joss.05820.
