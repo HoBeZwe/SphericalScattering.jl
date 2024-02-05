@@ -6,8 +6,6 @@ Compute the electric field scattered by a PEC sphere, for an incident plane wave
 """
 function scatteredfield(sphere::Sphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
 
-    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
-
     T = typeof(excitation.frequency)
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
 
@@ -148,7 +146,7 @@ Returns ``H₀/ηᵢ``, where ``H₀`` is the magnetic field of the incident pla
 For PEC layers, it returns ``0``.
 """
 function amplitude(sphere, excitation::PlaneWave, quantity::MagneticField, r)
-    η = impedance(sphere, r)
+    η = impedance(sphere, excitation, r)
 
     if η == 0.0 # PEC case
         return η * excitation.amplitude # return zero of correct type
@@ -166,7 +164,7 @@ Returns ``E₀``, where ``E₀`` is the electric field of the incident plane wav
 For PEC layers, it returns ``0``.
 """
 function amplitude(sphere, excitation::PlaneWave, quantity::ElectricField, r)
-    η = impedance(sphere, r)
+    η = impedance(sphere, excitation, r)
 
     if η == 0.0 # PEC case
         return η * excitation.amplitude # return zero of correct type
@@ -248,8 +246,8 @@ function scatterCoeff(sphere::DielectricSphere, excitation::PlaneWave, n::Int)
     f = excitation.frequency
     T = typeof(f)
 
-    ε2 = sphere.embedding.ε
-    μ2 = sphere.embedding.μ
+    ε2 = excitation.embedding.ε
+    μ2 = excitation.embedding.μ
 
     ε1 = sphere.filling.ε
     μ1 = sphere.filling.μ

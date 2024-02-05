@@ -4,12 +4,11 @@
     f = 1e8
     κ = 2π * f / c   # Wavenumber
 
-    sp = PECSphere(; radius=spRadius, embedding=Medium(𝜀, 𝜇))
-    ex = planeWave(sp; frequency=f)
+    sp = PECSphere(; radius=spRadius)
+    ex = planeWave(; frequency=f)
 
     @testset "Planewave excitation" begin
         @test planeWave(; frequency=f) isa PlaneWave{Float64,Float64,Float64}
-        @test planeWave(sp; frequency=f) isa PlaneWave{Float64,Float64,Float64}
     end
 
     @testset "Incident fields" begin
@@ -43,7 +42,7 @@
             FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(𝑇), points_cartFF, u, RT)
 
             # ----- this package
-            ex = planeWave(sp; frequency=f)
+            ex = planeWave(; frequency=f)
 
             EF₂ = scatteredfield(sp, ex, ElectricField(points_cartNF))
             EF₁ = scatteredfield(sp, ex, ElectricField(points_cartNF_inside))
@@ -86,7 +85,7 @@
             FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(𝑇), points_cartFF, u, RT)
 
             # ----- this package
-            ex = planeWave(sp; frequency=f, direction=dir, polarization=pol)
+            ex = planeWave(; frequency=f, direction=dir, polarization=pol)
 
             EF₂ = scatteredfield(sp, ex, ElectricField(points_cartNF))
             EF₁ = scatteredfield(sp, ex, ElectricField(points_cartNF_inside))

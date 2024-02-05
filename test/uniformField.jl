@@ -19,7 +19,7 @@ end
 @testset "Scattered fields" begin
     @testset "Dielectric sphere" begin
         # define scatterer: dielectric sphere
-        sp = DielectricSphere(; radius=1.0, embedding=Medium(ε0, μ0), filling=Medium(ε0 * 5, μ0))
+        sp = DielectricSphere(; radius=1.0, filling=Medium(ε0 * 5, μ0))
 
         # define observation points inside and outside of the sphere
         point_cart = [SVector(0.0, 0.0, 0.5), SVector(2.0, 0.0, 0.0)]
@@ -41,7 +41,7 @@ end
     end
     @testset "PEC sphere" begin
         # define scatterer: PEC sphere
-        sp = PECSphere(1.0, Medium(ε0, μ0))
+        sp = PECSphere(1.0)
 
         # define observation points inside and outside of the sphere
         point_cart = [SVector(0.0, 0.0, 0.5), SVector(2.0, 0.0, 0.0)]
@@ -63,7 +63,7 @@ end
     end
     @testset "Layered sphere" begin
         # define scatterer: layered dielectric sphere
-        sp = LayeredSphere(; radii=SVector(0.5, 1.0), filling=SVector(Medium(5ε0, μ0), Medium(3ε0, μ0)), embedding=Medium(ε0, μ0))
+        sp = LayeredSphere(; radii=SVector(0.5, 1.0), filling=SVector(Medium(5ε0, μ0), Medium(3ε0, μ0)))
 
         # define observation points in both layers and outside of the sphere
         point_cart = [SVector(0.25, 0.0, 0.0), SVector(0.75, 0.0, 0.0), SVector(2.0, 0.0, 0.0)]
@@ -91,7 +91,7 @@ end
     end
     @testset "Layered sphere PEC" begin
         # define scatterer: layered sphere PEC
-        sp = LayeredSpherePEC(; radii=SVector(0.5, 1.0), embedding=Medium(ε0, μ0), filling=SVector(Medium(5ε0, μ0)))
+        sp = LayeredSpherePEC(; radii=SVector(0.5, 1.0), filling=SVector(Medium(5ε0, μ0)))
 
         # define observation points in both layers and outside of the sphere
         point_cart = [SVector(0.25, 0.0, 0.0), SVector(0.75, 0.0, 0.0), SVector(2.0, 0.0, 0.0)]
@@ -118,9 +118,7 @@ end
 
 
         # more than one dielectric layer
-        sp = LayeredSpherePEC(;
-            radii=SVector(0.5, 0.75, 1.0), embedding=Medium(ε0, μ0), filling=SVector(Medium(3ε0, μ0), Medium(2ε0, μ0))
-        )
+        sp = LayeredSpherePEC(; radii=SVector(0.5, 0.75, 1.0), filling=SVector(Medium(3ε0, μ0), Medium(2ε0, μ0)))
 
         # define observation points in both layers and outside of the sphere
         point_cart = [SVector(0.25, 0.0, 0.0), SVector(0.6, 0.0, 0.0), SVector(2.0, 0.0, 0.0)]
@@ -166,18 +164,17 @@ end
         #
         sp = LayeredSphere(;
             radii=SVector(R_c - Δ, R_c),
-            embedding=md_s,
             filling=SVector(md_c, md_m), # From inner to outer layer
         )
 
 
-        spj = DielectricSphereThinImpedanceLayer(; radius=R_c, thickness=Δ, embedding=md_s, thinlayer=md_m, filling=md_c)
+        spj = DielectricSphereThinImpedanceLayer(; radius=R_c, thickness=Δ, thinlayer=md_m, filling=md_c)
 
         # We compare against Jones, 1995, Appendix, he uses E₀ẑ
         # So potential points (i.e., grows) into ẑ direction
         potential_direction = dir
 
-        ex = UniformField(; embedding=md_s, amplitude=E₀, direction=-potential_direction)
+        ex = UniformField(; amplitude=E₀, direction=-potential_direction, embedding=md_s)
 
         Φsca_ana_3l(pts) = scatteredfield(sp, ex, ScalarPotential(pts))
         Φtot_ana_3l(pts) = field(sp, ex, ScalarPotential(pts))
@@ -204,13 +201,13 @@ end
 
         Esca(pts) = scatteredfield(spj, ex, ElectricField(pts))
         𝒏 = points_cartFF ./ norm.(points_cartFF)
-        absdiff = dot.(𝒏, spj.embedding.ε * Esca(points_cartFF .* 1.01) - ε∇Φsca_ana_app(points_cartFF .* 0.99))
+        absdiff = dot.(𝒏, ex.embedding.ε * Esca(points_cartFF .* 1.01) - ε∇Φsca_ana_app(points_cartFF .* 0.99))
 
         # Check that normal component of D-field is continuous
         @test norm(absdiff) / norm(dot.(𝒏, ε∇Φsca_ana_app(points_cartFF .* 0.99))) < 0.03
 
 
-        @test norm(ε∇Φsca_ana_app(points_cartNF * 2.0) - spj.embedding.ε * Esca(points_cartNF * 2.0)) /
-              abs(spj.embedding.ε * norm(Esca(points_cartNF * 2.0))) < 0.007
+        @test norm(ε∇Φsca_ana_app(points_cartNF * 2.0) - ex.embedding.ε * Esca(points_cartNF * 2.0)) /
+              abs(ex.embedding.ε * norm(Esca(points_cartNF * 2.0))) < 0.007
     end
 end

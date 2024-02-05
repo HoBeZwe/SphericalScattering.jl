@@ -6,8 +6,6 @@ Compute the electric field scattered by a dipole at some position and orientatio
 """
 function scatteredfield(sphere::PECSphere, excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
 
-    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
-
     T = typeof(excitation.frequency)
 
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))

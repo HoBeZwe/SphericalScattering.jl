@@ -8,7 +8,6 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; 
 
     T = typeof(excitation.frequency)
 
-    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
     excitation.orientation × excitation.position == SVector{3,T}(0, 0, 0) || error("The dipole is not perpendicular to the sphere.")
 
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
