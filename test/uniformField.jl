@@ -63,7 +63,7 @@ end
     end
     @testset "Layered sphere" begin
         # define scatterer: layered dielectric sphere
-        sp = LayeredSphere(; radii=SVector(1.0, 0.5), filling=SVector(Medium(3ε0, μ0), Medium(5ε0, μ0)), embedding=Medium(ε0, μ0))
+        sp = LayeredSphere(; radii=SVector(0.5, 1.0), filling=SVector(Medium(5ε0, μ0), Medium(3ε0, μ0)), embedding=Medium(ε0, μ0))
 
         # define observation points in both layers and outside of the sphere
         point_cart = [SVector(0.25, 0.0, 0.0), SVector(0.75, 0.0, 0.0), SVector(2.0, 0.0, 0.0)]
@@ -72,6 +72,7 @@ end
         E = scatteredfield(sp, ex, ElectricField(point_cart))
         Φ = scatteredfield(sp, ex, ScalarPotential(point_cart))
 
+        # Sihvola&Lindell 1988, (10) - (12)
         @test Φ[1] ≈ 29 / 224
         @test Φ[2] ≈ 223 / 672
         @test Φ[3] ≈ 95 / 896
@@ -143,9 +144,9 @@ end
 
         #
         sp = LayeredSphere(;
-            radii=SVector(R_c, R_c - Δ),
+            radii=SVector(R_c - Δ, R_c),
             embedding=md_s,
-            filling=SVector(md_m, md_c), # From outer to inner layer
+            filling=SVector(md_c, md_m), # From inner to outer layer
         )
 
 
