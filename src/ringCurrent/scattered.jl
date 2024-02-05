@@ -8,7 +8,6 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Fi
 
     T = typeof(excitation.frequency)
 
-    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
     excitation.orientation × excitation.center == SVector{3,T}(0, 0, 0) ||
         error("The ring current is not perpendicular to the sphere.")
 

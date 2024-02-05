@@ -72,8 +72,8 @@
     EF₂MoM = efield(𝓣k2, j, RT, 𝓚k2, -m, RT, points_cartNF)
     EF₁MoM = efield(𝓣k1, -j, RT, 𝓚k1, +m, RT, points_cartNF_inside)
 
-    sp = DielectricSphere(; radius=spRadius, embedding=Medium(ε2, μ2), filling=Medium(ε1, μ1))
-    ex = planeWave(sp; frequency=f)
+    sp = DielectricSphere(; radius=spRadius, filling=Medium(ε1, μ1))
+    ex = planeWave(; frequency=f, embedding=Medium(ε2, μ2))
 
     # E-Field
     EF₂ = scatteredfield(sp, ex, ElectricField(points_cartNF))

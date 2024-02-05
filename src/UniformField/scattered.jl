@@ -6,8 +6,6 @@ Compute the electric field scattered by a sphere, for an incident uniform field.
 """
 function scatteredfield(sphere::Sphere, excitation::UniformField, quantity::Field; parameter::Parameter=Parameter())
 
-    sphere.embedding == excitation.embedding || error("Excitation and sphere are not in the same medium.") # verify excitation and sphere are in the same medium
-
     F = zeros(fieldType(quantity), size(quantity.locations))
 
     # --- compute field in Cartesian representation
@@ -31,7 +29,7 @@ function scatteredfield(
     sphere::DielectricSphere, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter()
 )
 
-    ε0 = sphere.embedding.ε
+    ε0 = excitation.embedding.ε
     ε1 = sphere.filling.ε
     E0 = field(excitation, point, quantity)
 
@@ -60,7 +58,7 @@ function scatteredfield(
     sphere::DielectricSphere, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter()
 )
 
-    ε0 = sphere.embedding.ε
+    ε0 = excitation.embedding.ε
     ε1 = sphere.filling.ε
     Φ0 = field(excitation, point, quantity)
 
@@ -137,7 +135,7 @@ function scatteredfield(
     E = scatteredfield(sphere, excitation, point, ElectricField(quantity.locations); parameter=parameter)
 
     if norm(point) > sphere.radius
-        D = sphere.embedding.ε * E
+        D = excitation.embedding.ε * E
     else
         D = sphere.filling.ε * E
     end
@@ -217,7 +215,7 @@ function scatterCoeff(sp::DielectricSphereThinImpedanceLayer, ex::UniformField)
     R = sp.radius
     Δ = sp.thickness
     εₘ = sp.thinlayer.ε
-    εₑ = sp.embedding.ε
+    εₑ = ex.embedding.ε
     εᵢ = sp.filling.ε
     E₀ = ex.amplitude
 
@@ -346,7 +344,7 @@ function scatterCoeff(sphere::LayeredSphere{LN,LR,LC}, excitation::UniformField{
 
     a = reverse(sphere.radii)
     n = length(a)
-    perms = reverse(getfield.(vcat(sphere.filling, sphere.embedding), 1))
+    perms = reverse(getfield.(vcat(sphere.filling, excitation.embedding), 1))
 
     T = promote_type(LR, LC, FC, FT, FR)
 
@@ -458,7 +456,7 @@ function scatterCoeff(sphere::LayeredSpherePEC{LN,LD,LR,LC}, excitation::Uniform
 
     a = reverse(sphere.radii)
     n = length(a) - 1
-    perms = reverse(getfield.(vcat(sphere.filling, sphere.embedding), 1))
+    perms = reverse(getfield.(vcat(sphere.filling, excitation.embedding), 1))
 
     T = promote_type(LR, LC, FC, FT, FR)
 
