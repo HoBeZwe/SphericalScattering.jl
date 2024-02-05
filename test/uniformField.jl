@@ -91,7 +91,7 @@ end
     end
     @testset "Layered sphere PEC" begin
         # define scatterer: layered sphere PEC
-        sp = LayeredSpherePEC(; radii=SVector(1.0, 0.5), embedding=Medium(ε0, μ0), filling=SVector(Medium(5ε0, μ0)))
+        sp = LayeredSpherePEC(; radii=SVector(0.5, 1.0), embedding=Medium(ε0, μ0), filling=SVector(Medium(5ε0, μ0)))
 
         # define observation points in both layers and outside of the sphere
         point_cart = [SVector(0.25, 0.0, 0.0), SVector(0.75, 0.0, 0.0), SVector(2.0, 0.0, 0.0)]

@@ -398,6 +398,8 @@ end
 Compute the scalar potential scattered by a layered dielectric sphere with PEC core, for an incident uniform field with polarization in the given direction
 using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`
 
+In contrast to `Sihvola and Lindell` the radii of the shells are ordered from inside to outside as depicted in the documentation.
+
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
@@ -409,69 +411,21 @@ function scatteredfield(
 ) where {LN,LD,LR,LC,FC,FT,FR}
 
     Φ0 = field(excitation, point, quantity)
-
     r = norm(point)
-    a = sphere.radii
-    dir = excitation.direction
-    n = length(a) - 1
-    perms = getfield.(vcat(sphere.embedding, sphere.filling), 1)
 
-    T = promote_type(LR, LC, FC, FT, FR)
+    C, D = scatterCoeff(sphere, excitation, r)
 
-    Bk = zeros(SMatrix{2,2,T}, n)
-    B = Matrix(I, 2, 2)
-
-    for k in range(n; stop=1, step=-1)
-        B11 = perms[k + 1] + 2 * perms[k]
-        B12 = 2 * (perms[k + 1] - perms[k]) * a[k]^-3
-        B21 = (perms[k + 1] - perms[k]) * a[k]^3
-        B22 = 2 * perms[k + 1] + perms[k]
-
-        Bk[k] = 1 / (3 * perms[k]) * ([B11 B12; B21 B22])
-        B = Bk[k] * B
-    end
-    Ck = zeros(T, n + 1)
-    Dk = zeros(T, n + 1)
-
-    Ck[1] = 1
-    Dk[1] = (B[2, 1] + B[2, 2] * a[end]^3) / (B[1, 1] + B[1, 2] * a[end]^3)
-    Ck[n + 1] = 1 / (B[1, 1] + B[1, 2] * a[end]^3)
-    Dk[n + 1] = a[end]^3 * Ck[n + 1]
-
-    for k in range(n; stop=2, step=-1)
-        #Bk[k]
-        #[Ck[k+1],Dk[k+1]]
-        Ck[k], Dk[k] = Bk[k] * [Ck[k + 1], Dk[k + 1]]
-    end
-    # find out in what layer `point` is
-    pos = 0
-
-    for k in 1:(n + 1)
-        if r < a[k]
-            pos = k
-        end
-    end
-
-    if pos == n + 1
-        C = 0
-        D = 0
-        R = 0
-    else
-        C = Ck[pos + 1]
-        D = Dk[pos + 1]
-        R = a[pos + 1]
-    end
-
-    return C * Φ0 - D * Φ0 / r^3 - Φ0
-
+    return Φ0 * (C - D / r^3) - Φ0
 end
-
 
 
 """
     scatteredfield(sphere::LayeredSpherePEC, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
-Compute the electric field scattered by a layered dielectric sphere with PEC core, for an incident uniform field with polarization in the given direction.
+Compute the electric field scattered by a layered dielectric sphere with PEC core, for an incident uniform field with polarization in the given direction
+using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`.
+
+In contrast to `Sihvola and Lindell` the radii of the shells are ordered from inside to outside as depicted in the documentation.
 
 The point and returned field are in Cartesian coordinates.
 """
@@ -482,14 +436,29 @@ function scatteredfield(
     quantity::ElectricField;
     parameter::Parameter=Parameter(),
 ) where {LN,LD,LR,LC,FC,FT,FR}
-    # using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`
 
     E0 = excitation.amplitude
     r = norm(point)
-    a = sphere.radii
     dir = excitation.direction
+
+    C, D = scatterCoeff(sphere, excitation, r)
+
+    return E0 * (C * dir - D * dir / r^3 + 3 * D * point * dot(dir, point) / r^5 - dir)
+end
+
+
+
+"""
+    scatterCoeff(sphere::LayeredSpherePEC{LN,LD,LR,LC}, excitation::UniformField{FC,FT,FR}, r) where {LN,LD,LR,LC,FC,FT,FR}
+
+Scatter coefficients according to `Sihvola and Lindell`. 
+However, the radii of the shells are ordered from inside to outside as depicted in the documentation.
+"""
+function scatterCoeff(sphere::LayeredSpherePEC{LN,LD,LR,LC}, excitation::UniformField{FC,FT,FR}, r) where {LN,LD,LR,LC,FC,FT,FR}
+
+    a = reverse(sphere.radii)
     n = length(a) - 1
-    perms = getfield.(vcat(sphere.embedding, sphere.filling), 1)
+    perms = reverse(getfield.(vcat(sphere.filling, sphere.embedding), 1))
 
     T = promote_type(LR, LC, FC, FT, FR)
 
@@ -505,7 +474,6 @@ function scatteredfield(
         Bk[k] = 1 / (3 * perms[k]) * ([B11 B12; B21 B22])
         B = Bk[k] * B
     end
-
     Ck = zeros(T, n + 1)
     Dk = zeros(T, n + 1)
 
@@ -515,30 +483,28 @@ function scatteredfield(
     Dk[n + 1] = a[end]^3 * Ck[n + 1]
 
     for k in range(n; stop=2, step=-1)
+
         Ck[k], Dk[k] = Bk[k] * [Ck[k + 1], Dk[k + 1]]
     end
+
     # find out in what layer `point` is
     pos = 0
-
     for k in 1:(n + 1)
-        if r < a[k]
-            pos = k
-        end
+        r < a[k] && (pos = k)
     end
 
     if pos == n + 1
         C = 0
         D = 0
-        R = 0
     else
         C = Ck[pos + 1]
         D = Dk[pos + 1]
-        R = a[pos + 1]
     end
 
-    return C * E0 * dir - D * E0 * dir / r^3 + 3 * D * E0 * point * dot(dir, point) / r^5 - E0 * dir
-
+    return C, D
 end
+
+
 
 fieldType(F::ElectricField)       = SVector{3,Complex{eltype(F.locations[1])}}
 fieldType(F::DisplacementField)   = SVector{3,Complex{eltype(F.locations[1])}}
