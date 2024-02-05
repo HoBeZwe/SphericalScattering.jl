@@ -21,12 +21,21 @@ end
     FF = scatteredfield(sp, ex, FarField(points_cart))
 
     @test_nowarn plotff(FF, points_sph, scale="linear", normalize=true, type="abs")
+    @test_nowarn plotff(FF, points_sph, scale="log", normalize=true, type="abs")
 
+    @test_nowarn plotff(FF, points_sph, scale="linear", normalize=true, type="theta")
+    @test_nowarn plotff(FF, points_sph, scale="log", normalize=true, type="phi")
 
+    @test_nowarn plotff(FF, points_sph, scale="linear", normalize=false, type="theta")
+    @test_nowarn plotff(FF, points_sph, scale="log", normalize=false, type="phi")
 
     # --- evaluate fields at φ = 5° cut
     points_cart, points_sph = phiCutPoints(5) # analogously, thetaCutPoints can be used
     FF = scatteredfield(sp, ex, FarField(points_cart))
 
     @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="log", format="polar")
+    @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="linear", format="polar")
+
+    @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="log", format="rectangular")
+    @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="linear", format="rectangular")
 end
