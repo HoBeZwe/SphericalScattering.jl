@@ -58,10 +58,7 @@ The layered dielectric sphere has radii ``[r_1, r_2, \dots, r_N]`` and is assume
 ```@docs
 LayeredSphere
 ```
-with, e.g., `radii = SVector(1.0, 0.5, 0.25)` and `radii = SVector(Medium(ε1, μ1), Medium(ε2, μ2), Medium(ε3, μ3))`.
-
-!!! warning
-    The order of the radii does not yet match the image!
+with, e.g., `radii = SVector(0.25, 0.5, 1.0)` and `radii = SVector(Medium(ε1, μ1), Medium(ε2, μ2), Medium(ε3, μ3))`.
 
 
 ---
@@ -79,10 +76,7 @@ The layered dielectric sphere has radii ``[r_1, r_2, \dots, r_{N+1}]`` and is as
 ```@docs
 LayeredSpherePEC
 ```
-with, e.g., `radii = SVector(1.0, 0.5, 0.25)` and `radii = SVector(Medium(ε1, μ1), Medium(ε2, μ2))`.
-
-!!! warning
-    The order of the radii does not yet match the image!
+with, e.g., `radii = SVector(0.25, 0.5, 1.0)` and `radii = SVector(Medium(ε1, μ1), Medium(ε2, μ2))`.
 
 
 ---
