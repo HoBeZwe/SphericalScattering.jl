@@ -135,12 +135,29 @@ E  = field(sp, ex, ElectricField(point_cart))
 H  = field(sp, ex, MagneticField(point_cart))
 
 FF = field(sp, ex, FarField(point_cart))
-
 ```
 For the uniform field excitation, only the electric field as well as the scalar potential can be calculated:
 ```julia
 Φ = field(sp, ex, ScalarPotential(point_cart))
 ```
+
+
+---
+## Radar Cross Section
+
+To compute the bistatic [radar cross section (RCS)](@ref rcsPW), the function
+```julia
+σ = rcs(sp, ex, points_cart)
+```
+is provided. For the monostatic RCS, the function
+```julia
+σ = rcs(sp, ex)
+```
+is provided.
+
+!!! note
+    The RCS is (so far) only defined for a plane wave excitation.
+
 
 
 ---

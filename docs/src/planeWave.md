@@ -95,3 +95,21 @@ H  = field(sp, ex, MagneticField(point_cart))
 
 !!! note
     The total far-field is not defined (since the incident far-field is not defined).
+
+
+---
+## [Radar Cross Section](@id rcsPW)
+
+To compute the bistatic radar cross section (RCS) [[1, pp. 350ff]](@ref refs)
+```math
+\sigma (\vartheta, \varphi) = \lim_{r\rightarrow \infty} \left( 4 \pi r^2 \frac{{|e^\mathrm{sc}|}^2}{{|e^\mathrm{sc}|}^2} \right)
+```
+the function
+```julia
+σ = rcs(sp, ex, points_cart)
+```
+is provided. For the monostatic RCS, the function
+```julia
+σ = rcs(sp, ex)
+```
+is provided.

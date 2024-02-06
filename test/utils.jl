@@ -39,3 +39,21 @@ end
     @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="log", format="rectangular")
     @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="linear", format="rectangular")
 end
+
+@testset "Radar cross section" begin
+
+    # --- monostatic RCS
+    @test_nowarn rcs(PECSphere(; radius=2.0), planeWave(; frequency=1e8))
+
+    @test_throws ErrorException("The (monostatic) RCS is only defined for a plane-wave excitation (so far).") rcs(
+        PECSphere(; radius=1.0), SphericalModeTE(; frequency=f)
+    )
+
+
+    # --- bistatic RCS
+    @test_nowarn rcs(PECSphere(; radius=2.0), planeWave(; frequency=1e8), [SVector(1.0, 0.0, 0.0)])
+
+    @test_throws ErrorException("The (bistatic) RCS is only defined for a plane-wave excitation (so far).") rcs(
+        PECSphere(; radius=1.0), SphericalModeTE(; frequency=f), []
+    )
+end
