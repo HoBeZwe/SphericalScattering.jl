@@ -91,6 +91,80 @@ print("Far-field error: $diff_FF %\n")
     [CompScienceMeshes](https://github.com/krcools/CompScienceMeshes.jl) are used to define several functional tests.
 
 
+---
+## [Radar Cross Section](@id rcsApplication) 
+
+The monostatic and the bistatic [radar cross section (RCS)](@ref rcsPW) can be evaluated.
+
+### Monostatic RCS
+
+The monostatic radar cross section as a function of the sphere radius can be computed as follows (compare also the plot in [[1, pp. 352ff]](@ref refs)):
+```@example RCS
+using SphericalScattering
+using PlotlyJS
+
+f = 1e8
+c = 2.99792458e8    # speed of light
+λ = c / f
+
+RCS = Float64[]
+aTλ = Float64[]
+
+# --- compute RCS
+for rg in 0.01:0.01:3.0
+
+    a = λ*rg
+
+    monoRCS = rcs(PECSphere(radius=a), planeWave(frequency=f))
+
+    push!(RCS, monoRCS / (π * a^2))
+    push!(aTλ, rg)
+end
+
+# --- plot
+layout = Layout(
+    yaxis=attr(title_text="RCS / πa² in dB"),
+    xaxis=attr(title_text="a / λ")
+)
+
+plot(scatter(; x=aTλ, y=10*log10.(RCS), mode="lines+markers"), layout)
+t = plot(scatter(; x=aTλ, y=10*log10.(RCS), mode="lines+markers"), layout) # hide
+savefig(t, "monoRCS.html"); nothing # hide
+```
+
+```@raw html
+<object data="../monoRCS.html" type="text/html"  style="width:100%;height:50vh;"> </object>
+```
+
+### Bistatic RCS
+
+The bistatic radar cross section along a ϑ-cut can be computed as follows (compare also the plot in [[1, pp. 351ff]](@ref refs)):
+```@example RCS
+using StaticArrays
+
+# --- points
+ϑ = [i*π/500 for i in 0:500]
+φ = 0
+points_cart = [SphericalScattering.sph2cart(SVector(1.0, ϑi, φ)) for ϑi in ϑ]
+
+# --- compute RCS
+biRCS = rcs(PECSphere(radius=λ), planeWave(frequency=1e8), points_cart) / λ^2
+
+# --- plot
+layout = Layout(
+    yaxis=attr(title_text="RCS / λ² in dB"),
+    xaxis=attr(title_text="ϑ in degree")
+)
+
+plot(scatter(; x=ϑ*180/π, y=10*log10.(biRCS), mode="lines+markers"), layout)
+t = plot(scatter(; x=ϑ*180/π, y=10*log10.(biRCS), mode="lines+markers"), layout) # hide
+savefig(t, "biRCS.html"); nothing # hide
+```
+
+```@raw html
+<object data="../biRCS.html" type="text/html"  style="width:100%;height:50vh;"> </object>
+```
+
 
 
 ---

@@ -39,3 +39,8 @@ end
     @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="log", format="rectangular")
     @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="linear", format="rectangular")
 end
+
+@testset "Radar cross section" begin
+
+
+end

@@ -6,9 +6,9 @@ Compute the bistatic radar cross-section (RCS).
 """
 function rcs(sphere::Sphere, excitation::PlaneWave, points_cart; parameter::Parameter=Parameter())
 
-    FF = scatteredfield(sphere, excitation, FarField(points_cart), parameter=parameter)
+    FF = scatteredfield(sphere, excitation, FarField(points_cart); parameter=parameter)
 
-    return 4π * norm.(FF).^2 / abs2(excitation.amplitude)
+    return 4π * norm.(FF) .^ 2 / abs2(excitation.amplitude)
 end
 
 
@@ -20,7 +20,7 @@ Compute the monostatic radar cross-section (RCS): the bistatic RCS solely for th
 """
 function rcs(sphere::Sphere, excitation::PlaneWave; parameter::Parameter=Parameter())
 
-    point_cart = -excitation.direction 
+    point_cart = -excitation.direction
 
     return rcs(sphere, excitation, [point_cart]; parameter=parameter)[1]
 end
