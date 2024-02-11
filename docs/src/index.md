@@ -42,7 +42,7 @@ The following aspects are implemented (✔) and planned (⌛):
 ##### Available quantities (where applicable):
 - ✔ Far-fields
 - ✔ Near-fields (electric & magnetic)
-- ⌛ Radar cross section (RCS)
+- ✔ Radar cross section (RCS)
 - ⌛ Surface currents
 - ✔ Scalar potentials 
 - ✔ Displacement fields 
