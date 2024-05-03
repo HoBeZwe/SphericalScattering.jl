@@ -21,6 +21,8 @@
 
     @test medium(pecsp, ex_md, 0.5) == Medium(0.0, 0.0)
 
+    @test SphericalScattering.wavenumber(pecsp, ex_md, 0.0) == 0.0
+
     sp = DielectricSphere(; radius=Float32(1.0), filling=md)
 
     @test medium(sp, ex_md, 0.5) == md
@@ -35,6 +37,21 @@
 
     md1 = Medium(15.0, -2.1) # innermost medium
     md2 = Medium(-10, -2.0) # innermost medium
+
+    @test_throws ErrorException("Radii are not ordered ascendingly.") LayeredSphere(;
+        radii=SVector(0.25, 0.5, 0.3), filling=SVector(md1, md2, md)
+    )
+    @test_throws ErrorException("Number of fillings does not match number of radii.") LayeredSphere(;
+        radii=SVector(0.25, 0.3, 0.5), filling=SVector(md1, md2)
+    )
+
+    @test_throws ErrorException("Radii are not ordered ascendingly.") LayeredSpherePEC(;
+        radii=SVector(0.25, 0.5, 0.3), filling=SVector(md1, md2)
+    )
+    @test_throws ErrorException("Number of fillings does not match number of radii.") LayeredSpherePEC(;
+        radii=SVector(0.25, 0.3, 0.5), filling=SVector(md1)
+    )
+
     spl = LayeredSphere(; radii=SVector(0.25, 0.3, 0.5), filling=SVector(md1, md2, md))
 
     @test numlayers(spl) == 4
