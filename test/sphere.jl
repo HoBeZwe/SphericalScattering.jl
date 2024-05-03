@@ -11,7 +11,21 @@
 
     @test Medium{Float64}(mdf) isa Medium{Float64}
 
+    pecsp = PECSphere(; radius=Float32(1.0))
+
+    @test numlayers(pecsp) == 2
+
+    ex_md = planeWave(; frequency=1e8, embedding=md)
+
+    @test medium(pecsp, ex_md, 3.0) == ex_md.embedding
+
+    @test medium(pecsp, ex_md, 0.5) == Medium(0.0, 0.0)
+
     sp = DielectricSphere(; radius=Float32(1.0), filling=md)
+
+    @test medium(sp, ex_md, 0.5) == md
+    @test medium(sp, ex_md, 1.5) == md
+    @test medium(sp, planeWave(; frequency=1e8, embedding=mdf), 1.5) == mdf
 
     @test sp isa DielectricSphere{Float64,Float32}
 
@@ -40,7 +54,13 @@
     @test permeability(spl, ex, 1.25) == 2.0
 
     spl = LayeredSpherePEC(; radii=SVector(0.25, 0.3, 0.5), filling=SVector(md1, md2))
+    @test medium(spl, ex_md, 1.5) == md
+
     @test permittivity(spl, ex, 0.1) == 0.0
     @test permittivity(spl, ex, 0.25) == 15.0
 
+    pts = [SVector(0.1, 0.0, 0.0), SVector(0.25, 0.0, 0.0)]
+
+    @test permittivity(spl, ex, pts) == [0.0, 15.0]
+    @test permeability(spl, ex, pts) == [0.0, -2.1]
 end

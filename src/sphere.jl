@@ -326,7 +326,7 @@ function medium(sp::PECSphere, ex::Excitation, r)
     if layer(sp, r) == 2
         return ex.embedding
     else
-        Z = promote_type(typeof(sp.embedding.ε), typeof(sp.embedding.μ))(0.0)
+        Z = promote_type(typeof(ex.embedding.ε), typeof(ex.embedding.μ))(0.0)
         return Medium(Z, Z)
     end
 end
@@ -355,7 +355,7 @@ function permeability(sp::Sphere, ex::Excitation, r)
     return md.μ
 end
 
-function permittivity(sp, ex, pts::AbstractVecOrMat)
+function permittivity(sp::Sphere, ex::Excitation, pts::AbstractVecOrMat)
 
     ε = permittivity(sp, ex, norm(first(pts)))
     F = zeros(typeof(ε), size(pts))
@@ -368,7 +368,7 @@ function permittivity(sp, ex, pts::AbstractVecOrMat)
     return F
 end
 
-function permeability(sp, ex, pts::AbstractVecOrMat)
+function permeability(sp::Sphere, ex::Excitation, pts::AbstractVecOrMat)
 
     ε = permeability(sp, ex, norm(first(pts)))
     F = zeros(typeof(ε), size(pts))

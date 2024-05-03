@@ -46,7 +46,7 @@ export field, scatteredfield
 export rcs
 export sphericalGridPoints, phiCutPoints, thetaCutPoints
 export numlayers, layer
-export permittivity, permeability
+export permittivity, permeability, medium
 
 
 # -------- extensions
