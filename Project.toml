@@ -1,7 +1,7 @@
 name = "SphericalScattering"
 uuid = "1a9ea918-b599-4f1f-bd9a-d681e8bb5b3e"
 authors = ["Bernd Hofmann <Bernd.Hofmann@tum.de> and contributors"]
-version = "0.7.1"
+version = "0.7.2"
 
 [deps]
 LegendrePolynomials = "3db4a2ba-fc88-11e8-3e01-49c72059a882"
