@@ -4,7 +4,7 @@
 
 Compute the electric field of a plane wave.
 """
-function field(excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
+function field(excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter(), zeroRadius=0.0)
 
     T = typeof(excitation.frequency)
 
@@ -12,6 +12,7 @@ function field(excitation::PlaneWave, quantity::Field; parameter::Parameter=Para
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)
+        norm(point) < zeroRadius && continue
         F[ind] = field(excitation, point, quantity; parameter=parameter)
     end
 

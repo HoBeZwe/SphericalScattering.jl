@@ -4,7 +4,7 @@
 
 Compute the electric field radiated by a magnetic/electric ring current at some position and with some orientation.
 """
-function field(excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
+function field(excitation::Dipole, quantity::Field; parameter::Parameter=Parameter(), zeroRadius=0.0)
 
     T = typeof(excitation.frequency)
 
@@ -15,6 +15,7 @@ function field(excitation::Dipole, quantity::Field; parameter::Parameter=Paramet
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)
+        norm(point) < zeroRadius && continue
         F[ind] = field(exc, point, fieldType; parameter=parameter)
     end
 
@@ -34,8 +35,8 @@ function field(excitation::Dipole, point, quantity::ElectricField; parameter::Pa
 
     Il = excitation.amplitude
     k  = wavenumber(excitation)
-    ε = excitation.embedding.ε
-    μ = excitation.embedding.μ
+    ε  = excitation.embedding.ε
+    μ  = excitation.embedding.μ
 
     r0 = excitation.position
     p  = excitation.orientation
@@ -86,8 +87,8 @@ function field(excitation::HertzianDipole, point, quantity::FarField; parameter:
 
     Il = excitation.amplitude
     k  = wavenumber(excitation)
-    ε = excitation.embedding.ε
-    μ = excitation.embedding.μ
+    ε  = excitation.embedding.ε
+    μ  = excitation.embedding.μ
 
     r0 = excitation.position
     p  = excitation.orientation

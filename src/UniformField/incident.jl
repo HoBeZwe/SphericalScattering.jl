@@ -4,7 +4,7 @@
 
 Compute the field or potential of a uniform field.
 """
-function field(excitation::UniformField, quantity::Field; parameter::Parameter=Parameter())
+function field(excitation::UniformField, quantity::Field; parameter::Parameter=Parameter(), zeroRadius=0.0)
 
     F = zeros(fieldType(quantity), size(quantity.locations))
 

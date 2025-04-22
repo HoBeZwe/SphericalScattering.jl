@@ -4,7 +4,7 @@
 
 Compute the electric field radiated by a magnetic/electric ring current at some position and with some orientation.
 """
-function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
+function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter(), zeroRadius=0.0)
 
     T = typeof(excitation.frequency)
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
@@ -18,6 +18,7 @@ function field(excitation::RingCurrent, quantity::Field; parameter::Parameter=Pa
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(points)
+        norm(point) < zeroRadius && continue
         F[ind] = field(exc, point, fieldType; parameter=parameter)
     end
 
@@ -121,10 +122,10 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
 
     eps = parameter.relativeAccuracy
 
-    Hr   = Complex{T}(0.0) # initialize
+    Hr  = Complex{T}(0.0) # initialize
     Hϑ  = Complex{T}(0.0) # initialize
     δHr = T(Inf)
-    n    = -1
+    n   = -1
 
     r = point_sph[1]
 

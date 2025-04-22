@@ -1,4 +1,8 @@
 
+inside(sphere::Sphere) = 0.0
+inside(sphere::PECSphere) = sphere.radius
+
+
 """
     field(sphere::Sphere, excitation::Excitation, quantity::Field; parameter::Parameter=Parameter())
 
@@ -7,10 +11,10 @@ Compute the total field in the presence of a sphere for a given excitation.
 function field(sphere::Sphere, excitation::Excitation, quantity::Field; parameter::Parameter=Parameter())
 
     # incident and scattered field
-    Finc = field(excitation, quantity; parameter=parameter)
-    Fsca = scatteredfield(sphere, excitation, quantity; parameter=parameter)
+    F = field(excitation, quantity; parameter=parameter, zeroRadius=inside(sphere))
+    F .+= scatteredfield(sphere, excitation, quantity; parameter=parameter)
 
-    return Finc .+ Fsca
+    return F
 end
 
 

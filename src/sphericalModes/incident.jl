@@ -4,7 +4,7 @@
 
 Compute the electric field of a spherical mode.
 """
-function field(excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
+function field(excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter(), zeroRadius=0.0)
 
     T = typeof(excitation.frequency)
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
@@ -14,6 +14,7 @@ function field(excitation::SphericalMode, quantity::Field; parameter::Parameter=
 
     # --- compute field in Cartesian representation
     for (ind, point) in enumerate(quantity.locations)
+        norm(point) < zeroRadius && continue
         F[ind] = field(exc, point, fieldType; parameter=parameter)
     end
 
