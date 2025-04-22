@@ -29,6 +29,7 @@ function (lc::Excitation)(p)
 end
 
 BEAST.cross(::BEAST.NormalVector, p::Excitation) = CrossTraceMW(p)
+BEAST.scalartype(p::Excitation) = eltype(p.embedding)
 
 
 # ----- variables used in all tests

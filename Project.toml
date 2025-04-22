@@ -22,7 +22,7 @@ LinearAlgebra = "1"
 PlotlyJS = "0.18"
 SpecialFunctions = "1, 2"
 StaticArrays = "1"
-julia = "1.7"
+julia = "1.10"
 
 [extras]
 BEAST = "bb4162c7-ba94-5a20-af32-d8ec4428bdd1"

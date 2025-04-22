@@ -4,7 +4,8 @@ on:
     branches:
       - 'master'
       - 'release-'
-    tags: '*'
+    tags: 
+      - '*'
   pull_request:
   release:
     types: [published]
@@ -17,7 +18,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.7'
+          - '1.10'
           - '1'
         os:
           - ubuntu-latest
