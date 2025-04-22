@@ -52,14 +52,9 @@ end
             orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
     )
 """
-electricRingCurrent(;
-    embedding   = Medium(ε0, μ0),
-    frequency   = error("missing argument `frequency`"),
-    amplitude   = 1.0,
-    radius      = error("missing argument `radius`"),
-    center      = error("missing argument `center`"),
-    orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
-) = ElectricRingCurrent(embedding, frequency, amplitude, radius, center, orientation)
+electricRingCurrent(; embedding=Medium(ε0, μ0), frequency=error("missing argument `frequency`"), amplitude=1.0, radius=error("missing argument `radius`"), center=error("missing argument `center`"), orientation=SVector{3,typeof(frequency)}(0.0, 0.0, 1.0)) = ElectricRingCurrent(
+    embedding, frequency, amplitude, radius, center, orientation
+)
 
 
 """
@@ -72,14 +67,9 @@ electricRingCurrent(;
             orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
     )
 """
-magneticRingCurrent(;
-    embedding   = Medium(ε0, μ0),
-    frequency   = error("missing argument `frequency`"),
-    amplitude   = 1.0,
-    radius      = error("missing argument `radius`"),
-    center      = error("missing argument `center`"),
-    orientation = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
-) = MagneticRingCurrent(embedding, frequency, amplitude, radius, center, orientation)
+magneticRingCurrent(; embedding=Medium(ε0, μ0), frequency=error("missing argument `frequency`"), amplitude=1.0, radius=error("missing argument `radius`"), center=error("missing argument `center`"), orientation=SVector{3,typeof(frequency)}(0.0, 0.0, 1.0)) = MagneticRingCurrent(
+    embedding, frequency, amplitude, radius, center, orientation
+)
 
 
 

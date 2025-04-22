@@ -51,7 +51,7 @@ function field(excitation::RingCurrent, point, quantity::ElectricField; paramete
 
     Eϕ = Complex{T}(0.0) # initialize
     δE = T(Inf)
-    n  = -1
+    n = -1
 
     r = point_sph[1]
 
@@ -121,10 +121,10 @@ function field(excitation::RingCurrent, point, quantity::MagneticField; paramete
 
     eps = parameter.relativeAccuracy
 
-    Hr  = Complex{T}(0.0) # initialize
+    Hr   = Complex{T}(0.0) # initialize
     Hϑ  = Complex{T}(0.0) # initialize
     δHr = T(Inf)
-    n   = -1
+    n    = -1
 
     r = point_sph[1]
 
@@ -212,7 +212,7 @@ function field(excitation::RingCurrent, point, quantity::FarField; parameter::Pa
 
     Eϕ = Complex{T}(0.0) # initialize
     δE = T(Inf)
-    n  = -1
+    n = -1
 
     r = point_sph[1]
 

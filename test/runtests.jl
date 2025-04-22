@@ -34,7 +34,7 @@ BEAST.cross(::BEAST.NormalVector, p::Excitation) = CrossTraceMW(p)
 # ----- variables used in all tests
 spRadius = 1.0 # radius of sphere
 
-Γ  = meshsphere(spRadius, 0.45)
+Γ = meshsphere(spRadius, 0.45)
 RT = raviartthomas(Γ)
 
 𝜇 = SphericalScattering.μ0
@@ -47,7 +47,7 @@ points_cartNF, points_sphNF = getDefaultPoints(5.0)
 points_cartNF_inside, ~ = getDefaultPoints(0.5)
 
 # ----- testsets
-@testset "Testing SphericalScattering functionality" begin
+@testset verbose = true "Testing SphericalScattering functionality" begin
 
     @testset "Medium and Sphere" begin
         include("sphere.jl")

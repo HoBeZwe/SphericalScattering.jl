@@ -52,10 +52,10 @@ function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::
 
     eps = parameter.relativeAccuracy
 
-    Er  = Complex{T}(0.0) # initialize
+    Er   = Complex{T}(0.0) # initialize
     Eϑ  = Complex{T}(0.0) # initialize
     δEr = T(Inf)
-    n   = 0
+    n    = 0
 
     r = point_sph[1]
 
@@ -185,7 +185,7 @@ function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, qu
 
     Eϑ = Complex{T}(0.0) # initialize
     δE = T(Inf)
-    n  = 0
+    n = 0
 
     kz0 = k * z0
     ka  = k * sphere.radius
@@ -243,7 +243,7 @@ function scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, point, 
 
     Eϕ = Complex{T}(0.0) # initialize
     δE = T(Inf)
-    n  = 0
+    n = 0
 
     kz0 = k * z0
     ka  = k * sphere.radius

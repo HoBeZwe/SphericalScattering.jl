@@ -46,8 +46,8 @@
     h = Vector(assemble(𝒉, RT))
 
     Z_PMCHWT = [
-        -(Kk2_rt + Kk1_rt)  (Tk2 + Tk1)./η2
-        (((1 / η2)^2 .* Tk2 + (1 / η1)^2 .* Tk1).*η2)  (Kk2_rt+Kk1_rt)
+        -(Kk2_rt + Kk1_rt)  (Tk2 + Tk1) ./ η2
+        (((1 / η2)^2 .* Tk2 + (1 / η1)^2 .* Tk1) .* η2) (Kk2_rt+Kk1_rt)
     ]
 
     eh = [-e; -h .* η2]

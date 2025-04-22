@@ -34,8 +34,8 @@ function field(excitation::Dipole, point, quantity::ElectricField; parameter::Pa
 
     Il = excitation.amplitude
     k  = wavenumber(excitation)
-    ε  = excitation.embedding.ε
-    μ  = excitation.embedding.μ
+    ε = excitation.embedding.ε
+    μ = excitation.embedding.μ
 
     r0 = excitation.position
     p  = excitation.orientation
@@ -86,8 +86,8 @@ function field(excitation::HertzianDipole, point, quantity::FarField; parameter:
 
     Il = excitation.amplitude
     k  = wavenumber(excitation)
-    ε  = excitation.embedding.ε
-    μ  = excitation.embedding.μ
+    ε = excitation.embedding.ε
+    μ = excitation.embedding.μ
 
     r0 = excitation.position
     p  = excitation.orientation

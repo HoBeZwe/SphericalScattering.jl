@@ -19,8 +19,9 @@ end
         direction=SVector{3,typeof(amplitude)}(1.0, 0.0, 0.0)
     )
 """
-UniformField(; embedding=Medium(ε0, μ0), amplitude=1.0, direction=SVector{3,typeof(amplitude)}(1.0, 0.0, 0.0)) =
-    UniformField(embedding, amplitude, direction)
+UniformField(; embedding=Medium(ε0, μ0), amplitude=1.0, direction=SVector{3,typeof(amplitude)}(1.0, 0.0, 0.0)) = UniformField(
+    embedding, amplitude, direction
+)
 
 function orientation(ex::UniformField)
     return ex.direction

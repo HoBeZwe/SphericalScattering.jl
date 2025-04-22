@@ -174,7 +174,7 @@ end
         # So potential points (i.e., grows) into ẑ direction
         potential_direction = dir
 
-        ex = UniformField(; amplitude=E₀, direction=-potential_direction, embedding=md_s)
+        ex = UniformField(; amplitude=E₀, direction=(-potential_direction), embedding=md_s)
 
         Φsca_ana_3l(pts) = scatteredfield(sp, ex, ScalarPotential(pts))
         Φtot_ana_3l(pts) = field(sp, ex, ScalarPotential(pts))
