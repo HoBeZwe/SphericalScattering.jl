@@ -1,6 +1,6 @@
 
 inside(sphere::Sphere) = 0.0
-inside(sphere::PECSphere) = sphere.radius
+inside(sphere::PECSphere) = sphere.radius - 1e-15
 
 
 """
