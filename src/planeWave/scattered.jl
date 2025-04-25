@@ -12,10 +12,14 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, quantity::Field; 
     # --- rotate coordinates
     points = rotate(excitation, quantity.locations; inverse=true)
 
+    p = progress(length(points))
+
     # --- compute field in Cartesian representation
-    for (ind, point) in enumerate(points)
-        F[ind] = scatteredfield(sphere, excitation, point, quantity; parameter=parameter)
+    @tasks for ind in eachindex(points)
+        F[ind] = scatteredfield(sphere, excitation, points[ind], quantity; parameter=parameter)
+        next!(p)
     end
+    finish!(p)
 
     # --- rotate resulting field
     rotate!(excitation, F; inverse=false)
@@ -42,10 +46,9 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::
 
     eps = parameter.relativeAccuracy
 
-    ST = SVector{3,Complex{T}}
-    F = ST(0.0, 0.0, 0.0)
+    F = SVector{3,Complex{T}}(0.0, 0.0, 0.0)
 
-    A₀ = amplitude(sphere, excitation::PlaneWave, quantity, r)
+    A₀ = amplitude(sphere, excitation, quantity, r)
 
     A₀ == 0.0 && return F # Inside of PEC return zero field
 
@@ -80,7 +83,30 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::
 
     end
 
-    return convertSpherical2Cartesian(A₀ .* F, point_sph)
+    Fin = inside(sphere, excitation, point, quantity; parameter=parameter)
+
+    return convertSpherical2Cartesian(A₀ .* F, point_sph) + Fin
+end
+
+
+function inside(sphere::Sphere, excitation::PlaneWave{T,R,C}, point, quantity::Field; parameter) where {T,R,C}
+
+    return SVector{3,Complex{R}}(0.0, 0.0, 0.0) # no correction needed
+end
+
+function inside(sphere::DielectricSphere, excitation::PlaneWave{T,R,C}, point, quantity::FarField; parameter) where {T,R,C}
+
+    return SVector{3,Complex{R}}(0.0, 0.0, 0.0) # no correction needed
+end
+
+function inside(sphere::DielectricSphere, excitation::PlaneWave{T,R,C}, point, quantity::Field; parameter) where {T,R,C}
+
+    # inside the sphere the incident field has to be substracted to get only the scattered part
+    if norm(point) < sphere.radius
+        return -field(excitation, point, quantity; parameter=parameter)
+    end
+
+    return SVector{3,Complex{R}}(0.0, 0.0, 0.0)
 end
 
 

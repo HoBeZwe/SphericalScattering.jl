@@ -19,10 +19,14 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Fi
     # --- translate/rotate coordinates
     points = rotate(excitation, quantity.locations; inverse=true)
 
+    p = progress(length(points))
+
     # --- compute field in Cartesian representation
-    for (ind, point) in enumerate(points)
-        F[ind] = scatteredfield(sphere, exc, point, fieldType; parameter=parameter)
+    @tasks for ind in eachindex(points)
+        F[ind] = scatteredfield(sphere, exc, points[ind], fieldType; parameter=parameter)
+        next!(p)
     end
+    finish!(p)
 
     # --- rotate resulting field
     rotate!(excitation, F; inverse=false)

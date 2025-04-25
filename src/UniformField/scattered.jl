@@ -8,10 +8,15 @@ function scatteredfield(sphere::Sphere, excitation::UniformField, quantity::Fiel
 
     F = zeros(fieldType(quantity), size(quantity.locations))
 
+    points = quantity.locations
+    p = progress(length(points))
+
     # --- compute field in Cartesian representation
-    for (ind, point) in enumerate(quantity.locations)
-        F[ind] = scatteredfield(sphere, excitation, point, quantity; parameter=parameter)
+    @tasks for ind in eachindex(points)
+        F[ind] = scatteredfield(sphere, excitation, points[ind], quantity; parameter=parameter)
+        next!(p)
     end
+    finish!(p)
 
     return F
 end
