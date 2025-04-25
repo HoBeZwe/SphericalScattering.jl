@@ -210,7 +210,7 @@ end
 wavenumber(sp::Sphere, ex::Excitation, r)
 
 Returns the wavenumber at radius `r` in the sphere `sp`.
-If this part is PEC, k=0 is rweturned.
+If this part is PEC, k=0 is returned.
 """
 function wavenumber(sp::PECSphere, ex::Excitation, r)
     ε = ex.embedding.ε

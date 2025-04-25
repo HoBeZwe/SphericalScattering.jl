@@ -38,3 +38,8 @@ struct Parameter
 end
 
 Parameter() = Parameter(-1, 1e-12)
+
+# global setting for the style of the progress bar
+function progress(numIter::Int)
+    return Progress(numIter; barglyphs=BarGlyphs("[=> ]"), color=:white)
+end

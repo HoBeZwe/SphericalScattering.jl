@@ -19,10 +19,14 @@ function scatteredfield(sphere::PECSphere, excitation::SphericalMode, quantity::
 
     γ = scatterCoeff(sphere, excitation, excitation.n, wavenumber(excitation) * sphere.radius)
 
+    p = progress(length(points))
+
     # --- compute field in Cartesian representation
-    for (ind, point) in enumerate(points)
-        F[ind] = γ * scatteredfield(sphere, exc, point, fieldType; parameter=parameter)
+    @tasks for ind in eachindex(points)
+        F[ind] = γ * scatteredfield(sphere, exc, points[ind], fieldType; parameter=parameter)
+        next!(p)
     end
+    finish!(p)
 
     # --- rotate resulting field
     # rotate!(F, excitation.rotation)

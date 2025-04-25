@@ -12,10 +12,14 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, quantity::Field; 
     # --- rotate coordinates
     points = rotate(excitation, quantity.locations; inverse=true)
 
+    p = progress(length(points))
+
     # --- compute field in Cartesian representation
-    for (ind, point) in enumerate(points)
-        F[ind] = scatteredfield(sphere, excitation, point, quantity; parameter=parameter)
+    @tasks for ind in eachindex(points)
+        F[ind] = scatteredfield(sphere, excitation, points[ind], quantity; parameter=parameter)
+        next!(p)
     end
+    finish!(p)
 
     # --- rotate resulting field
     rotate!(excitation, F; inverse=false)
