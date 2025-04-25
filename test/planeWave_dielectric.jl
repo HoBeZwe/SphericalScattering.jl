@@ -77,7 +77,7 @@
 
     # E-Field
     EF₂ = scatteredfield(sp, ex, ElectricField(points_cartNF))
-    EF₁ = scatteredfield(sp, ex, ElectricField(points_cartNF_inside))
+    EF₁ = field(sp, ex, ElectricField(points_cartNF_inside))
 
     diff_EF₂ = norm.(EF₂ - EF₂MoM) ./ maximum(norm.(EF₂))  # worst case error
     diff_EF₁ = norm.(EF₁ - EF₁MoM) ./ maximum(norm.(EF₁))  # worst case error
@@ -90,7 +90,7 @@
     HF₁MoM = hfield(𝓣k1, -(1 / η1)^2 .* m, RT, 𝓚k1, -j, RT, points_cartNF_inside)
 
     HF₂ = scatteredfield(sp, ex, MagneticField(points_cartNF))
-    HF₁ = scatteredfield(sp, ex, MagneticField(points_cartNF_inside))
+    HF₁ = field(sp, ex, MagneticField(points_cartNF_inside))
 
     diff_HF₂ = norm.(HF₂ - HF₂MoM) ./ maximum(norm.(HF₂))  # worst case error
     diff_HF₁ = norm.(HF₁ - HF₁MoM) ./ maximum(norm.(HF₁))  # worst case error
