@@ -1,4 +1,12 @@
 
+struct AcousticMonopole{T,R,C} <: AcousticExcitation
+    embedding::Medium{C}
+    frequency::R
+    amplitude::T
+    position::SVector{3,R}
+end
+
+
 """
     field(excitation::AcousticMonopole, quantity::Union{Pressure,PressureTrace}; parameter::Parameter=Parameter())
 
@@ -24,7 +32,6 @@ function field(excitation::AcousticMonopole, quantity::Union{Pressure,PressureTr
 end
 
 
-
 """
     field(excitation::AcousticMonopole, quantity::PressureNormalGradient; parameter::Parameter=Parameter())
 
@@ -48,7 +55,6 @@ function field(excitation::AcousticMonopole, quantity::PressureNormalGradient; p
 end
 
 
-
 """
     field(excitation::AcousticMonopole, point, quantity::Union{Pressure,PressureTrace}; parameter::Parameter=Parameter())
 
@@ -69,7 +75,6 @@ function field(excitation::AcousticMonopole, point, quantity::Union{Pressure,Pre
 
     return a / (4 * π) * cis(-k * R) / R
 end
-
 
 
 """
@@ -102,7 +107,6 @@ function field(excitation::AcousticMonopole, point, normal, quantity::PressureNo
 end
 
 
-
 """
     field(excitation::AcousticMonopole, quantity::FarField; parameter::Parameter=Parameter())
 
@@ -124,7 +128,6 @@ function field(excitation::AcousticMonopole, quantity::FarField; parameter::Para
 
     return F
 end
-
 
 
 """
@@ -149,4 +152,56 @@ function field(excitation::AcousticMonopole, point, quantity::FarField; paramete
     r̂ = normalize(point) # only the direction of observation is relevant
 
     return a / (4 * π) * cis(k * dot(r̂, excitation.position))
+end
+
+
+"""
+    symmetryAxis(excitation::AcousticMonopole)
+
+Returns the direction towards the monopole, about which the scattered field is rotationally symmetric.
+"""
+symmetryAxis(excitation::AcousticMonopole) = normalize(excitation.position)
+
+
+"""
+    incidentCoeff(excitation::AcousticMonopole, n::Int)
+
+Compute the coefficient ``e_n = -\\mathrm{j} k \\, h_n^{(2)}(k R_0) / (4π)`` of the n-th term of the incident
+expansion, where ``R_0`` denotes the distance of the monopole from the center of the sphere.
+
+It follows from the addition theorem of the free-space Green's function,
+
+```math
+\\frac{\\mathrm{e}^{-\\mathrm{j}k|\\mathbf{r} - \\mathbf{r}_0|}}{4π|\\mathbf{r} - \\mathbf{r}_0|}
+    = \\frac{-\\mathrm{j}k}{4π} \\sum_n (2n+1) j_n(k r_<) h_n^{(2)}(k r_>) P_n(\\cos\\vartheta)
+```
+
+with ``r_< = \\min(r, R_0)``, ``r_> = \\max(r, R_0)`` and ``\\vartheta`` measured from the monopole. Since the
+monopole lies outside the sphere, ``r_> = R_0`` holds at its surface, which is where the boundary condition
+determines the scattering coefficients.
+"""
+function incidentCoeff(excitation::AcousticMonopole, n::Int)
+
+    T = typeof(excitation.frequency)
+
+    k = wavenumber(excitation)
+    kR₀ = k * norm(excitation.position)
+
+    s = sqrt(π / 2 / kR₀)
+
+    return -im * k / (4 * π) * s * hankelh2(n + T(0.5), kR₀) # spherical Hankel function
+end
+
+
+"""
+    checkExcitation(scatterer::AcousticScatterer, excitation::AcousticMonopole)
+
+Ensure that the monopole lies outside the scatterer, as the expansion of its field assumes.
+"""
+function checkExcitation(scatterer::AcousticScatterer, excitation::AcousticMonopole)
+
+    isinside(scatterer, excitation.position) &&
+        error("The monopole has to be located outside the scatterer, as the expansion of its field assumes.")
+
+    return nothing
 end

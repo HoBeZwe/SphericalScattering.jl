@@ -1,9 +1,3 @@
-
-# the quantities obtained from the series for the scattered pressure itself; the Neumann trace
-# requires the derivatives of that series and is handled separately
-const AcousticQuantity = Union{Pressure,FarField,PressureTrace}
-
-
 """
     scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity::AcousticQuantity; parameter::Parameter=Parameter())
 
@@ -33,7 +27,6 @@ function scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity
 end
 
 
-
 """
     scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity::PressureNormalGradient; parameter::Parameter=Parameter())
 
@@ -60,7 +53,6 @@ function scatteredfield(
 
     return F
 end
-
 
 
 """
@@ -157,7 +149,6 @@ function scatteredfield(
 
     return excitation.amplitude * u
 end
-
 
 
 """
@@ -266,7 +257,6 @@ function scatteredfield(
 end
 
 
-
 """
     scatteredfield(sphere::Sphere, excitation::AcousticExcitation, point, quantity::AcousticQuantity; parameter::Parameter=Parameter())
 
@@ -280,7 +270,6 @@ function scatteredfield(
 end
 
 
-
 """
     scatteredfield(sphere::Sphere, excitation::AcousticExcitation, point, normal, quantity::PressureNormalGradient; parameter::Parameter=Parameter())
 
@@ -292,7 +281,6 @@ function scatteredfield(
 
     return error("Acoustic scattering is only implemented for sound-hard and sound-soft spheres (so far).")
 end
-
 
 
 """
@@ -312,7 +300,6 @@ function expansion(excitation::AcousticExcitation, quantity::Union{Pressure,Pres
 end
 
 
-
 """
     expansion(excitation::AcousticExcitation, quantity::FarField, kr, n::Int)
 
@@ -326,16 +313,6 @@ function expansion(excitation::AcousticExcitation, quantity::FarField, kr, n::In
 
     return im^(n + 1) / wavenumber(excitation)
 end
-
-
-
-"""
-    checkExcitation(sphere::Sphere, excitation::AcousticExcitation)
-
-Ensure that the excitation is compatible with the sphere; nothing has to be checked by default.
-"""
-checkExcitation(sphere::Sphere, excitation::AcousticExcitation) = nothing
-
 
 
 """
@@ -365,7 +342,6 @@ function scatterCoeff(sphere::HardSphere, excitation::AcousticExcitation, n::Int
 
     return -dj / dh
 end
-
 
 
 """

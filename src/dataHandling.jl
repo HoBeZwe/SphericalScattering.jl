@@ -39,6 +39,20 @@ struct PressureTrace <: Trace
 end
 
 """
+    PressureJump(locations)
+
+The jump ``[p] = p|_+ - p|_-`` of the pressure across an open surface at the given locations.
+
+The faces are distinguished by the outward normal: ``+`` denotes the one whose normal is the axis of the
+scatterer. The jump is the natural unknown of a boundary element formulation on an open surface, where a
+one-sided trace is not determined by the geometry alone.
+"""
+struct PressureJump <: Trace
+    locations
+end
+
+
+"""
     PressureNormalGradient(locations)
     PressureNormalGradient(locations, normals)
 

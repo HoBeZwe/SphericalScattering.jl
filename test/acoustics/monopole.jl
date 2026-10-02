@@ -232,9 +232,7 @@
                 @test norm(scatteredfield(sp, ex, Pressure(points_cartNF_inside))) == 0.0
             end
 
-            errInside = ErrorException(
-                "The monopole has to be located outside the sphere: its distance from the center is smaller than the radius."
-            )
+            errInside = ErrorException("The monopole has to be located outside the scatterer, as the expansion of its field assumes.")
             exInside = SphericalScattering.Acoustic.monopole(; position=SVector(0.0, 0.0, 0.5), frequency=f)
 
             @test_throws errInside scatteredfield(spHard, exInside, Pressure(points_cartNF))

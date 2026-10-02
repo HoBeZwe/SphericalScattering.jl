@@ -26,3 +26,11 @@ end
 Constructor for a sound-soft sphere.
 """
 SoftSphere(; radius=error("missing argument `radius`")) = SoftSphere(radius)
+
+
+"""
+    isinside(scatterer::Union{HardSphere,SoftSphere}, point)
+
+Returns whether the point lies inside the sphere, see [`isinside`](@ref).
+"""
+isinside(scatterer::Union{HardSphere,SoftSphere}, point) = norm(point) < scatterer.radius

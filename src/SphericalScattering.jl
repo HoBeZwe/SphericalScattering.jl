@@ -18,6 +18,8 @@ const ε0 = 8.8541878176e-12  # default permittivity
 
 # -------- used packages
 using SpecialFunctions, LegendrePolynomials
+using SpheroidalWaves
+using FastGaussQuadrature
 using LinearAlgebra
 using StaticArrays
 using OhMyThreads
@@ -40,7 +42,7 @@ export μ0, ε0
 export Acoustic
 export AcousticPlaneWave, AcousticMonopole
 export Pressure
-export PressureTrace, PressureNormalGradient
+export PressureTrace, PressureNormalGradient, PressureJump
 
 # functions
 export electricRingCurrent, magneticRingCurrent
@@ -50,6 +52,10 @@ export SphericalMode, SphericalModeTE, SphericalModeTM
 export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export DielectricSphereThinImpedanceLayer
 export HardSphere, SoftSphere
+export AcousticBoundary, SoundHard, SoundSoft
+export Spheroid, Disc
+export outwardNormal, outwardNormals
+export equatorialRadius, polarRadius, isdisc
 export field, scatteredfield
 export rcs
 export sphericalGridPoints, phiCutPoints, thetaCutPoints
@@ -93,16 +99,19 @@ include("electromagnetics/UniformField/incident.jl")
 include("electromagnetics/UniformField/scattered.jl")
 
 
-include("acoustics/sphere.jl")
-include("acoustics/scattered.jl") # the series shared by all acoustic excitations
+include("acoustics/sphere/types.jl")
+include("acoustics/spheroid/types.jl")
 
-include("acoustics/planeWave/excitation.jl")
-include("acoustics/planeWave/incident.jl")
-include("acoustics/planeWave/scattered.jl")
+include("acoustics/quantities.jl")
 
-include("acoustics/monopole/excitation.jl")
-include("acoustics/monopole/incident.jl")
-include("acoustics/monopole/scattered.jl")
+include("acoustics/excitations/planeWave.jl")
+include("acoustics/excitations/monopole.jl")
+
+include("acoustics/sphere/series.jl")
+
+include("acoustics/spheroid/waveFunctions.jl")
+include("acoustics/spheroid/series.jl")
+include("acoustics/spheroid/surface.jl")
 
 include("acoustics/Acoustic.jl") # the single `Acoustic` submodule holding the user-facing constructors
 

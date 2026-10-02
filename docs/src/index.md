@@ -24,10 +24,36 @@ pkg> add SphericalScattering
 
 
 ---
-## Overview
+## Feature Overview
 
 The following aspects are implemented (✔) and planned (⌛):
 
+- Electromagnetic
+
+| spheres                              | plane wave | el. ring current | mag. ring current | el. dipole | mag. dipole | TE/TM modes | uniform static field | static charge(s) |
+|--------------------------------------|------------|------------------|-------------------|------------|-------------|-------------|----------------------|------------------|
+| PEC                                  |      ✔     |        ✔         |         ✔         |      ✔     |       ✔     |      ✔      |           ✔          |        ⌛         |
+| PMC                                  |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ⌛          |        ⌛        |
+| Dielectric                           |      ✔     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
+| Multilayer dielectric                |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
+| Multilayer dielectric with PEC core  |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
+| Dielectric with thin impedance layer |      ➖     |        ➖         |         ➖         |      ➖     |       ➖    |      ➖      |           ✔          |        ➖        |
+
+- Acoustic
+
+| objects                              | plane wave | monopole |
+|--------------------------------------|------------|----------|
+| Sphere sound-hard                    |      ✔     |     ✔    | 
+| Sphere sound-soft                    |      ✔     |     ✔    | 
+| Prolate Spheroid sound-hard          |      ⌛     |     ⌛    |
+| Prolate Spheroid sound-soft          |      ⌛     |     ⌛    |
+| Oblate Spheroid sound-hard           |      ⌛     |     ⌛    |
+| Oblate Spheroid sound-soft           |      ⌛     |     ⌛    |
+| Disc sound-hard                      |      ⌛     |     ⌛    |
+| Disc sound-soft                      |      ⌛     |     ⌛    | 
+
+
+---
 ##### Available incident fields:
 
 - Electromagnetic
@@ -72,29 +98,5 @@ The following aspects are implemented (✔) and planned (⌛):
 - ✔ Pressure traces
 
 
----
-##### Detailed implementation status:
 
-- Electromagnetic
-
-| spheres                              | plane wave | el. ring current | mag. ring current | el. dipole | mag. dipole | TE/TM modes | uniform static field | static charge(s) |
-|--------------------------------------|------------|------------------|-------------------|------------|-------------|-------------|----------------------|------------------|
-| PEC                                  |      ✔     |        ✔         |         ✔         |      ✔     |       ✔     |      ✔      |           ✔          |        ⌛         |
-| PMC                                  |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ⌛          |        ⌛        |
-| Dielectric                           |      ✔     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
-| Multilayer dielectric                |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
-| Multilayer dielectric with PEC core  |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
-| Dielectric with thin impedance layer |      ➖     |        ➖         |         ➖         |      ➖     |       ➖    |      ➖      |           ✔          |        ➖        |
-
-- Acoustic
-
-| objects                              | plane wave | monopole |
-|--------------------------------------|------------|----------|
-| Sphere sound-hard                    |      ✔     |     ✔    | 
-| Sphere sound-soft                    |      ✔     |     ✔    | 
-| Prolate Sphereoid sound-hard         |      ⌛     |     ⌛    |
-| Prolate Sphereoid sound-soft         |      ⌛     |     ⌛    |
-| Oblate Sphereoid sound-hard          |      ⌛     |     ⌛    |
-| Oblate Sphereoid sound-soft          |      ⌛     |     ⌛    |
-| Disc sound-hard                      |      ⌛     |     ⌛    |
-| Disc sound-soft                      |      ⌛     |     ⌛    |         
+        

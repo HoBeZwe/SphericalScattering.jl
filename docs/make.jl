@@ -19,17 +19,17 @@ makedocs(;
     plugins=[bib],
     pages=[
         "Introduction" => "index.md",
-        "Manual" => Any["General Usage"=>"manual.md", "Application Examples"=>"application.md"],
-        "Geometry" => Any["Coordinate System"=>"coordinateSys.md", "Sphere Dimensions"=>"scatterer.md"],
+        "Manual" => Any["General Usage" => "manual.md", "Application Examples" => "application.md"],
+        "Geometry" => Any["Coordinate System" => "coordinateSys.md", "Sphere Dimensions" => "scatterer.md"],
         "Excitations" => Any[
-            "Electromagnetic"=>Any[
-                "Plane Wave"=>"electromagnetic/planeWave.md",
-                "Dipoles"=>"electromagnetic/dipoles.md",
-                "Ring Currents"=>"electromagnetic/ringCurrents.md",
-                "Spherical Modes"=>"electromagnetic/sphModes.md",
-                "Uniform Static Field"=>"electromagnetic/uniformStatic.md",
+            "Electromagnetic" => Any[
+                "Plane Wave" => "electromagnetic/planeWave.md",
+                "Dipoles" => "electromagnetic/dipoles.md",
+                "Ring Currents" => "electromagnetic/ringCurrents.md",
+                "Spherical Modes" => "electromagnetic/sphModes.md",
+                "Uniform Static Field" => "electromagnetic/uniformStatic.md",
             ],
-            "Acoustic"=>Any["Plane Wave"=>"acoustic/planeWave.md", "Monopole"=>"acoustic/monopole.md"],
+            "Acoustic" => Any["Plane Wave" => "acoustic/planeWave.md", "Monopole" => "acoustic/monopole.md"],
         ],
         "Further Details" => "details.md",
         "Contributing" => "contributing.md",

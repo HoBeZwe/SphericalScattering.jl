@@ -216,3 +216,135 @@ function sph2cart(vec)
 
     return SVector{3,T}(x, y, z)
 end
+
+
+"""
+    obl2cart(vec, semifocal)
+
+Convert a 3D (3 entry) point from oblate spheroidal to Cartesian coordinates.
+
+The oblate spheroidal coordinates ``(ξ, η, φ)`` with ``ξ ≥ 0`` and ``η ∈ [-1, 1]`` are defined by
+``x = f \\sqrt{(1 + ξ^2)(1 - η^2)} \\cos φ``, ``y = f \\sqrt{(1 + ξ^2)(1 - η^2)} \\sin φ`` and ``z = f ξ η``,
+where ``f`` denotes the semifocal distance. The surface ``ξ = ξ_0`` is an oblate spheroid with equatorial radius
+``f \\sqrt{1 + ξ_0^2}`` and polar radius ``f ξ_0``; the degenerate surface ``ξ = 0`` is the disc of radius ``f``,
+its two faces being distinguished by the sign of ``η``.
+"""
+function obl2cart(vec, semifocal)
+
+    ξ = vec[1]
+    η = vec[2]
+    φ = vec[3]
+
+    T = typeof(ξ)
+
+    ρ = semifocal * sqrt((1 + ξ^2) * (1 - η^2))
+
+    return SVector{3,T}(ρ * cos(φ), ρ * sin(φ), semifocal * ξ * η)
+end
+
+
+"""
+    cart2obl(vec, semifocal)
+
+Convert a 3D (3 entry) point from Cartesian to oblate spheroidal coordinates ``(ξ, η, φ)``.
+
+Inverting the definition in [`obl2cart`](@ref) leads to the quadratic ``u^2 + (1 - A - B) u - B = 0`` for
+``u = ξ^2``, where ``A = (x^2 + y^2) / f^2`` and ``B = z^2 / f^2``, of which the non-negative root is taken.
+
+For a point in the plane ``z = 0`` inside the disc the sign of ``η``, that is, the face of the disc, cannot be
+recovered; the positive one is returned.
+"""
+function cart2obl(vec, semifocal)
+
+    x = vec[1]
+    y = vec[2]
+    z = vec[3]
+
+    T = eltype(x)
+
+    A = (x^2 + y^2) / semifocal^2
+    B = z^2 / semifocal^2
+
+    # --- non-negative root of u² + (1 - A - B) u - B = 0
+    u = ((A + B - 1) + sqrt((A + B - 1)^2 + 4 * B)) / 2
+    u = max(u, T(0.0))
+
+    # --- η² follows either from B = u η² or from A = (1 + u)(1 - η²). The latter cancels for η² → 0,
+    #     the former involves no subtraction at all but degenerates as u → 0, that is, on a disc. Hence
+    #     the one is taken where the other would cancel
+    v = clamp(1 - A / (1 + u), T(0.0), T(1.0))
+    v < T(0.5) && u > eps(T) && (v = clamp(B / u, T(0.0), T(1.0)))
+
+    ξ = sqrt(u)
+    η = copysign(sqrt(v), z)
+    φ = atan(y, x)
+
+    return SVector{3,T}(ξ, η, φ)
+end
+
+
+"""
+    oblateMetric(vec, semifocal)
+
+Compute the metric coefficients ``(h_ξ, h_η, h_φ)`` of the oblate spheroidal coordinates at the point `vec`,
+which is given in oblate spheroidal coordinates.
+
+They read ``h_ξ = f \\sqrt{(ξ^2 + η^2) / (1 + ξ^2)}``, ``h_η = f \\sqrt{(ξ^2 + η^2) / (1 - η^2)}`` and
+``h_φ = f \\sqrt{(1 + ξ^2)(1 - η^2)}``. Since the outward normal of the surface ``ξ = ξ_0`` is
+``\\hat{e}_ξ = h_ξ^{-1} ∂\\bm{r} / ∂ξ``, the normal derivative is ``∂/∂n = h_ξ^{-1} ∂/∂ξ``.
+
+Note that ``h_ξ = f |η|`` on the disc ``ξ = 0``, so that the normal derivative is singular at its rim
+``η = 0``: this is where the edge singularity of a disc enters.
+"""
+function oblateMetric(vec, semifocal)
+
+    ξ = vec[1]
+    η = vec[2]
+
+    T = typeof(ξ)
+
+    hξ = semifocal * sqrt((ξ^2 + η^2) / (1 + ξ^2))
+    hη = semifocal * sqrt((ξ^2 + η^2) / (1 - η^2))
+    hφ = semifocal * sqrt((1 + ξ^2) * (1 - η^2))
+
+    return SVector{3,T}(hξ, hη, hφ)
+end
+
+
+
+"""
+    oblateBasis(vec, semifocal)
+
+Compute the unit vectors ``(\\hat{e}_ξ, \\hat{e}_η, \\hat{e}_φ)`` of the oblate spheroidal coordinates at the
+point `vec`, which is given in oblate spheroidal coordinates.
+
+They follow from the tangent vectors ``∂\\bm{r} / ∂ξ``, ``∂\\bm{r} / ∂η`` and ``∂\\bm{r} / ∂φ`` of the forward
+transform, normalized by the metric coefficients, see [`oblateMetric`](@ref). The first one is the outward normal
+of the surface ``ξ = \\mathrm{const}``.
+
+!!! note
+    The basis degenerates at the rim of a disc, ``ξ = 0`` and ``η = 0``, where ``\\hat{e}_ξ`` and
+    ``\\hat{e}_η`` vanish, and on the axis, ``|η| = 1``, where ``\\hat{e}_φ`` is not determined. These are the
+    edge and the poles of the scatterer.
+"""
+function oblateBasis(vec, semifocal)
+
+    ξ = vec[1]
+    η = vec[2]
+    φ = vec[3]
+
+    T = typeof(ξ)
+
+    f = semifocal
+
+    sξ = sqrt(1 + ξ^2)
+    sη = sqrt(1 - η^2)
+
+    h = oblateMetric(vec, semifocal)
+
+    êξ = SVector{3,T}(f * ξ * sη / sξ * cos(φ), f * ξ * sη / sξ * sin(φ), f * η) / h[1]
+    êη = SVector{3,T}(-f * η * sξ / sη * cos(φ), -f * η * sξ / sη * sin(φ), f * ξ) / h[2]
+    êφ = SVector{3,T}(-sin(φ), cos(φ), T(0.0))
+
+    return êξ, êη, êφ
+end

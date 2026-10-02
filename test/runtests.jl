@@ -1,3 +1,5 @@
+using TestItemRunner
+
 using SphericalScattering
 using Test
 
@@ -14,7 +16,7 @@ using LinearAlgebra
 
 function getDefaultPoints(r::Float64)
     points_cart = [point(r * cos(φ) * sin(θ), r * sin(φ) * sin(θ), r * cos(θ)) for θ in ϑ, φ in ϕ]       # convert points to cartesian components
-    points_sph  = [point(r, θ, φ) for θ in ϑ, φ in ϕ]
+    points_sph = [point(r, θ, φ) for θ in ϑ, φ in ϕ]
 
     return points_cart, points_sph
 end
@@ -29,7 +31,7 @@ function (lc::Excitation)(p)
 end
 
 BEAST.cross(::BEAST.NormalVector, p::Excitation) = CrossTraceMW(p)
-BEAST.scalartype(p::Excitation) = eltype(p.embedding)
+BEAST.scalartype(p::Excitation) = Complex{typeof(p.embedding.ε)}
 
 
 # ----- variables used in all tests
@@ -78,6 +80,7 @@ points_cartNF_inside, ~ = getDefaultPoints(0.5)
     @testset "Test acoustics" begin
         include("acoustics/planeWave.jl")
         include("acoustics/monopole.jl")
+        include("acoustics/spheroid.jl")
     end
 
     @testset "Test coordinate transforms" begin

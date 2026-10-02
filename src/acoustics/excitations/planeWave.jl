@@ -1,4 +1,23 @@
 
+
+
+struct AcousticPlaneWave{T,R,C} <: AcousticExcitation
+    embedding::Medium{C}
+    frequency::R
+    amplitude::T
+    direction::SVector{3,R}
+
+    # inner constructor: normalize direction
+    function AcousticPlaneWave(embedding::Medium{C}, frequency::R, amplitude::T, direction::SVector{3,R}) where {T,R,C}
+
+        dir_normalized = normalize(direction)
+
+        new{T,R,C}(embedding, frequency, amplitude, dir_normalized)
+    end
+end
+
+
+
 """
     field(excitation::AcousticPlaneWave, quantity::Union{Pressure,PressureTrace}; parameter::Parameter=Parameter())
 
@@ -103,3 +122,25 @@ function field(excitation::AcousticPlaneWave, quantity::FarField; parameter::Par
 
     return error("The far-field of a plane wave is not defined.")
 end
+
+
+
+"""
+    symmetryAxis(excitation::AcousticPlaneWave)
+
+Returns the direction of incidence, about which the scattered field is rotationally symmetric.
+"""
+symmetryAxis(excitation::AcousticPlaneWave) = excitation.direction
+
+
+
+"""
+    incidentCoeff(excitation::AcousticPlaneWave, n::Int)
+
+Compute the coefficient ``e_n = (-\\mathrm{j})^n`` of the n-th term of the incident expansion.
+
+It follows from ``\\mathrm{e}^{-\\mathrm{j} k \\hat{d} ⋅ \\mathbf{r}}
+= \\sum_n (2n+1) (-\\mathrm{j})^n j_n(kr) P_n(\\cos\\vartheta)``, the plane-wave expansion with ``\\vartheta``
+measured from the direction of incidence ``\\hat{d}``.
+"""
+incidentCoeff(excitation::AcousticPlaneWave, n::Int) = (-im)^n
