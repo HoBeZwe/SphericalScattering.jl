@@ -194,8 +194,7 @@
 
                 # the Neumann trace is -im * κ * (d ⋅ n̂) times the incident pressure
                 cosϑ = dot(ex.direction, n̂)
-                @test field(ex, PressureNormalGradient([point]))[1] ≈
-                    -im * κ * cosϑ * field(ex, Pressure([point]))[1] rtol = 1e-12
+                @test field(ex, PressureNormalGradient([point]))[1] ≈ -im * κ * cosϑ * field(ex, Pressure([point]))[1] rtol = 1e-12
             end
         end
 
@@ -206,8 +205,7 @@
             for sp in (spHard, spSoft), n̂ in directions
 
                 # the Dirichlet trace is the scattered pressure evaluated at r = a
-                @test scatteredfield(sp, ex, PressureTrace([n̂]))[1] ==
-                    scatteredfield(sp, ex, Pressure([spRadius * n̂]))[1]
+                @test scatteredfield(sp, ex, PressureTrace([n̂]))[1] == scatteredfield(sp, ex, Pressure([spRadius * n̂]))[1]
 
                 # the Neumann trace is the radial derivative of the scattered pressure at r = a
                 g = scatteredfield(sp, ex, PressureNormalGradient([n̂]))[1]
@@ -357,13 +355,10 @@
                 ñ = normalize(n̂ + 0.5 * ϑ̂)
 
                 dpϑ =
-                    (
-                        field(spHard, ex, PressureTrace([rotated(n̂, hϑ)]))[1] -
-                        field(spHard, ex, PressureTrace([rotated(n̂, -hϑ)]))[1]
-                    ) / (2 * hϑ)
+                    (field(spHard, ex, PressureTrace([rotated(n̂, hϑ)]))[1] - field(spHard, ex, PressureTrace([rotated(n̂, -hϑ)]))[1]) /
+                    (2 * hϑ)
 
-                @test field(spHard, ex, PressureNormalGradient([spRadius * n̂], [ñ]))[1] ≈
-                    dot(ñ, ϑ̂) / spRadius * dpϑ rtol = 1e-7
+                @test field(spHard, ex, PressureNormalGradient([spRadius * n̂], [ñ]))[1] ≈ dot(ñ, ϑ̂) / spRadius * dpϑ rtol = 1e-7
             end
 
             # --- the total pressure vanishes on a sound-soft sphere, hence so does its polar
@@ -392,8 +387,7 @@
             for cosϑ in (1.0, 0.5, 0.0, -1.0)
                 point = SVector(sqrt(1 - cosϑ^2), 0.0, cosϑ)
 
-                @test field(spHard, exl, PressureTrace([point]))[1] ≈
-                    1 - 1.5im * κl * spRadius * cosϑ rtol = 1e-4
+                @test field(spHard, exl, PressureTrace([point]))[1] ≈ 1 - 1.5im * κl * spRadius * cosϑ rtol = 1e-4
             end
         end
 

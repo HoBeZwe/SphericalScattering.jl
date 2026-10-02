@@ -10,9 +10,7 @@ const AcousticQuantity = Union{Pressure,FarField,PressureTrace}
 Compute the pressure, the far field, or the Dirichlet trace scattered by a sound-hard or sound-soft sphere, for
 an incident acoustic plane wave.
 """
-function scatteredfield(
-    sphere::Sphere, excitation::AcousticPlaneWave, quantity::AcousticQuantity; parameter::Parameter=Parameter()
-)
+function scatteredfield(sphere::Sphere, excitation::AcousticPlaneWave, quantity::AcousticQuantity; parameter::Parameter=Parameter())
 
     T = typeof(excitation.frequency)
     F = zeros(Complex{T}, size(quantity.locations))
@@ -51,9 +49,7 @@ function scatteredfield(
 
     # --- compute trace
     @tasks for ind in eachindex(quantity.locations)
-        F[ind] = scatteredfield(
-            sphere, excitation, quantity.locations[ind], quantity.normals[ind], quantity; parameter=parameter
-        )
+        F[ind] = scatteredfield(sphere, excitation, quantity.locations[ind], quantity.normals[ind], quantity; parameter=parameter)
         next!(p)
     end
     finish!(p)
@@ -193,7 +189,7 @@ function scatteredfield(
     ka = k * a
     s  = sqrt(π / 2 / ka)
 
-    d  = excitation.direction
+    d = excitation.direction
     r̂ = normalize(point)
 
     cosϑ = clamp(dot(d, r̂), -T(1.0), T(1.0))
@@ -236,8 +232,7 @@ function scatteredfield(
 
             # recurrence relationships for the next Legendre polynomial and its derivative
             Pn₋₁, Pn, dPn₋₁, dPn = Pn,
-            ((2 * n + 1) * cosϑ * Pn - n * Pn₋₁) / (n + 1),
-            dPn,
+            ((2 * n + 1) * cosϑ * Pn - n * Pn₋₁) / (n + 1), dPn,
             ((2 * n + 1) * (Pn + cosϑ * dPn) - n * dPn₋₁) / (n + 1)
         end
     catch

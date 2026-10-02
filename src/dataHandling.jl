@@ -58,8 +58,7 @@ struct PressureNormalGradient <: Trace
 
         isnothing(normals) && return new(locations, normalize.(locations))
 
-        length(normals) == length(locations) ||
-            error("The number of provided normal vectors does not match the number of locations.")
+        length(normals) == length(locations) || error("The number of provided normal vectors does not match the number of locations.")
 
         return new(locations, normalize.(normals))
     end
