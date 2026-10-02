@@ -22,7 +22,7 @@
 ---
 ## Definition
 
-The spherical modes are defined following the conventions of [[5]](@ref refs), however adapted to the time convention ``\mathrm{e}^{\,\mathrm{j}\omega t}``.
+The spherical modes are defined following the conventions of [hansenSphericalNearfieldAntenna1988](@cite), however adapted to the time convention ``\mathrm{e}^{\,\mathrm{j}\omega t}``.
 
 #### TE Modes
 
@@ -52,7 +52,7 @@ form the ``\mathrm{TM}_{mn}`` modes.
 !!! note
     By ``c=1`` inward travelling waves and by ``c=2`` outward travelling waves are denoted.
     
-    The change of time convention from [[5]](@ref refs) to the one of this package is achieved solely by interchanging these values. 
+    The change of time convention from [hansenSphericalNearfieldAntenna1988](@cite) to the one of this package is achieved solely by interchanging these values. 
 
 ---
 ## [API](@id modesAPI)

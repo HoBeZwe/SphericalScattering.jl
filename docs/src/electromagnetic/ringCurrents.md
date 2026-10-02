@@ -53,7 +53,7 @@ magneticRingCurrent
 ---
 ## Radiated Field
 
-The electric field of the electric ring current itself (without scatterer) is computed as a series expansion as defined in [[1, pp. 362ff]](@ref refs).
+The electric field of the electric ring current itself (without scatterer) is computed as a series expansion as defined in [jinTheoryComputationElectromagnetic2015; pp. 362ff](@cite).
 
 !!! note
     The fields of the magnetic ring currents are computed via [duality relations](@ref dualityRelations).
@@ -76,7 +76,7 @@ FF = field(ex, FarField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation follows [[1, pp. 368ff]](@ref refs). For the magnetic ring current [duality relations](@ref dualityRelations) are employed. 
+The scattered field computation follows [jinTheoryComputationElectromagnetic2015; pp. 368ff](@cite). For the magnetic ring current [duality relations](@ref dualityRelations) are employed. 
 
 !!! tip
     For the scattered field computation the orientation of the ring current is restricted: the orientation vector has to be perpendicular to the surface of the sphere. 
@@ -91,7 +91,7 @@ The scattered field computation follows [[1, pp. 368ff]](@ref refs). For the mag
     ```
 
 !!! note
-    Internal details of the computations: Following [[1, pp. 368ff]](@ref refs) the orientation vectors of the ring currents are initially assumed to be aligned with the ``z``-axis. Arbitrary centers and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails).
+    Internal details of the computations: Following [jinTheoryComputationElectromagnetic2015; pp. 368ff](@cite) the orientation vectors of the ring currents are initially assumed to be aligned with the ``z``-axis. Arbitrary centers and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails).
 
 #### API
 

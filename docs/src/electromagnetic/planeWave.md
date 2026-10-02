@@ -65,10 +65,10 @@ H  = field(ex, MagneticField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation follows [[1, pp. 347ff]](@ref refs). 
+The scattered field computation follows [jinTheoryComputationElectromagnetic2015; pp. 347ff](@cite). 
 
 !!! note
-    Internal details of the computations: Following [[1, pp. 347ff]](@ref refs) the plane wave is initially assumed to travel in positive ``z``-axis direction and to have a polarization along the positive ``x``-axis. Arbitrary directions and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails). 
+    Internal details of the computations: Following [jinTheoryComputationElectromagnetic2015; pp. 347ff](@cite) the plane wave is initially assumed to travel in positive ``z``-axis direction and to have a polarization along the positive ``x``-axis. Arbitrary directions and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails). 
 
 #### API
 
@@ -100,7 +100,7 @@ H  = field(sp, ex, MagneticField(point_cart))
 ---
 ## [Radar Cross Section](@id rcsPW)
 
-To compute the bistatic radar cross section (RCS) [[1, pp. 350ff]](@ref refs)
+To compute the bistatic radar cross section (RCS) [jinTheoryComputationElectromagnetic2015; pp. 350ff](@cite)
 ```math
 \sigma (\vartheta, \varphi) = \lim_{r\rightarrow \infty} \left( 4 \pi r^2 \frac{{|e^\mathrm{sc}|}^2}{{|e^\mathrm{inc}|}^2} \right)
 ```

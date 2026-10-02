@@ -18,7 +18,7 @@
 ---
 ## Definition
 
-The dipoles are defined as infinitesimal time harmonic current elements. Note that the definitions differ from the ones employed in [[4, pp. 411ff]](@ref refs) basically by a factor of ``k``. Hence, they lead to different static fields, i.e., for ``k\rightarrow 0``.
+The dipoles are defined as infinitesimal time harmonic current elements. Note that the definitions differ from the ones employed in [jacksonClassicalElectrodynamics1999a; pp. 411ff](@cite) basically by a factor of ``k``. Hence, they lead to different static fields, i.e., for ``k\rightarrow 0``.
 
 #### Hertzian Dipole
 
@@ -51,7 +51,7 @@ FitzgeraldDipole
 ---
 ## Radiated Field
 
-The electric field of the Hertzian dipole itself (without scatterer) is [[4, pp. 411ff]](@ref refs)
+The electric field of the Hertzian dipole itself (without scatterer) is [jacksonClassicalElectrodynamics1999a; pp. 411ff](@cite)
 ```math
 \bm e(\bm r) = Z_\mathrm{F} \cfrac{Il}{4 \pi} \mathrm{e}^{-\mathrm{j} k r}  \left( \cfrac{k}{r}  ((\hat{\bm n} \times \hat{\bm p}) \times \hat{\bm n}) + \left(\cfrac{1}{k r^3} + \cfrac{\mathrm{j}}{r^2} \right)  (3 \hat{\bm n} (\hat{\bm n} \cdot \hat{\bm p}) - \hat{\bm p}) \right)
 ```
@@ -81,7 +81,7 @@ FF = field(ex, FarField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation is a generalization of the analysis in [[1, pp. 374ff]](@ref refs). For the magnetic dipole [duality relations](@ref dualityRelations) are employed.
+The scattered field computation is a generalization of the analysis in [jinTheoryComputationElectromagnetic2015; pp. 374ff](@cite). For the magnetic dipole [duality relations](@ref dualityRelations) are employed.
 
 !!! tip
     For the scattered field computation the orientation of the dipole is restricted: the dipole has to be perpendicular to the surface of the sphere. 
@@ -96,7 +96,7 @@ The scattered field computation is a generalization of the analysis in [[1, pp. 
     ```
 
 !!! note
-    Internal details of the computations: Following [[1, pp. 347ff]](@ref refs) the dipoles are initially assumed to be aligned with the ``z``-axis. Arbitrary positions and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails).
+    Internal details of the computations: Following [jinTheoryComputationElectromagnetic2015; pp. 347ff](@cite) the dipoles are initially assumed to be aligned with the ``z``-axis. Arbitrary positions and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails).
 
 #### API
 

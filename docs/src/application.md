@@ -98,7 +98,7 @@ The monostatic and the bistatic [radar cross section (RCS)](@ref rcsPW) can be e
 
 ### Monostatic RCS
 
-The monostatic radar cross section as a function of the sphere radius can be computed as follows (compare also the plot in [[1, pp. 352ff]](@ref refs)):
+The monostatic radar cross section as a function of the sphere radius can be computed as follows (compare also the plot in [jinTheoryComputationElectromagnetic2015; pp. 352ff](@cite)):
 ```@example RCS
 using SphericalScattering
 using PlotlyJS
@@ -138,7 +138,7 @@ savefig(t, "monoRCS.html"); nothing # hide
 
 ### Bistatic RCS
 
-The bistatic radar cross section along a ϑ-cut can be computed as follows (compare also the plot in [[1, pp. 351ff]](@ref refs)):
+The bistatic radar cross section along a ϑ-cut can be computed as follows (compare also the plot in [jinTheoryComputationElectromagnetic2015; pp. 351ff](@cite)):
 ```@example RCS
 using StaticArrays
 

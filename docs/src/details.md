@@ -10,7 +10,7 @@ SI units are employed everywhere.
 ---
 ## [Duality Relations](@id dualityRelations)
 
-In many places the duality relations [[1, p. 120]](@ref refs)
+In many places the duality relations [jinTheoryComputationElectromagnetic2015; p. 120](@cite)
 
 | electric current | ``\rightarrow`` | magnetic current | 
 |:---------------: | :-------------: | :--------------: |

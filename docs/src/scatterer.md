@@ -83,7 +83,7 @@ with, e.g., `radii = SVector(0.25, 0.5, 1.0)` and `filling = SVector(Medium(ε1,
 ---
 ## [Dielectric Sphere with Thin Impedance Layer](@id dielecimped)
 
-The dielectric sphere with a thin impedance layer of thickness ``t`` has radius ``r`` and is assumed to be located in the origin. It is defined by [`DielectricSphereThinImpedanceLayer`](@ref). Unlike the LayeredSphere model, the solution is obtained by using an approximation: it is assumed that the impedance is so high that the displacement field is purely radial (see [[6, pp. 230ff]](@ref refs)). This leads to a potential drop across the thin layer, while the displacement field is constant in radial direction. In addition to the filling [`Medium(εᵢ, μᵢ)`](@ref), the impedance layer must be specified, both the [`Medium(εₜ, μₜ)`](@ref) and its `thickness`.  
+The dielectric sphere with a thin impedance layer of thickness ``t`` has radius ``r`` and is assumed to be located in the origin. It is defined by [`DielectricSphereThinImpedanceLayer`](@ref). Unlike the LayeredSphere model, the solution is obtained by using an approximation: it is assumed that the impedance is so high that the displacement field is purely radial (see [jonesElectromechanicsParticles1995; pp. 230ff](@cite)). This leads to a potential drop across the thin layer, while the displacement field is constant in radial direction. In addition to the filling [`Medium(εᵢ, μᵢ)`](@ref), the impedance layer must be specified, both the [`Medium(εₜ, μₜ)`](@ref) and its `thickness`.  
 ```@raw html
 <div align="center">
 <img src="../assets/ImpedanceLayer.svg" width="300"/>

@@ -53,7 +53,7 @@ E = field(ex, ElectricField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation follows [[3]](@ref refs). 
+The scattered field computation follows [sihvolaTransmissionLineAnalogy1988](@cite). 
 
 
 #### API
