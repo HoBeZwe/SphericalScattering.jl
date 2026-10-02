@@ -1,7 +1,7 @@
 
 
 
-struct AcousticPlaneWave{T,R,C} <: Excitation
+struct AcousticPlaneWave{T,R,C} <: AcousticExcitation
     embedding::Medium{C}
     frequency::R
     amplitude::T

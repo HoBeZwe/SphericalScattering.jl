@@ -94,6 +94,7 @@ include("electromagnetics/UniformField/scattered.jl")
 
 
 include("acoustics/sphere.jl")
+include("acoustics/scattered.jl") # the series shared by all acoustic excitations
 
 include("acoustics/planeWave/excitation.jl")
 include("acoustics/planeWave/incident.jl")

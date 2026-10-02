@@ -68,6 +68,10 @@ end
 
 abstract type Excitation end
 
+# the acoustic excitations share the series for the scattered field, which differs only in the axis of
+# rotational symmetry and in the coefficients of the incident expansion
+abstract type AcousticExcitation <: Excitation end
+
 wavenumber(ex::Excitation) = 2π * ex.frequency * sqrt(ex.embedding.ε * ex.embedding.μ)
 
 #abstract type Parameter end

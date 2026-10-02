@@ -100,3 +100,53 @@ function field(excitation::AcousticMonopole, point, normal, quantity::PressureNo
 
     return -a / (4 * π) * (1 + im * k * R) * cis(-k * R) / R^2 * dot(normal, d / R)
 end
+
+
+
+"""
+    field(excitation::AcousticMonopole, quantity::FarField; parameter::Parameter=Parameter())
+
+Compute the far field of an acoustic monopole.
+
+In contrast to a plane wave, a monopole does possess a far field. It is determined by the direction of
+observation alone, hence no locations are suppressed and a `zeroRadius` is not taken into account.
+"""
+function field(excitation::AcousticMonopole, quantity::FarField; parameter::Parameter=Parameter(), zeroRadius=0.0)
+
+    T = typeof(excitation.frequency)
+
+    F = zeros(Complex{T}, size(quantity.locations))
+
+    # --- compute field
+    for (ind, point) in enumerate(quantity.locations)
+        F[ind] = field(excitation, point, quantity; parameter=parameter)
+    end
+
+    return F
+end
+
+
+
+"""
+    field(excitation::AcousticMonopole, point, quantity::FarField; parameter::Parameter=Parameter())
+
+Compute the far field ``A \\mathrm{e}^{\\mathrm{j} k \\hat{r} ⋅ \\mathbf{r}_0} / (4π)`` of an acoustic monopole
+located at ``\\mathbf{r}_0``.
+
+Since ``|\\mathbf{r} - \\mathbf{r}_0| = r - \\hat{r} ⋅ \\mathbf{r}_0 + 𝒪(1/r)``, the far field follows from the
+pressure by dropping the factor ``\\mathrm{e}^{-\\mathrm{j}kr} / r``, that is, the returned quantity is
+``\\lim_{r → ∞} r \\, \\mathrm{e}^{\\mathrm{j}kr} p_\\mathrm{i}``, as for the electromagnetic excitations. Its
+magnitude is the same in all directions, as it has to be for a point source: the position of the monopole enters
+the phase alone.
+
+The point is in Cartesian coordinates, only its direction being relevant.
+"""
+function field(excitation::AcousticMonopole, point, quantity::FarField; parameter::Parameter=Parameter())
+
+    a = excitation.amplitude
+    k = wavenumber(excitation)
+
+    r̂ = normalize(point) # only the direction of observation is relevant
+
+    return a / (4 * π) * cis(k * dot(r̂, excitation.position))
+end
