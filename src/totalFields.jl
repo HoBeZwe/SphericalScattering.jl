@@ -21,6 +21,25 @@ end
 
 
 """
+    field(sphere::Sphere, excitation::Excitation, quantity::Trace; parameter::Parameter=Parameter())
+
+Compute the total trace on the surface of a sphere for a given excitation.
+
+In contrast to the fields, the traces are not set to zero anywhere: they are defined on the surface of the sphere,
+where the locations are assumed to lie.
+"""
+function field(sphere::Sphere, excitation::Excitation, quantity::Trace; parameter::Parameter=Parameter())
+
+    # incident and scattered trace
+    F = field(excitation, quantity; parameter=parameter)
+    F .+= scatteredfield(sphere, excitation, quantity; parameter=parameter)
+
+    return F
+end
+
+
+
+"""
     field(sphere::Sphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
 
 Descriptive error for the total far-field in the presence of a sphere for an incident plane wave.

@@ -30,6 +30,43 @@ struct Pressure <: Field
     locations
 end
 
+
+
+abstract type Trace end
+
+struct PressureTrace <: Trace
+    locations
+end
+
+"""
+    PressureNormalGradient(locations)
+    PressureNormalGradient(locations, normals)
+
+The normal gradient ``\\hat{n} ⋅ ∇p`` of the pressure at the given locations.
+
+If no `normals` are provided, the outward normal ``\\hat{n} = \\hat{r}`` of a sphere centered at the origin is
+employed at every location. Otherwise one normal vector per location is expected, which is useful for the
+locations of a faceted surface mesh, whose normals do not coincide with ``\\hat{r}``. Either way, the normals are
+normalized and stored for every location.
+"""
+struct PressureNormalGradient <: Trace
+    locations
+    normals
+
+    # inner constructor: default to the outward normal n̂ = r̂ and normalize
+    function PressureNormalGradient(locations, normals=nothing)
+
+        isnothing(normals) && return new(locations, normalize.(locations))
+
+        length(normals) == length(locations) ||
+            error("The number of provided normal vectors does not match the number of locations.")
+
+        return new(locations, normalize.(normals))
+    end
+end
+
+
+
 abstract type Excitation end
 
 wavenumber(ex::Excitation) = 2π * ex.frequency * sqrt(ex.embedding.ε * ex.embedding.μ)

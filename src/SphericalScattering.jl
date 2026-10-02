@@ -40,6 +40,7 @@ export μ0, ε0
 export Acoustic
 export AcousticPlaneWave, AcousticMonopole
 export Pressure
+export PressureTrace, PressureNormalGradient
 
 # functions
 export electricRingCurrent, magneticRingCurrent
@@ -95,6 +96,7 @@ include("acoustics/sphere.jl")
 include("acoustics/planeWave/excitation.jl")
 include("acoustics/planeWave/incident.jl")
 include("acoustics/planeWave/scattered.jl")
+
 include("acoustics/monopole/excitation.jl")
 include("acoustics/monopole/incident.jl")
 include("acoustics/monopole/scattered.jl")
