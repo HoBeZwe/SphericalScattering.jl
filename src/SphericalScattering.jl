@@ -70,6 +70,8 @@ export plotff, plotnf, plotffcut, plotnfcut
 include("dataHandling.jl")
 include("sphere.jl")
 
+include("electromagnetics/sphere.jl")
+
 include("electromagnetics/ringCurrent/excitation.jl")
 include("electromagnetics/ringCurrent/incident.jl")
 include("electromagnetics/ringCurrent/scattered.jl")
@@ -100,6 +102,8 @@ include("acoustics/planeWave/scattered.jl")
 include("acoustics/monopole/excitation.jl")
 include("acoustics/monopole/incident.jl")
 include("acoustics/monopole/scattered.jl")
+
+include("acoustics/Acoustic.jl") # the single `Acoustic` submodule holding the user-facing constructors
 
 include("totalFields.jl")
 include("coordinateTransforms.jl")

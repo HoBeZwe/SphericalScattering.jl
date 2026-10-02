@@ -55,28 +55,29 @@ points_cartNF_inside, ~ = getDefaultPoints(0.5)
     end
 
     @testset "Test dipoles" begin
-        include("dipoles.jl")
+        include("electromagnetics/dipoles.jl")
     end
 
     @testset "Test plane waves" begin
-        include("planeWave.jl")
-        include("planeWave_dielectric.jl")
+        include("electromagnetics/planeWave.jl")
+        include("electromagnetics/planeWave_dielectric.jl")
     end
 
     @testset "Test ring currents" begin
-        include("ringCurrents.jl")
+        include("electromagnetics/ringCurrents.jl")
     end
 
     @testset "Test spherical modes" begin
-        include("sphericalModes.jl")
+        include("electromagnetics/sphericalModes.jl")
     end
 
     @testset "Test uniform field" begin
-        include("uniformField.jl")
+        include("electromagnetics/uniformField.jl")
     end
 
     @testset "Test acoustics" begin
-        include("acoustics.jl")
+        include("acoustics/planeWave.jl")
+        include("acoustics/monopole.jl")
     end
 
     @testset "Test coordinate transforms" begin

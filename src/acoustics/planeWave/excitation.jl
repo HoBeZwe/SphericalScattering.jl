@@ -15,26 +15,3 @@ struct AcousticPlaneWave{T,R,C} <: Excitation
         new{T,R,C}(embedding, frequency, amplitude, dir_normalized)
     end
 end
-
-
-module Acoustic
-
-using ..SphericalScattering
-using StaticArrays
-
-"""
-    ex = planeWave(;
-            embedding    = Medium(ε0, μ0),
-            frequency    = error("missing argument `frequency`"),
-            amplitude    = 1.0,
-            direction    = SVector{3,typeof(frequency)}(0.0, 0.0, 1.0)
-    )
-"""
-planeWave(;
-    embedding=SphericalScattering.Medium(ε0, μ0),
-    frequency=error("missing argument `frequency`"),
-    amplitude=1.0,
-    direction=SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
-) = SphericalScattering.AcousticPlaneWave(embedding, frequency, amplitude, direction)
-
-end
