@@ -50,7 +50,7 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
     k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
-    θ = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
+    θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
 
     T = typeof(k)
 
@@ -116,16 +116,16 @@ function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quant
     k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
-    θ = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
+    θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
 
     T = typeof(k)
 
     eps = parameter.relativeAccuracy
 
-    Hr   = Complex{T}(0.0) # initialize
+    Hr  = Complex{T}(0.0) # initialize
     Hϑ  = Complex{T}(0.0) # initialize
     δHr = T(Inf)
-    n    = 0
+    n   = 0
 
     r = point_sph[1]
 
@@ -189,7 +189,7 @@ function scatteredfield(
     k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
-    θ = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
+    θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
 
     T = typeof(k)
 
@@ -251,7 +251,7 @@ function scatteredfield(
     k  = wavenumber(excitation)
     I0 = excitation.amplitude
     R  = sqrt(norm(excitation.center)^2 + excitation.radius^2)    # distance loop-origin
-    θ = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
+    θ  = atan(excitation.radius / norm(excitation.center))        # angle between z-axis and connection loop-origin
 
     T = typeof(k)
 

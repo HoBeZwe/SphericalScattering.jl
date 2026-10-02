@@ -38,4 +38,3 @@ planeWave(;
     direction=SVector{3,typeof(frequency)}(0.0, 0.0, 1.0),
     polarization=SVector{3,typeof(frequency)}(1.0, 0.0, 0.0),
 ) = PlaneWave(embedding, frequency, amplitude, direction, polarization)
-

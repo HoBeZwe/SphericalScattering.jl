@@ -30,7 +30,7 @@
             𝐸 = Maxwell3D.planewave(; direction=ẑ, polarization=x̂, wavenumber=κ)
 
             𝑒 = n × 𝐸 × n
-            𝑇 = Maxwell3D.singlelayer(; wavenumber=κ, alpha=-im * 𝜇 * (2π * f), beta=1 / (-im * 𝜀 * (2π * f)))
+            𝑇 = Maxwell3D.singlelayer(; wavenumber=κ, alpha=(-im * 𝜇 * (2π * f)), beta=1 / (-im * 𝜀 * (2π * f)))
 
             e = -assemble(𝑒, RT)
             T = assemble(𝑇, RT, RT)
@@ -73,7 +73,7 @@
             𝐸 = Maxwell3D.planewave(; direction=dir, polarization=pol, wavenumber=κ)
 
             𝑒 = n × 𝐸 × n
-            𝑇 = Maxwell3D.singlelayer(; wavenumber=κ, alpha=-im * 𝜇 * (2π * f), beta=1 / (-im * 𝜀 * (2π * f)))
+            𝑇 = Maxwell3D.singlelayer(; wavenumber=κ, alpha=(-im * 𝜇 * (2π * f)), beta=1 / (-im * 𝜀 * (2π * f)))
 
             e = -assemble(𝑒, RT)
             T = assemble(𝑇, RT, RT)

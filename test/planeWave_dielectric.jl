@@ -23,8 +23,8 @@
     η1 = sqrt(μ1 / ε1)
 
     # MoM solution via PMCHWT
-    𝓣k2 = Maxwell3D.singlelayer(; wavenumber=k2, alpha=-im * μ2 * ω, beta=1 / (-im * ε2 * ω))
-    𝓣k1 = Maxwell3D.singlelayer(; wavenumber=k1, alpha=-im * μ1 * ω, beta=1 / (-im * ε1 * ω))
+    𝓣k2 = Maxwell3D.singlelayer(; wavenumber=k2, alpha=(-im * μ2 * ω), beta=1 / (-im * ε2 * ω))
+    𝓣k1 = Maxwell3D.singlelayer(; wavenumber=k1, alpha=(-im * μ1 * ω), beta=1 / (-im * ε1 * ω))
 
     𝓚k2 = Maxwell3D.doublelayer(; wavenumber=k2)
     𝓚k1 = Maxwell3D.doublelayer(; wavenumber=k1)
