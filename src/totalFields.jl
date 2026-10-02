@@ -1,6 +1,7 @@
 
 inside(sphere::Sphere) = 0.0
 inside(sphere::PECSphere) = sphere.radius - 1e-15
+inside(sphere::Union{HardSphere,SoftSphere}) = sphere.radius - 1e-15
 
 
 """
@@ -25,6 +26,17 @@ end
 Descriptive error for the total far-field in the presence of a sphere for an incident plane wave.
 """
 function field(sphere::Sphere, excitation::PlaneWave, quantity::FarField; parameter::Parameter=Parameter())
+
+    return error("The total far-field for a plane-wave excitation is not defined")
+end
+
+
+"""
+    field(sphere::Sphere, excitation::AcousticPlaneWave, quantity::Field; parameter::Parameter=Parameter())
+
+Descriptive error for the total far-field in the presence of a sphere for an incident acoustic plane wave.
+"""
+function field(sphere::Sphere, excitation::AcousticPlaneWave, quantity::FarField; parameter::Parameter=Parameter())
 
     return error("The total far-field for a plane-wave excitation is not defined")
 end

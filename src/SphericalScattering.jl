@@ -37,6 +37,10 @@ export ScalarPotential, ScalarPotentialJump
 export Medium, Parameter
 export μ0, ε0
 
+export Acoustic
+export AcousticPlaneWave, AcousticMonopole
+export Pressure
+
 # functions
 export electricRingCurrent, magneticRingCurrent
 export HertzianDipole, FitzgeraldDipole
@@ -44,6 +48,7 @@ export planeWave
 export SphericalMode, SphericalModeTE, SphericalModeTM
 export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export DielectricSphereThinImpedanceLayer
+export HardSphere, SoftSphere
 export field, scatteredfield
 export rcs
 export sphericalGridPoints, phiCutPoints, thetaCutPoints
@@ -64,25 +69,35 @@ export plotff, plotnf, plotffcut, plotnfcut
 include("dataHandling.jl")
 include("sphere.jl")
 
-include("ringCurrent/excitation.jl")
-include("ringCurrent/incident.jl")
-include("ringCurrent/scattered.jl")
+include("electromagnetics/ringCurrent/excitation.jl")
+include("electromagnetics/ringCurrent/incident.jl")
+include("electromagnetics/ringCurrent/scattered.jl")
 
-include("dipoles/excitation.jl")
-include("dipoles/incident.jl")
-include("dipoles/scattered.jl")
+include("electromagnetics/dipoles/excitation.jl")
+include("electromagnetics/dipoles/incident.jl")
+include("electromagnetics/dipoles/scattered.jl")
 
-include("planeWave/excitation.jl")
-include("planeWave/incident.jl")
-include("planeWave/scattered.jl")
+include("electromagnetics/planeWave/excitation.jl")
+include("electromagnetics/planeWave/incident.jl")
+include("electromagnetics/planeWave/scattered.jl")
 
-include("sphericalModes/excitation.jl")
-include("sphericalModes/incident.jl")
-include("sphericalModes/scattered.jl")
+include("electromagnetics/sphericalModes/excitation.jl")
+include("electromagnetics/sphericalModes/incident.jl")
+include("electromagnetics/sphericalModes/scattered.jl")
 
-include("UniformField/excitation.jl")
-include("UniformField/incident.jl")
-include("UniformField/scattered.jl")
+include("electromagnetics/UniformField/excitation.jl")
+include("electromagnetics/UniformField/incident.jl")
+include("electromagnetics/UniformField/scattered.jl")
+
+
+include("acoustics/sphere.jl")
+
+include("acoustics/planeWave/excitation.jl")
+include("acoustics/planeWave/incident.jl")
+include("acoustics/planeWave/scattered.jl")
+include("acoustics/monopole/excitation.jl")
+include("acoustics/monopole/incident.jl")
+include("acoustics/monopole/scattered.jl")
 
 include("totalFields.jl")
 include("coordinateTransforms.jl")

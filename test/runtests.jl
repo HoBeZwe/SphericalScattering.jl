@@ -75,6 +75,10 @@ points_cartNF_inside, ~ = getDefaultPoints(0.5)
         include("uniformField.jl")
     end
 
+    @testset "Test acoustics" begin
+        include("acoustics.jl")
+    end
+
     @testset "Test coordinate transforms" begin
         include("coordinateTransforms.jl")
     end
