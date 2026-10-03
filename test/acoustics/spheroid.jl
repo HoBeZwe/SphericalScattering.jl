@@ -1,5 +1,5 @@
 
-@testset "Spheroid" begin
+@testitem "Spheroid" setup = [Setup] begin
 
     f = 1.3   # semifocal distance
 
@@ -185,7 +185,7 @@
 end
 
 
-@testset "Spheroidal expansion" begin
+@testitem "Spheroidal expansion" setup = [Setup] begin
 
     freq(k) = k * c / (2π)   # the frequency belonging to a desired wavenumber
 
@@ -326,7 +326,7 @@ end
 end
 
 
-@testset "Independent validation" begin
+@testitem "Independent validation" setup = [Setup] begin
 
     freq(k) = k * c / (2π)
 
@@ -403,7 +403,7 @@ end
 end
 
 
-@testset "Automatic truncation" begin
+@testitem "Automatic truncation" setup = [Setup] begin
 
     freq(k) = k * c / (2π)
 
@@ -494,7 +494,7 @@ end
 end
 
 
-@testset "Spheroidal traces" begin
+@testitem "Spheroidal traces" setup = [Setup] begin
 
     freq(k) = k * c / (2π)
 
@@ -675,7 +675,7 @@ end
 end
 
 
-@testset "Spheroidal far field" begin
+@testitem "Spheroidal far field" setup = [Setup] begin
 
     freq(k) = k * c / (2π)
 
@@ -780,7 +780,7 @@ end
 end
 
 
-@testset "Pressure jump across a disc" begin
+@testitem "Pressure jump across a disc" setup = [Setup] begin
 
     freq(k) = k * c / (2π)
 
@@ -882,7 +882,7 @@ end
 end
 
 
-@testset "Interior and preconditions" begin
+@testitem "Interior and preconditions" setup = [Setup] begin
 
     freq(k) = k * c / (2π)
 

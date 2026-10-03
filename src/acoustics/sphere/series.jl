@@ -6,6 +6,7 @@ an incident acoustic excitation.
 """
 function scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity::AcousticQuantity; parameter::Parameter=Parameter())
 
+    checkScatterer(sphere)
     checkExcitation(sphere, excitation)
 
     T = typeof(excitation.frequency)
@@ -37,6 +38,7 @@ function scatteredfield(
     sphere::Sphere, excitation::AcousticExcitation, quantity::PressureNormalGradient; parameter::Parameter=Parameter()
 )
 
+    checkScatterer(sphere)
     checkExcitation(sphere, excitation)
 
     T = typeof(excitation.frequency)

@@ -1,13 +1,4 @@
-
-f = 1e8
-κ = 2π * f / c   # Wavenumber
-
-# BEAST impedance matrix
-𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
-T = assemble(𝑇, RT, RT)
-
-
-@testset "Hertzian dipole" begin
+@testitem "Hertzian dipole" setup = [Setup, BEASTSetup, Impedance] begin
 
     ex = HertzianDipole(; frequency=f, position=SVector(0.0, 0.0, 2.0))
 
@@ -109,7 +100,7 @@ T = assemble(𝑇, RT, RT)
 end
 
 
-@testset "Fitzgerald dipole" begin
+@testitem "Fitzgerald dipole" setup = [Setup, BEASTSetup, Impedance] begin
 
     #f = 1e8
     #κ = 2π * f / c   # Wavenumber

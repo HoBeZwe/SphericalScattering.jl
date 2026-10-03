@@ -268,6 +268,16 @@ end
 
 
 """
+    checkDisc(sphere::Spheroid)
+
+Ensure that the scatterer is a disc, across which alone a jump is defined; see [`checkScatterer`](@ref) for why
+the check belongs before the loop over the locations.
+"""
+checkDisc(sphere::Spheroid) =
+    isdisc(sphere) || error("The jump of the pressure is defined across an open surface, that is, across a disc.")
+
+
+"""
     scatteredfield(sphere::Spheroid, excitation::AcousticExcitation, md::SpheroidalModes, point, quantity::PressureJump; parameter::Parameter=Parameter())
 
 Compute the jump ``[p] = p|_+ - p|_-`` of the pressure across a disc.
@@ -298,7 +308,7 @@ function scatteredfield(
     parameter::Parameter=Parameter(),
 ) where {T}
 
-    isdisc(sphere) || error("The jump of the pressure is defined across an open surface, that is, across a disc.")
+    checkDisc(sphere)
 
     coefficients = md.A .* md.b
 
@@ -334,6 +344,8 @@ Compute the jump of the scattered pressure across a disc at all locations of `qu
 function scatteredfield(
     sphere::Spheroid, excitation::AcousticExcitation, md::SpheroidalModes, quantity::PressureJump; parameter::Parameter=Parameter()
 )
+
+    checkDisc(sphere)
 
     T = typeof(excitation.frequency)
     F = zeros(Complex{T}, size(quantity.locations))

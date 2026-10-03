@@ -26,3 +26,17 @@ function isinside end
 Ensure that the excitation is compatible with the scatterer; nothing has to be checked by default.
 """
 checkExcitation(scatterer::Sphere, excitation::AcousticExcitation) = nothing
+
+
+"""
+    checkScatterer(scatterer::Sphere)
+
+Ensure that an acoustic solution is implemented for the scatterer.
+
+The check belongs before the loop over the locations: an error thrown inside the parallel loop is wrapped in a
+`TaskFailedException` as soon as more than one thread is available, which would make the failure depend on the
+number of threads.
+"""
+checkScatterer(scatterer::AcousticScatterer) = nothing
+
+checkScatterer(scatterer::Sphere) = error("Acoustic scattering is only implemented for sound-hard and sound-soft spheres (so far).")

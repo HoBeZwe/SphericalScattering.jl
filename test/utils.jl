@@ -1,5 +1,5 @@
 
-@testset "Plotting points" begin
+@testitem "Plotting points" setup = [Setup] begin
 
     # just check whether function calls returns no errors
     @test_nowarn sphericalGridPoints()
@@ -7,7 +7,7 @@
     @test_nowarn thetaCutPoints(20)
 end
 
-@testset "Plotting extensions" begin
+@testitem "Plotting extensions" setup = [Setup] begin
 
     using PlotlyJS
 
@@ -40,7 +40,7 @@ end
     @test_nowarn plotffcut(norm.(FF), points_sph, normalize=true, scale="linear", format="rectangular")
 end
 
-@testset "Radar cross section" begin
+@testitem "Radar cross section" setup = [Setup] begin
 
     # --- monostatic RCS
     @test_nowarn rcs(PECSphere(; radius=2.0), planeWave(; frequency=1e8))

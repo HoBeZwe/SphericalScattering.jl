@@ -1,13 +1,4 @@
-
-f = 1e8
-κ = 2π * f / c   # Wavenumber
-
-# BEAST impedance matrix
-𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
-T = assemble(𝑇, RT, RT)
-
-
-@testset "Electric ring current" begin
+@testitem "Electric ring current" setup = [Setup, BEASTSetup, Impedance] begin
 
     @testset "Incident fields" begin
 
@@ -111,7 +102,7 @@ T = assemble(𝑇, RT, RT)
 end
 
 
-@testset "Magnetic ring current" begin
+@testitem "Magnetic ring current" setup = [Setup, BEASTSetup, Impedance] begin
 
     @testset "Incident fields" begin
 

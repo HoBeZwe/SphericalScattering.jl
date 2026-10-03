@@ -1,12 +1,12 @@
-using StaticArrays
 
-const μ0 = 4pi * 1e-7        # default permeability
-const ε0 = 8.8541878176e-12  # default permittivity
+@testsnippet UniformFieldSetup begin
 
-dir = SVector(1.0, 5.0, -3.0)
-ex = UniformField(; direction=dir, amplitude=norm(dir))
+    # μ0 and ε0 are exported by the package, hence not redefined here
+    dir = SVector(1.0, 5.0, -3.0)
+    ex = UniformField(; direction=dir, amplitude=norm(dir))
+end
 
-@testset "Incident field" begin
+@testitem "Incident field" setup = [Setup, UniformFieldSetup] begin
     # define an observation point
     point_cart = [SVector(2.0, 2.0, 3.2)]
 
@@ -16,7 +16,7 @@ ex = UniformField(; direction=dir, amplitude=norm(dir))
     @test E[1][3] ≈ -3.0
 end
 
-@testset "Scattered fields" begin
+@testitem "Scattered fields" setup = [Setup, UniformFieldSetup] begin
     @testset "Dielectric sphere" begin
         # define scatterer: dielectric sphere
         sp = DielectricSphere(; radius=1.0, filling=Medium(ε0 * 5, μ0))

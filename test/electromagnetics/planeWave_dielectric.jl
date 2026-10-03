@@ -1,5 +1,5 @@
 
-@testset "Dielectric" begin
+@testitem "Dielectric" setup = [Setup, BEASTSetup] begin
 
     f = 1e7
 

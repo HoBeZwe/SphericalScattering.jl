@@ -1,13 +1,4 @@
-
-f = 1e8
-κ = 2π * f / c   # Wavenumber
-
-# BEAST impedance matrix
-𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
-T = assemble(𝑇, RT, RT)
-
-
-@testset "TE modes" begin
+@testitem "TE modes" setup = [Setup, BEASTSetup, Impedance] begin
 
     @testset "Incident fields" begin
 
@@ -108,7 +99,7 @@ T = assemble(𝑇, RT, RT)
 end
 
 
-@testset "TM modes" begin
+@testitem "TM modes" setup = [Setup, BEASTSetup, Impedance] begin
 
     @testset "Incident fields" begin
 

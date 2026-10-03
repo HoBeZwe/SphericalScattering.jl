@@ -1,5 +1,5 @@
 
-@testset "Monopole" begin
+@testitem "Monopole" setup = [Setup] begin
 
     f = 1e8
     κ = 2π * f / c   # Wavenumber

@@ -1,5 +1,5 @@
 
-@testset "PEC" begin
+@testitem "PEC" setup = [Setup, BEASTSetup] begin
 
     f = 1e8
     κ = 2π * f / c   # Wavenumber

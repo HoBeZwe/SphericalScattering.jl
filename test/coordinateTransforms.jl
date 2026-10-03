@@ -1,5 +1,5 @@
 
-@testset "Coordinate transforms" begin
+@testitem "Coordinate transforms" setup = [Setup] begin
 
     # ----- sph2cart
     vec = SVector(1.0, π / 4, π / 4)

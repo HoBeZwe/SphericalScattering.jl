@@ -1,5 +1,5 @@
 
-@testset "Medium and Sphere" begin
+@testitem "Medium and Sphere" setup = [Setup] begin
 
     md = Medium(3.0, Float32(2.0))
 
