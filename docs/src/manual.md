@@ -69,6 +69,8 @@ For all available scatteres a simple constructor with keyword arguments and defa
 - [Multilayer dielectric sphere](@ref mlDielecAPI)
 - [Multilayer dielectric sphere with PEC core](@ref mlDielecPecAPI)
 - [Dielectric sphere with thin impedance layer](@ref dielecimped) 
+- [Sound-hard/soft sphere](@ref acScattererAPI)
+- [Sound-hard/soft oblate spheroid and disc](@ref ACspheroidAPI)
 
 
 ---

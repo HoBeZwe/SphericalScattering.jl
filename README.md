@@ -16,35 +16,53 @@
 
 ## Introduction
 
-This package provides semi-analytical solutions to the scattering of time harmonic and static electromagnetic fields from spherical objects (amongst others known as Mie solutions or Mie scattering). 
+This package provides semi-analytical solutions to the scattering of time-harmonic and static electromagnetic fields as well as time-harmonic acoustic fields from spherical and spheroidal objects (amongst others known as Mie solutions or Mie scattering). 
 To this end, series expansions are evaluated. Special care is taken to obtain accurate solutions down to the static limit.
 
 The following aspects are implemented (✔) and planned (⌛):
 
 ##### Available incident fields:
-- ✔ Plane wave
-- ✔ Field of electric/magnetic ring current
-- ✔ Field of electric/magnetic dipole
-- ✔ TE/TM spherical vector waves
-- ✔ Uniform static electric field
-- ⌛ Static charge(s)
+- Electromagnetic
+    + ✔ Plane wave
+    + ✔ Field of electric/magnetic ring current
+    + ✔ Field of electric/magnetic dipole
+    + ✔ TE/TM spherical vector waves
+    + ✔ Uniform static electric field
+    + ⌛ Static charge(s)
+
+- Acoustic
+    + ✔ Plane wave
+    + ✔ Monopole
 
 ##### Available scattering objects:
-- ✔ PEC sphere
-- ⌛ PMC sphere
-- ⌛ Dielectric sphere                          (✔ for uniform static field & plane-wave)
-- ⌛ Multilayer dielectric sphere               (✔ for uniform static field)
-- ⌛ Multilayer dielectric sphere with PEC core (✔ for uniform static field)
-- ✔ Dielectric sphere with thin impedance layer
+- Electromagnetic
+    - ✔ PEC sphere
+    - ⌛ PMC sphere
+    - ⌛ Dielectric sphere                          (✔ for uniform static field & plane-wave)
+    - ⌛ Multilayer dielectric sphere               (✔ for uniform static field)
+    - ⌛ Multilayer dielectric sphere with PEC core (✔ for uniform static field)
+    - ✔ Dielectric sphere with thin impedance layer
+
+- Acoustic
+    - ✔ Sound-hard/soft sphere
+    - ⌛ Sound-hard/soft prolate spheroid
+    - ✔ Sound-hard/soft oblate spheroid
+    - ✔ Sound-hard/soft disc
 
 ##### Available quantities (where applicable):
-- ✔ Far-fields
-- ✔ Near-fields (electric & magnetic)
-- ✔ Radar cross section (RCS)
-- ⌛ Surface currents
-- ✔ Scalar potentials 
-- ✔ Displacement fields 
-- ✔ Scalar potential jump 
+- Electromagnetic
+    - ✔ Far-fields
+    - ✔ Near-fields (electric & magnetic)
+    - ✔ Radar cross section (RCS)
+    - ⌛ Surface currents
+    - ✔ Scalar potentials 
+    - ✔ Displacement fields 
+    - ✔ Scalar potential jump 
+
+- Acoustic
+    - ✔ Pressure
+    - ✔ Pressure traces
+    - ✔ Pressure jump (across a disc)
 
 
 

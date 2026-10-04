@@ -95,6 +95,18 @@ struct Parameter
     relativeAccuracy::AbstractFloat
 end
 
+"""
+    Parameter(nmax = -1, relativeAccuracy = 1e-12)
+
+Settings controlling the truncation of the series which are evaluated.
+
+The `relativeAccuracy` is the relative contribution below which a term is considered negligible: series which
+converge on their own are terminated once a term contributes less than that, and truncations which are
+determined in advance are chosen such that the neglected terms stay below it.
+
+A non-negative `nmax` fixes the truncation instead, overriding the automatic choice; the default of `-1` leaves
+it to the implementation.
+"""
 Parameter() = Parameter(-1, 1e-12)
 
 # global setting for the style of the progress bar

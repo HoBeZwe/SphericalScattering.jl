@@ -115,7 +115,7 @@ FF = scatteredfield(sp, ex, FarField(point_cart))
 
 γ₁ = scatteredfield(sp, ex, PressureNormalGradient(point_cart))
 ```
-where `sp` is a [`HardSphere`](@ref) or a [`SoftSphere`](@ref).
+where `sp` is a [`HardSphere`](@ref) or a [`SoftSphere`](@ref). A [`Spheroid`](@ref) or a [`Disc`](@ref) is scattered from as well, by a series in the oblate spheroidal wave functions instead; see [Spheroid and Disc](@ref ACspheroidAPI).
 
 !!! note
     The traces are evaluated on the surface of the sphere: only the direction of each location is taken into account, the radial coordinate being replaced by the radius of the sphere. Hence, the locations may also be given by the points of a faceted surface mesh, which do not lie exactly on the sphere. Normals other than ``\hat{\bm r}`` are supported, the tangential part of the gradient being included.

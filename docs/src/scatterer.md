@@ -100,3 +100,19 @@ The dielectric sphere with a thin impedance layer of thickness ``t`` has radius 
 DielectricSphereThinImpedanceLayer
 ```
 Here `radius` and `thickness` are a Floats, `filling` and `thinlayer` are of type [`Medium`](@ref).
+
+
+---
+## [Sound-Hard/Soft Sphere](@id acScattererAPI)
+
+The acoustic counterparts of the PEC sphere have radius ``r`` and are assumed to be located in the origin. On a sound-hard surface the normal velocity, and hence the normal derivative of the total pressure, vanishes; on a sound-soft (pressure release) surface the total pressure vanishes.
+
+#### API
+
+```@docs
+HardSphere
+SoftSphere
+```
+
+!!! note
+    These two are the only acoustic scatterers with a closed surface of revolution for which the cheap spherical series applies. The oblate spheroid and the disc are documented separately, together with the accuracy of their solution, under [Spheroid and Disc](@ref ACspheroidAPI).

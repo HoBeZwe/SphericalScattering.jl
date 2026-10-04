@@ -15,6 +15,7 @@ makedocs(;
         assets=String[],
         collapselevel=2,
         sidebar_sitename=true,
+        size_threshold_ignore=["apiref.md"], # a single autodocs page of every docstring is legitimately large
     ),
     plugins=[bib],
     pages=[
@@ -29,7 +30,11 @@ makedocs(;
                 "Spherical Modes" => "electromagnetic/sphModes.md",
                 "Uniform Static Field" => "electromagnetic/uniformStatic.md",
             ],
-            "Acoustic" => Any["Plane Wave" => "acoustic/planeWave.md", "Monopole" => "acoustic/monopole.md"],
+            "Acoustic" => Any[
+                "Plane Wave" => "acoustic/planeWave.md",
+                "Monopole" => "acoustic/monopole.md",
+                "Spheroid and Disc" => "acoustic/spheroid.md",
+            ],
         ],
         "Further Details" => "details.md",
         "Contributing" => "contributing.md",

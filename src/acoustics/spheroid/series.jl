@@ -39,7 +39,9 @@ excitation and is independent of the normalization of the angular functions, sin
 the numerator and ``N_{mn}``.
 
 The surface of the projection has to lie within the region in which the incident field is regular, that is,
-closer to the scatterer than a monopole. By default it is placed just outside the scatterer.
+closer to the scatterer than a monopole. By default it is the surface of the scatterer itself, or ``ξ = 0.5``
+for a scatterer flatter than that: at the degenerate surface ``ξ = 0`` the regular radial functions of odd
+``n - m`` vanish, by which the division above would fail, so that a disc has to be projected off its surface.
 
 The truncations are determined automatically unless they are given. Since the scattering coefficients decay
 once a mode is cut off at the surface, the degree is bounded by the size of the scatterer, so that

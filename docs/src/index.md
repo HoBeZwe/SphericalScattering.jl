@@ -47,10 +47,10 @@ The following aspects are implemented (✔) and planned (⌛):
 | Sphere sound-soft                    |      ✔     |     ✔    | 
 | Prolate Spheroid sound-hard          |      ⌛     |     ⌛    |
 | Prolate Spheroid sound-soft          |      ⌛     |     ⌛    |
-| Oblate Spheroid sound-hard           |      ⌛     |     ⌛    |
-| Oblate Spheroid sound-soft           |      ⌛     |     ⌛    |
-| Disc sound-hard                      |      ⌛     |     ⌛    |
-| Disc sound-soft                      |      ⌛     |     ⌛    | 
+| Oblate Spheroid sound-hard           |      ✔     |     ✔    |
+| Oblate Spheroid sound-soft           |      ✔     |     ✔    |
+| Disc sound-hard                      |      ✔     |     ✔    |
+| Disc sound-soft                      |      ✔     |     ✔    | 
 
 
 ---
@@ -82,7 +82,7 @@ The following aspects are implemented (✔) and planned (⌛):
 - Acoustic
 
     - ✔ Sound-hard/soft sphere
-    - ✔ Sound-hard/soft prolate spheroid
+    - ⌛ Sound-hard/soft prolate spheroid
     - ✔ Sound-hard/soft oblate spheroid
     - ✔ Sound-hard/soft disc
 
@@ -96,6 +96,7 @@ The following aspects are implemented (✔) and planned (⌛):
 
 - ✔ Pressure
 - ✔ Pressure traces
+- ✔ Pressure jump (across a disc)
 
 
 
