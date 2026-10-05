@@ -1,10 +1,12 @@
 
 """
-    scatteredfield(sphere::Sphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
     
 Compute the electric field scattered by a PEC sphere, for an incident plane wave.
 """
-function scatteredfield(sphere::Sphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(
+    sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter()
+)
 
     T = typeof(excitation.frequency)
     F = zeros(SVector{3,Complex{T}}, size(quantity.locations))
@@ -30,14 +32,16 @@ end
 
 
 """
-    scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::Field; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, point, quantity::Field; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a PEC or dielectric sphere, for an incident plane wave
 travelling in +z-direction with E-field polarization in x-direction.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(
+    sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, point, quantity::Field; parameter::Parameter=Parameter()
+)
 
     point_sph = cart2sph(point) # [r ϑ φ]
     r = point_sph[1]
@@ -89,17 +93,19 @@ function scatteredfield(sphere::Sphere, excitation::PlaneWave, point, quantity::
 end
 
 
-function inside(sphere::Sphere, excitation::PlaneWave{T,R,C}, point, quantity::Field; parameter) where {T,R,C}
+function inside(
+    sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave{T,R,C}, point, quantity::Field; parameter
+) where {T,R,C}
 
     return SVector{3,Complex{R}}(0.0, 0.0, 0.0) # no correction needed
 end
 
-function inside(sphere::DielectricSphere, excitation::PlaneWave{T,R,C}, point, quantity::FarField; parameter) where {T,R,C}
+function inside(sphere::Sphere{<:Dielectric}, excitation::PlaneWave{T,R,C}, point, quantity::FarField; parameter) where {T,R,C}
 
     return SVector{3,Complex{R}}(0.0, 0.0, 0.0) # no correction needed
 end
 
-function inside(sphere::DielectricSphere, excitation::PlaneWave{T,R,C}, point, quantity::Field; parameter) where {T,R,C}
+function inside(sphere::Sphere{<:Dielectric}, excitation::PlaneWave{T,R,C}, point, quantity::Field; parameter) where {T,R,C}
 
     # inside the sphere the incident field has to be substracted to get only the scattered part
     if norm(point) < sphere.radius
@@ -227,12 +233,12 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int)
+    scatterCoeff(sphere::Sphere{PEC}, excitation::PlaneWave, n::Int)
 
 Compute scattering coefficients for a plane wave travelling in +z-direction 
 with polarization in x-direction.
 """
-function scatterCoeff(sphere::PECSphere, excitation::PlaneWave, n::Int)
+function scatterCoeff(sphere::Sphere{PEC}, excitation::PlaneWave, n::Int)
 
     T = typeof(excitation.frequency)
 
@@ -267,7 +273,7 @@ end
 
 
 
-function scatterCoeff(sphere::DielectricSphere, excitation::PlaneWave, n::Int)
+function scatterCoeff(sphere::Sphere{<:Dielectric}, excitation::PlaneWave, n::Int)
 
     f = excitation.frequency
     T = typeof(f)
@@ -275,8 +281,8 @@ function scatterCoeff(sphere::DielectricSphere, excitation::PlaneWave, n::Int)
     ε2 = excitation.embedding.ε
     μ2 = excitation.embedding.μ
 
-    ε1 = sphere.filling.ε
-    μ1 = sphere.filling.μ
+    ε1 = sphere.boundary.filling.ε
+    μ1 = sphere.boundary.filling.μ
 
     c2 = 1 / sqrt(ε2 * μ2)
     c1 = 1 / sqrt(ε1 * μ1)
@@ -324,12 +330,12 @@ end
 
 
 """
-    expansion(sphere::Sphere, excitation::PlaneWave, quantity::Field, r, plm, cosϑ, sinϑ, n::Int) 
+    expansion(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, quantity::Field, r, plm, cosϑ, sinϑ, n::Int) 
 
 Compute functional dependencies of the Mie series for a plane wave
 travelling in +z-direction with polarization in x-direction.
 """
-function expansion(sphere::Sphere, excitation::PlaneWave, quantity::Field, r, plm, cosϑ, sinϑ, n::Int)
+function expansion(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, quantity::Field, r, plm, cosϑ, sinϑ, n::Int)
 
     T = typeof(excitation.frequency)
 

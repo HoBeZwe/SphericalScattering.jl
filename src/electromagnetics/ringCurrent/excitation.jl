@@ -1,5 +1,5 @@
 
-abstract type RingCurrent <: Excitation end
+abstract type RingCurrent <: ElectromagneticExcitation end
 
 struct ElectricRingCurrent{T,R,C} <: RingCurrent
     embedding::Medium{C}

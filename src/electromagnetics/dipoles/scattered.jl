@@ -1,10 +1,10 @@
 
 """
-    scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
 
 Compute the field scattered by a PEC sphere excited by a dipole at some position and orientation.
 """
-function scatteredfield(sphere::PECSphere, excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::Dipole, quantity::Field; parameter::Parameter=Parameter())
 
     T = typeof(excitation.frequency)
 
@@ -32,13 +32,13 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::Dipole, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a PEC sphere, where the dipole is placed along the z-axis at z0.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::ElectricField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::Dipole, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -104,13 +104,13 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::MagneticField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::Dipole, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
 Compute the magnetic field scattered by a PEC sphere, where the dipole is placed along the z-axis at z0.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::Dipole, point, quantity::MagneticField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::Dipole, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -163,13 +163,13 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::HertzianDipole, quantity::FarField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::HertzianDipole, quantity::FarField; parameter::Parameter=Parameter())
 
 Compute the electric far-field scattered by a PEC sphere, where the dipole is placed along the z-axis at z0.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::HertzianDipole, point, quantity::FarField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::HertzianDipole, point, quantity::FarField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -221,13 +221,13 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, quantity::FarField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::FitzgeraldDipole, quantity::FarField; parameter::Parameter=Parameter())
 
 Compute the electric far-field scattered by a PEC sphere, where the dipole is placed along the z-axis at z0.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::FitzgeraldDipole, point, quantity::FarField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::FitzgeraldDipole, point, quantity::FarField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -277,11 +277,11 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::FitzgeraldDipole, n::Int, ka)
+    scatterCoeff(sphere::Sphere{PEC}, excitation::FitzgeraldDipole, n::Int, ka)
 
 Compute scattering coefficient for Fitzgerald dipole.
 """
-function scatterCoeff(sphere::PECSphere, excitation::FitzgeraldDipole, n::Int, ka)
+function scatterCoeff(sphere::Sphere{PEC}, excitation::FitzgeraldDipole, n::Int, ka)
 
     T = typeof(ka)
     Jka = besselj(n + T(0.5), ka)  # Bessel function 1st kind
@@ -293,11 +293,11 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::HertzianDipole, n::Int, ka)
+    scatterCoeff(sphere::Sphere{PEC}, excitation::HertzianDipole, n::Int, ka)
 
 Compute scattering coefficient for Hertzian dipole.
 """
-function scatterCoeff(sphere::PECSphere, excitation::HertzianDipole, n::Int, ka)
+function scatterCoeff(sphere::Sphere{PEC}, excitation::HertzianDipole, n::Int, ka)
 
     T = typeof(ka)
     Jka = (n + 1) * besselj(n + T(0.5), ka) - ka * besselj(n + T(1.5), ka)  # derivative spherical Bessel function 1st kind (without sqrt factor)

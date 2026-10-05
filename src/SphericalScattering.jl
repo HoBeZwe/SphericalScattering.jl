@@ -49,11 +49,13 @@ export electricRingCurrent, magneticRingCurrent
 export HertzianDipole, FitzgeraldDipole
 export planeWave
 export SphericalMode, SphericalModeTE, SphericalModeTM
+export Scatterer # `Sphere` is not exported, lest it clash with the spheres of geometry packages
+export ElectromagneticBoundary, PEC, Dielectric, Layered, ThinImpedanceLayer
+export AcousticBoundary, SoundHard, SoundSoft
 export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export DielectricSphereThinImpedanceLayer
 export HardSphere, SoftSphere
-export AcousticBoundary, SoundHard, SoundSoft
-export Spheroid, Disc
+export Spheroid, OblateSpheroid, Disc
 export outwardNormal, outwardNormals
 export equatorialRadius, polarRadius, isdisc
 export field, scatteredfield
@@ -74,7 +76,14 @@ export plotff, plotnf, plotffcut, plotnfcut
 
 # -------- included files
 include("dataHandling.jl")
-include("sphere.jl")
+include("medium.jl")
+
+# the geometry, shared by both physics, and the conditions on the surfaces, which are not
+include("geometry/scatterer.jl")
+include("electromagnetics/boundaries.jl")
+include("acoustics/boundaries.jl")
+include("geometry/spheroid.jl")
+include("geometry/spheroidalWaveFunctions.jl")
 
 include("electromagnetics/sphere.jl")
 
@@ -100,7 +109,6 @@ include("electromagnetics/UniformField/scattered.jl")
 
 
 include("acoustics/sphere/types.jl")
-include("acoustics/spheroid/types.jl")
 
 include("acoustics/quantities.jl")
 
@@ -109,14 +117,14 @@ include("acoustics/excitations/monopole.jl")
 
 include("acoustics/sphere/series.jl")
 
-include("acoustics/spheroid/waveFunctions.jl")
+include("acoustics/spheroid/coefficients.jl")
 include("acoustics/spheroid/series.jl")
 include("acoustics/spheroid/surface.jl")
 
 include("acoustics/Acoustic.jl") # the single `Acoustic` submodule holding the user-facing constructors
 
 include("totalFields.jl")
-include("coordinateTransforms.jl")
+include("geometry/coordinateTransforms.jl") # after the excitations, as it defines their rotations
 include("utils.jl")
 include("rcs.jl")
 

@@ -4,7 +4,7 @@
 
 Compute the electric field radiated by an electric ring current at some position and orientation
 """
-function scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::RingCurrent, quantity::Field; parameter::Parameter=Parameter())
 
     T = typeof(excitation.frequency)
 
@@ -37,13 +37,13 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::RingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by the PEC sphere, where the ring current is placed along the z-axis.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::RingCurrent, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -103,13 +103,13 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::RingCurrent, quantity::MagneticField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::RingCurrent, quantity::MagneticField; parameter::Parameter=Parameter())
 
 Compute the magnetic field scattered by the PEC sphere, where the ring current is placed along the z-axis.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::RingCurrent, point, quantity::MagneticField; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::RingCurrent, point, quantity::MagneticField; parameter::Parameter=Parameter())
 
     point_sph = cart2sph(point) # [r ϑ φ]
 
@@ -174,14 +174,14 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::ElectricRingCurrent, quantity::FarField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::ElectricRingCurrent, quantity::FarField; parameter::Parameter=Parameter())
 
 Compute the electric far-field scattered by the PEC sphere, where the ring current is placed along the z-axis.
 
 The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::PECSphere, excitation::ElectricRingCurrent, point, quantity::FarField; parameter::Parameter=Parameter()
+    sphere::Sphere{PEC}, excitation::ElectricRingCurrent, point, quantity::FarField; parameter::Parameter=Parameter()
 )
 
     point_sph = cart2sph(point) # [r ϑ φ]
@@ -236,14 +236,14 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::MagneticRingCurrent, quantity::FarField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::MagneticRingCurrent, quantity::FarField; parameter::Parameter=Parameter())
 
 Compute the electric far-field scattered by the PEC sphere, where the ring current is placed along the z-axis.
 
 The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::PECSphere, excitation::MagneticRingCurrent, point, quantity::FarField; parameter::Parameter=Parameter()
+    sphere::Sphere{PEC}, excitation::MagneticRingCurrent, point, quantity::FarField; parameter::Parameter=Parameter()
 )
 
     point_sph = cart2sph(point) # [r ϑ φ]
@@ -297,11 +297,11 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::ElectricRingCurrent, n::Int, ka)
+    scatterCoeff(sphere::Sphere{PEC}, excitation::ElectricRingCurrent, n::Int, ka)
 
 Compute scattering coefficient for electric ring current.
 """
-function scatterCoeff(sphere::PECSphere, excitation::ElectricRingCurrent, n::Int, ka)
+function scatterCoeff(sphere::Sphere{PEC}, excitation::ElectricRingCurrent, n::Int, ka)
 
     T = typeof(excitation.frequency)
 
@@ -314,11 +314,11 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::MagneticRingCurrent, n::Int, ka)
+    scatterCoeff(sphere::Sphere{PEC}, excitation::MagneticRingCurrent, n::Int, ka)
 
 Compute scattering coefficient for magnetic ring current.
 """
-function scatterCoeff(sphere::PECSphere, excitation::MagneticRingCurrent, n::Int, ka)
+function scatterCoeff(sphere::Sphere{PEC}, excitation::MagneticRingCurrent, n::Int, ka)
 
     T = typeof(excitation.frequency)
 

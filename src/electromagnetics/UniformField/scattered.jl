@@ -1,10 +1,12 @@
 
 """
-    scatteredfield(sphere::Sphere, excitation::PlaneWave, quantity::Field; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::UniformField, quantity::Field; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a sphere, for an incident uniform field.
 """
-function scatteredfield(sphere::Sphere, excitation::UniformField, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(
+    sphere::Scatterer{<:ElectromagneticBoundary}, excitation::UniformField, quantity::Field; parameter::Parameter=Parameter()
+)
 
     F = zeros(fieldType(quantity), size(quantity.locations))
 
@@ -24,18 +26,18 @@ end
 
 
 """
-    scatteredfield(sphere::DielectricSphere, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:Dielectric}, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a Dielectric sphere, for an incident uniform field with polarization in given direction.
 
 The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::DielectricSphere, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter()
+    sphere::Sphere{<:Dielectric}, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter()
 )
 
     ε0 = excitation.embedding.ε
-    ε1 = sphere.filling.ε
+    ε1 = sphere.boundary.filling.ε
     E0 = field(excitation, point, quantity)
 
     R = sphere.radius
@@ -53,18 +55,18 @@ end
 
 
 """
-    scatteredfield(sphere::DielectricSphere, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:Dielectric}, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
 
 Compute the scalar potential scattered by a dielectric sphere, for an incident uniform field with polarization in given direction.
 
 The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::DielectricSphere, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter()
+    sphere::Sphere{<:Dielectric}, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter()
 )
 
     ε0 = excitation.embedding.ε
-    ε1 = sphere.filling.ε
+    ε1 = sphere.boundary.filling.ε
     Φ0 = field(excitation, point, quantity)
 
     R = sphere.radius
@@ -81,7 +83,7 @@ end
 
 
 """
-    scatteredfield(sphere::DielectricSphereThinImpedanceLayer, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:ThinImpedanceLayer}, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a dielectric sphere with a thin coating, where the displacement field in the coating is only in radial direction.
 We assume an an incident uniform field with polarization in the given direction.
@@ -89,11 +91,7 @@ We assume an an incident uniform field with polarization in the given direction.
 The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::DielectricSphereThinImpedanceLayer,
-    excitation::UniformField,
-    point,
-    quantity::ElectricField;
-    parameter::Parameter=Parameter(),
+    sphere::Sphere{<:ThinImpedanceLayer}, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter()
 )
 
     point = rotate(excitation, [point]; inverse=true)[1]
@@ -123,14 +121,14 @@ end
 
 
 """
-    scatteredfield(sphere::DielectricSphereThinImpedanceLayer, excitation::UniformField, point, quantity::DisplacementField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:ThinImpedanceLayer}, excitation::UniformField, point, quantity::DisplacementField; parameter::Parameter=Parameter())
 
 Compute the displacement field D = ε * E.
 
 The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::DielectricSphereThinImpedanceLayer,
+    sphere::Sphere{<:ThinImpedanceLayer},
     excitation::UniformField,
     point,
     quantity::DisplacementField;
@@ -142,7 +140,7 @@ function scatteredfield(
     if norm(point) > sphere.radius
         D = excitation.embedding.ε * E
     else
-        D = sphere.filling.ε * E
+        D = sphere.boundary.filling.ε * E
     end
 
     return D
@@ -151,7 +149,7 @@ end
 
 
 """
-    scatteredfield(sphere::DielectricSphereThinImpedanceLayer, excitation::UniformField, point, quantity::ScalarPotentialJump; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:ThinImpedanceLayer}, excitation::UniformField, point, quantity::ScalarPotentialJump; parameter::Parameter=Parameter())
 
 Compute the jump of the scalar potential for a dielectric sphere with a thin coating, where the displacement field in the coating is only in radial direction.
 We assume an an incident uniform field with polarization in the given direction.
@@ -161,7 +159,7 @@ More precisely, we compute the difference Δ = Φ_i - Φ_e, where Φ_i is the po
 The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::DielectricSphereThinImpedanceLayer,
+    sphere::Sphere{<:ThinImpedanceLayer},
     excitation::UniformField,
     point,
     quantity::ScalarPotentialJump;
@@ -172,14 +170,14 @@ function scatteredfield(
 
     ~, K = scatterCoeff(sphere, excitation)
 
-    return sphere.thickness * (sphere.filling.ε / sphere.thinlayer.ε) * K * cosθ
+    return sphere.boundary.thickness * (sphere.boundary.filling.ε / sphere.boundary.thinlayer.ε) * K * cosθ
 
 end
 
 
 
 """
-    scatteredfield(sphere::DielectricSphereThinImpedanceLayer, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:ThinImpedanceLayer}, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
 
 Compute the scalar potential scattered by a dielectric sphere with a thin coating, where the displacement field in the coating is only in radial direction.
 We assume an an incident uniform field with polarization in the given direction.
@@ -187,11 +185,7 @@ We assume an an incident uniform field with polarization in the given direction.
 The point and the returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::DielectricSphereThinImpedanceLayer,
-    excitation::UniformField,
-    point,
-    quantity::ScalarPotential;
-    parameter::Parameter=Parameter(),
+    sphere::Sphere{<:ThinImpedanceLayer}, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter()
 )
 
     cosθ = dot(excitation.direction, point) / norm(point)
@@ -212,16 +206,16 @@ end
 
 
 """
-    scatterCoeff(sp::DielectricSphereThinImpedanceLayer, ex::UniformField)
+    scatterCoeff(sp::Sphere{<:ThinImpedanceLayer}, ex::UniformField)
 
 Compute the expansion coefficients for the thin impedance layer case and a uniform static field excitation.
 """
-function scatterCoeff(sp::DielectricSphereThinImpedanceLayer, ex::UniformField)
+function scatterCoeff(sp::Sphere{<:ThinImpedanceLayer}, ex::UniformField)
     R = sp.radius
-    Δ = sp.thickness
-    εₘ = sp.thinlayer.ε
+    Δ = sp.boundary.thickness
+    εₘ = sp.boundary.thinlayer.ε
     εₑ = ex.embedding.ε
-    εᵢ = sp.filling.ε
+    εᵢ = sp.boundary.filling.ε
     E₀ = ex.amplitude
 
     A = E₀ * R^3 * (-R * εₑ * εₘ + R * εᵢ * εₘ - Δ * εₑ * εᵢ) / (2R * εₑ * εₘ + R * εᵢ * εₘ + 2Δ * εₑ * εᵢ)
@@ -233,13 +227,15 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a PEC sphere, for an incident uniform field with polarization in the given direction.
 
 The point and returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
+function scatteredfield(
+    sphere::Sphere{PEC}, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter()
+)
 
     E0 = field(excitation, point, quantity)
 
@@ -257,14 +253,14 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
 
 Compute the scalar potential scattered by a PEC sphere, for an incident uniform field with polarization in the given direction.
 
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::PECSphere, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter()
+    sphere::Sphere{PEC}, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter()
 )
 
     Φ0 = field(excitation, point, quantity)
@@ -283,7 +279,7 @@ end
 
 
 """
-    scatteredfield(sphere::LayeredSphere, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:Layered{<:Dielectric}}, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a layered dielectric sphere, for an incident uniform field with polarization in the given direction
 using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`.
@@ -293,12 +289,12 @@ In contrast to `Sihvola and Lindell` the radii of the shells are ordered from in
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::LayeredSphere{LN,LR,LC},
+    sphere::Sphere{<:Layered{<:Dielectric}},
     excitation::UniformField{FC,FT,FR},
     point,
     quantity::ElectricField;
     parameter::Parameter=Parameter(),
-) where {LN,LR,LC,FC,FT,FR}
+) where {FC,FT,FR}
 
     E0 = excitation.amplitude
     dir = excitation.direction
@@ -312,7 +308,7 @@ end
 
 
 """
-    scatteredfield(sphere::LayeredSphere, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:Layered{<:Dielectric}}, excitation::UniformField, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
 
 Compute the scalar potential scattered by a layered dielectric sphere, for an incident uniform field with polarization in the given direction
 using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`.
@@ -322,12 +318,12 @@ In contrast to `Sihvola and Lindell` the radii of the shells are ordered from in
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::LayeredSphere{LN,LR,LC},
+    sphere::Sphere{<:Layered{<:Dielectric}},
     excitation::UniformField{FC,FT,FR},
     point,
     quantity::ScalarPotential;
     parameter::Parameter=Parameter(),
-) where {LN,LR,LC,FC,FT,FR}
+) where {FC,FT,FR}
 
     Φ0 = field(excitation, point, quantity)
     r = norm(point)
@@ -340,16 +336,18 @@ end
 
 
 """
-    scatterCoeff(sphere::LayeredSphere{LN,LR,LC}, excitation::UniformField{FC,FT,FR}, r) where {LN,LR,LC,FC,FT,FR}
+    scatterCoeff(sphere::Sphere{Layered{Core,LN,LR,LC}}, excitation::UniformField{FC,FT,FR}, r) where {Core<:Dielectric,LN,LR,LC,FC,FT,FR}
 
 Scatter coefficients according to `Sihvola and Lindell`. 
 However, the radii of the shells are ordered from inside to outside as depicted in the documentation.
 """
-function scatterCoeff(sphere::LayeredSphere{LN,LR,LC}, excitation::UniformField{FC,FT,FR}, r) where {LN,LR,LC,FC,FT,FR}
+function scatterCoeff(
+    sphere::Sphere{Layered{Core,LN,LR,LC}}, excitation::UniformField{FC,FT,FR}, r
+) where {Core<:Dielectric,LN,LR,LC,FC,FT,FR}
 
-    a = reverse(sphere.radii)
+    a = reverse(layerRadii(sphere))
     n = length(a)
-    perms = reverse(getfield.(vcat(sphere.filling, excitation.embedding), 1))
+    perms = reverse(getfield.(vcat(layerFillings(sphere), excitation.embedding), 1))
 
     T = promote_type(LR, LC, FC, FT, FR)
 
@@ -396,7 +394,7 @@ end
 
 
 """
-    scatteredfield(sphere::LayeredSpherePEC, excitation::UniformField{FC,FT,FR}, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:Layered{PEC}}, excitation::UniformField{FC,FT,FR}, point, quantity::ScalarPotential; parameter::Parameter=Parameter())
 
 Compute the scalar potential scattered by a layered dielectric sphere with PEC core, for an incident uniform field with polarization in the given direction
 using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`
@@ -406,12 +404,12 @@ In contrast to `Sihvola and Lindell` the radii of the shells are ordered from in
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::LayeredSpherePEC{LN,LD,LR,LC},
+    sphere::Sphere{<:Layered{PEC}},
     excitation::UniformField{FC,FT,FR},
     point,
     quantity::ScalarPotential;
     parameter::Parameter=Parameter(),
-) where {LN,LD,LR,LC,FC,FT,FR}
+) where {FC,FT,FR}
 
     Φ0 = field(excitation, point, quantity)
     r = norm(point)
@@ -423,7 +421,7 @@ end
 
 
 """
-    scatteredfield(sphere::LayeredSpherePEC, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:Layered{PEC}}, excitation::UniformField, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a layered dielectric sphere with PEC core, for an incident uniform field with polarization in the given direction
 using `Sihvola and Lindell, 1988, Transmission line analogy for calculating the effective permittivity of mixtures with spherical multilayer scatterers`.
@@ -433,12 +431,12 @@ In contrast to `Sihvola and Lindell` the radii of the shells are ordered from in
 The point and returned field are in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::LayeredSpherePEC{LN,LD,LR,LC},
+    sphere::Sphere{<:Layered{PEC}},
     excitation::UniformField{FC,FT,FR},
     point,
     quantity::ElectricField;
     parameter::Parameter=Parameter(),
-) where {LN,LD,LR,LC,FC,FT,FR}
+) where {FC,FT,FR}
 
     E0 = excitation.amplitude
     r = norm(point)
@@ -452,16 +450,16 @@ end
 
 
 """
-    scatterCoeff(sphere::LayeredSpherePEC{LN,LD,LR,LC}, excitation::UniformField{FC,FT,FR}, r) where {LN,LD,LR,LC,FC,FT,FR}
+    scatterCoeff(sphere::Sphere{Layered{PEC,LN,LR,LC}}, excitation::UniformField{FC,FT,FR}, r) where {LN,LR,LC,FC,FT,FR}
 
 Scatter coefficients according to `Sihvola and Lindell`. 
 However, the radii of the shells are ordered from inside to outside as depicted in the documentation.
 """
-function scatterCoeff(sphere::LayeredSpherePEC{LN,LD,LR,LC}, excitation::UniformField{FC,FT,FR}, r) where {LN,LD,LR,LC,FC,FT,FR}
+function scatterCoeff(sphere::Sphere{Layered{PEC,LN,LR,LC}}, excitation::UniformField{FC,FT,FR}, r) where {LN,LR,LC,FC,FT,FR}
 
-    a = reverse(sphere.radii)
+    a = reverse(layerRadii(sphere))
     n = length(a) - 1
-    perms = reverse(getfield.(vcat(sphere.filling, excitation.embedding), 1))
+    perms = reverse(getfield.(vcat(layerFillings(sphere), excitation.embedding), 1))
 
     T = promote_type(LR, LC, FC, FT, FR)
 

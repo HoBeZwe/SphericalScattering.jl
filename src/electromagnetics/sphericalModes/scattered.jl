@@ -1,10 +1,10 @@
 
 """
-    scatteredfield(sphere::PECSphere, excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a dipole at some position and orientation.
 """
-function scatteredfield(sphere::PECSphere, excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::SphericalMode, quantity::Field; parameter::Parameter=Parameter())
 
     T = typeof(excitation.frequency)
 
@@ -37,13 +37,13 @@ end
 
 
 """
-    scatteredfield(sphere::PECSphere, excitation::SphericalModeTE, point, quantity::ElectricField; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{PEC}, excitation::SphericalModeTE, point, quantity::ElectricField; parameter::Parameter=Parameter())
 
 Compute the electric field scattered by a PEC sphere, when excited by a spherical mode travelling towards the origin.
 
 The point and the returned field are in Cartesian coordinates.
 """
-function scatteredfield(sphere::PECSphere, excitation::SphericalMode, point, quantity::Field; parameter::Parameter=Parameter())
+function scatteredfield(sphere::Sphere{PEC}, excitation::SphericalMode, point, quantity::Field; parameter::Parameter=Parameter())
 
     k  = wavenumber(excitation)
     ka = k * sphere.radius
@@ -71,11 +71,11 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::SphericalModeTE, n::Int, ka)
+    scatterCoeff(sphere::Sphere{PEC}, excitation::SphericalModeTE, n::Int, ka)
 
 Compute scattering coefficients for a spherical TE mode travelling towards the origin.
 """
-function scatterCoeff(sphere::PECSphere, excitation::SphericalModeTE, n::Int, ka)
+function scatterCoeff(sphere::Sphere{PEC}, excitation::SphericalModeTE, n::Int, ka)
     T = typeof(ka)
     return -hankelh1(n + T(0.5), ka) / hankelh2(n + T(0.5), ka)
 end
@@ -83,11 +83,11 @@ end
 
 
 """
-    scatterCoeff(sphere::PECSphere, excitation::SphericalModeTM, n::Int, ka)
+    scatterCoeff(sphere::Sphere{PEC}, excitation::SphericalModeTM, n::Int, ka)
 
 Compute scattering coefficients for a spherical TM mode travelling towards the origin.
 """
-function scatterCoeff(sphere::PECSphere, excitation::SphericalModeTM, n::Int, ka)
+function scatterCoeff(sphere::Sphere{PEC}, excitation::SphericalModeTM, n::Int, ka)
 
     T = typeof(ka)
 

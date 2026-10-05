@@ -252,7 +252,8 @@ Inverting the definition in [`obl2cart`](@ref) leads to the quadratic ``u^2 + (1
 ``u = ξ^2``, where ``A = (x^2 + y^2) / f^2`` and ``B = z^2 / f^2``, of which the non-negative root is taken.
 
 For a point in the plane ``z = 0`` inside the disc the sign of ``η``, that is, the face of the disc, cannot be
-recovered; the positive one is returned.
+recovered; the positive one is returned. This holds for ``z = -0`` as well, whose sign is an artifact of rounding,
+e.g., of the rotation into the frame of a scatterer, rather than a choice of the face.
 """
 function cart2obl(vec, semifocal)
 
@@ -276,7 +277,7 @@ function cart2obl(vec, semifocal)
     v < T(0.5) && u > eps(T) && (v = clamp(B / u, T(0.0), T(1.0)))
 
     ξ = sqrt(u)
-    η = copysign(sqrt(v), z)
+    η = z < 0 ? -sqrt(v) : sqrt(v) # not `copysign`, which would honour the sign of a vanishing z
     φ = atan(y, x)
 
     return SVector{3,T}(ξ, η, φ)
@@ -303,9 +304,13 @@ function oblateMetric(vec, semifocal)
 
     T = typeof(ξ)
 
+    # 1 - η² is formed as (1 - η)(1 + η): close to the poles 1 - η is exact, whereas 1 - η² would cancel and
+    # deviate from the η at which the angular functions are evaluated
+    sη² = (1 - η) * (1 + η)
+
     hξ = semifocal * sqrt((ξ^2 + η^2) / (1 + ξ^2))
-    hη = semifocal * sqrt((ξ^2 + η^2) / (1 - η^2))
-    hφ = semifocal * sqrt((1 + ξ^2) * (1 - η^2))
+    hη = semifocal * sqrt((ξ^2 + η^2) / sη²)
+    hφ = semifocal * sqrt((1 + ξ^2) * sη²)
 
     return SVector{3,T}(hξ, hη, hφ)
 end
@@ -338,7 +343,7 @@ function oblateBasis(vec, semifocal)
     f = semifocal
 
     sξ = sqrt(1 + ξ^2)
-    sη = sqrt(1 - η^2)
+    sη = sqrt((1 - η) * (1 + η)) # see `oblateMetric`
 
     h = oblateMetric(vec, semifocal)
 

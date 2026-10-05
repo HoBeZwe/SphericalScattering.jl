@@ -79,8 +79,9 @@
 
         sp = Spheroid{SoundHard}(; equatorialRadius=2.0, polarRadius=1.0)
 
-        @test sp isa Spheroid{SoundHard,Float64}
-        @test sp isa SphericalScattering.Sphere
+        @test sp isa OblateSpheroid{SoundHard,Float64}
+        @test sp isa Scatterer{SoundHard}
+        @test !(sp isa SphericalScattering.Sphere) # the spheroidal coordinates degenerate for a sphere
         @test sp.semifocal ≈ sqrt(3.0) rtol = 1e-14
         @test equatorialRadius(sp) ≈ 2.0 rtol = 1e-14
         @test polarRadius(sp) ≈ 1.0 rtol = 1e-14
@@ -93,7 +94,7 @@
         # --- the disc is the degenerate spheroid
         d = Disc(SoundHard; radius=1.5)
 
-        @test d isa Spheroid{SoundHard,Float64}
+        @test d isa OblateSpheroid{SoundHard,Float64}
         @test isdisc(d)
         @test d.ξ₀ == 0.0
         @test d.semifocal ≈ 1.5 rtol = 1e-14
@@ -115,7 +116,7 @@
         c = 20.0
         ξs = (8.0, 9.0, 10.0)
 
-        outgoing = [SphericalScattering.oblateRadial(0, 1, c, ξ; outgoing=true).value for ξ in ξs]
+        outgoing = [SphericalScattering.spheroidalRadial(:oblate, 0, 1, c, ξ; outgoing=true).value for ξ in ξs]
 
         spread(s) = begin
             ratios = [outgoing[i] / (cis(s * c * ξs[i]) / (c * ξs[i])) for i in eachindex(ξs)]
@@ -128,8 +129,8 @@
         # --- the Wronskian of the two real solutions is known: R₁R₂' - R₂R₁' = 1 / (c (ξ² + 1)).
         #     Reconstructing R₂ from the regular and the outgoing function tests the adapter itself.
         for c in (0.5, 5.0, 100.0), m in (0, 2), n in (m, m + 3), ξ in (0.0, 0.4, 2.0)
-            R₁ = SphericalScattering.oblateRadial(m, n, c, ξ)
-            Rₒ = SphericalScattering.oblateRadial(m, n, c, ξ; outgoing=true)
+            R₁ = SphericalScattering.spheroidalRadial(:oblate, m, n, c, ξ)
+            Rₒ = SphericalScattering.spheroidalRadial(:oblate, m, n, c, ξ; outgoing=true)
 
             R₂ = im * (Rₒ.value - R₁.value)              # since Rₒ = R₁ - im R₂
             dR₂ = im * (Rₒ.derivative - R₁.derivative)
@@ -139,7 +140,7 @@
 
         # --- the angular function reduces to the Legendre function as c → 0
         for m in (0, 1), n in (m, m + 2), η in (-0.6, 0.3)
-            @test SphericalScattering.oblateAngular(m, n, 1e-7, η).value ≈ SphericalScattering.Plm(η, n, m) rtol = 1e-6
+            @test SphericalScattering.spheroidalAngular(:oblate, m, n, 1e-7, η).value ≈ SphericalScattering.Plm(η, n, m) rtol = 1e-6
         end
     end
 
@@ -490,6 +491,39 @@ end
                       abs(field(ex, point, quantity)) < 1e-10
             end
         end
+    end
+
+    @testset "Degree raised for a nearby source" begin
+
+        # A monopole above a disc requires more degrees than the size of the disc suggests. The degree is raised
+        # until the omitted modes are negligible on the surface; a given degree is used as it is, the check of
+        # the truncation reporting its insufficiency.
+        d = Disc(SoundSoft; radius=1.0)
+        ex = SphericalScattering.Acoustic.monopole(; frequency=freq(1.5), position=SVector(0.2, 0.1, 0.6))
+
+        N₀ = ceil(Int, SphericalScattering.spheroidalParameter(d, ex) * SphericalScattering.normalizedCircumradius(d)) + 15
+
+        surface = [SphericalScattering.cartesianCoordinates(d, SVector(0.0, η, φ)) for η in (0.15, 0.5, 0.85) for φ in (0.3, 2.0, 4.1)]
+        incident = field(ex, PressureTrace(surface))
+        residual(md) = maximum(abs.(incident .+ scatteredfield(d, ex, md, PressureTrace(surface)))) / maximum(abs.(incident))
+
+        printed(f) = mktemp() do path, io
+            md = redirect_stdout(f, io)
+            close(io)
+            return md, read(path, String)
+        end
+
+        md, message = printed(() -> SphericalScattering.modes(d, ex))
+
+        @test md.N > N₀
+        @test residual(md) < 1e-10
+        @test isempty(message)
+
+        mdGiven, messageGiven = printed(() -> SphericalScattering.modes(d, ex; N=N₀))
+
+        @test mdGiven.N == N₀
+        @test residual(mdGiven) > 1e-7 # which the check reports
+        @test occursin("truncation may be insufficient", messageGiven)
     end
 end
 
@@ -843,9 +877,10 @@ end
 
         points = [locate(d, η, φ) for (η, φ) in surface]
 
-        # the incident field is regular across the disc, hence the total jump is the scattered one
+        # the incident field is regular across the disc, hence the total jump is the scattered one. The
+        # comparison allows for the last digit: two evaluations on several threads need not agree bitwise
         @test norm(field(ex, PressureJump(points))) == 0.0
-        @test field(d, ex, PressureJump(points)) == scatteredfield(d, ex, md, PressureJump(points))
+        @test field(d, ex, PressureJump(points)) ≈ scatteredfield(d, ex, md, PressureJump(points)) rtol = 1e-14
     end
 
     @testset "Convention for the faces" begin
@@ -924,5 +959,104 @@ end
         exOutside = SphericalScattering.Acoustic.monopole(; position=SVector(0.5, -0.3, 4.0), frequency=freq(2.0))
 
         @test_nowarn SphericalScattering.modes(sp, exOutside)
+    end
+end
+
+
+@testitem "Spheroidal axis, faces and nearby sources" setup = [Setup] begin
+
+    freq(k) = k * c / (2π)
+    quiet(f) = redirect_stdout(f, devnull) # the check of the truncation may report
+
+    @testset "Neumann trace on the axis" begin
+
+        # On the axis the basis vectors ê_η and ê_φ are not determined, but the surface is smooth and the
+        # trace finite. Its limit is checked against the average over two antipodal points at a distance ρ
+        # from the axis, which approaches the axis like ρ², the error of first order cancelling.
+        ex = SphericalScattering.Acoustic.planeWave(; frequency=freq(2.0), direction=normalize(SVector(0.4, 0.3, 1.0)))
+        locate(sp, η, φ) = SphericalScattering.frame(sp) * SphericalScattering.cartesianCoordinates(sp, SVector(sp.ξ₀, η, φ))
+
+        arbitrary = normalize(SVector(0.3, -0.8, 0.5))
+
+        for (sp, poles) in (
+            (Spheroid{SoundHard}(; equatorialRadius=sqrt(1.25), polarRadius=0.5), (1.0, -1.0)),
+            (Spheroid{SoundSoft}(; equatorialRadius=1.2, polarRadius=0.7, axis=SVector(0.3, -0.4, 1.0)), (1.0, -1.0)),
+            (Disc(SoundHard; radius=1.0), (1.0,)), # the faces of a disc share the center, the upper one is reported
+        )
+            md = quiet(() -> SphericalScattering.modes(sp, ex))
+            a = equatorialRadius(sp)
+
+            for pole in poles
+                P = locate(sp, pole, 0.0)
+                normal = outwardNormal(sp, P)
+
+                for n̂ in (normal, arbitrary)
+                    onAxis = scatteredfield(sp, ex, md, PressureNormalGradient([P], [n̂]))[1]
+
+                    @test isfinite(onAxis)
+
+                    for (ρ, tolerance) in ((1e-3, 1e-5), (1e-4, 1e-7))
+                        η = pole * sqrt(1 - (ρ / a)^2)
+                        near = [locate(sp, η, φ) for φ in (0.7, 0.7 + π)]
+                        normals = n̂ === normal ? outwardNormals(sp, near) : [n̂, n̂]
+                        average = sum(scatteredfield(sp, ex, md, PressureNormalGradient(near, normals))) / 2
+
+                        @test abs(average - onAxis) / abs(onAxis) < tolerance
+                    end
+                end
+
+                # the boundary condition holds on the axis as well
+                if sp.boundary isa SoundHard
+                    @test abs(field(sp, ex, md, PressureNormalGradient([P], [normal]))[1]) /
+                          abs(field(ex, PressureNormalGradient([P], [normal]))[1]) < 1e-8
+                end
+            end
+        end
+    end
+
+    @testset "Faces of a disc" begin
+
+        # in the plane of a disc the face cannot be recovered from a location, and the upper one is reported;
+        # this must not depend on the sign of a vanishing z, an artifact of rounding
+        for x in (0.3, -0.3), y in (0.2, -0.2)
+            @test SphericalScattering.cart2obl(SVector(x, y, -0.0), 1.0)[2] > 0
+            @test SphericalScattering.cart2obl(SVector(x, y, -0.0), 1.0) == SphericalScattering.cart2obl(SVector(x, y, 0.0), 1.0)
+        end
+
+        d = Disc(SoundHard; radius=1.0)
+        ex = SphericalScattering.Acoustic.planeWave(; frequency=freq(2.0), direction=normalize(SVector(0.4, 0.3, 1.0)))
+        md = quiet(() -> SphericalScattering.modes(d, ex))
+
+        points = [SVector(-0.3, -0.2, z) for z in (0.0, -0.0)]
+
+        # the trace of a sound-hard disc is odd in η: the other face would flip its sign
+        @test scatteredfield(d, ex, md, PressureTrace(points[1:1]))[1] ≈ scatteredfield(d, ex, md, PressureTrace(points[2:2]))[1] rtol =
+            1e-12
+    end
+
+    @testset "Source close to the scatterer" begin
+
+        # The expansion of the incident field holds between the scatterer and its source only, hence the
+        # surface of the projection has to lie there. For a monopole closer to a disc than the default surface
+        # ξ = 0.5 this requires to move the surface; the degree has to be raised as well, as the check of the
+        # truncation reports
+        d = Disc(SoundSoft; radius=1.0)
+        ex = SphericalScattering.Acoustic.monopole(; frequency=freq(1.5), position=SVector(0.2, 0.1, 0.3))
+
+        ξs = SphericalScattering.sourceCoordinate(d, ex)
+        @test ξs < SphericalScattering.projectionCoordinate(d)
+
+        md = quiet(() -> SphericalScattering.modes(d, ex; N=50))
+
+        surface = [SphericalScattering.cartesianCoordinates(d, SVector(0.0, η, φ)) for η in (0.2, 0.5, 0.8) for φ in (0.3, 2.0)]
+        incident = field(ex, PressureTrace(surface))
+
+        @test maximum(abs.(incident .+ scatteredfield(d, ex, md, PressureTrace(surface)))) / maximum(abs.(incident)) < 1e-6
+
+        # a given surface reaching the source is rejected
+        @test_throws ErrorException SphericalScattering.modes(d, ex; ξ=1.2 * ξs)
+
+        # a plane wave has no source at a finite distance
+        @test SphericalScattering.sourceCoordinate(d, SphericalScattering.Acoustic.planeWave(; frequency=freq(1.5))) == Inf
     end
 end

@@ -75,7 +75,13 @@ end
 @testitem "Formatting of files" begin
     using JuliaFormatter
     pkgpath = pkgdir(SphericalScattering)   # path of this package including name
-    @test format(pkgpath, overwrite=false)  # check whether files are formatted according to the .JuliaFormatter.toml 
+    @test format(pkgpath, overwrite=false)  # check whether files are formatted according to the .JuliaFormatter.toml
+end
+
+@testitem "Method ambiguities" begin
+    # the scatterers are dispatched on by geometry, by condition, and by physics; mixing these levels in the
+    # signatures of one function is how ambiguities arise, see `Scatterer`
+    @test isempty(Test.detect_ambiguities(SphericalScattering; recursive=true))
 end
 
 

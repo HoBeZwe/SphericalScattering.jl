@@ -194,11 +194,11 @@ end
 
 
 """
-    checkExcitation(scatterer::AcousticScatterer, excitation::AcousticMonopole)
+    checkExcitation(scatterer::Scatterer{<:AcousticBoundary}, excitation::AcousticMonopole)
 
 Ensure that the monopole lies outside the scatterer, as the expansion of its field assumes.
 """
-function checkExcitation(scatterer::AcousticScatterer, excitation::AcousticMonopole)
+function checkExcitation(scatterer::Scatterer{<:AcousticBoundary}, excitation::AcousticMonopole)
 
     isinside(scatterer, excitation.position) &&
         error("The monopole has to be located outside the scatterer, as the expansion of its field assumes.")

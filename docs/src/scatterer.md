@@ -22,6 +22,7 @@ The perfectly electrically conducting (PEC) or perfectly magnetically conducting
 ```@docs
 PECSphere
 ```
+`PECSphere` is an alias of `Sphere{PEC}`: a sphere carrying the boundary condition [`PEC`](@ref) as its type parameter, see [`Scatterer`](@ref).
 
 
 ---
@@ -42,6 +43,8 @@ DielectricSphere
 ```
 Here `radius` is a Float and `filling` is of type [`Medium(εᵢ, μᵢ)`](@ref).
 
+`DielectricSphere` is an alias of `Sphere{<:Dielectric}`: the filling is carried by the boundary condition [`Dielectric`](@ref), which, in contrast to [`PEC`](@ref), requires data and is therefore stored as a value as well, `sp.boundary.filling`.
+
 
 ---
 ## Layered Dielectric Sphere
@@ -61,6 +64,8 @@ LayeredSphere
 ```
 with, e.g., `radii = SVector(0.25, 0.5, 1.0)` and `filling = SVector(Medium(ε1, μ1), Medium(ε2, μ2), Medium(ε3, μ3))`.
 
+`LayeredSphere` is an alias of `Sphere{<:Layered{<:Dielectric}}`. Seen from outside, the shells form a condition on the outer surface: the outermost radius ``r_N`` is the radius of the [`Sphere`](@ref SphericalScattering.Sphere), while the inner interfaces, the fillings of the shells, and the dielectric core are carried by the boundary condition [`Layered`](@ref).
+
 
 ---
 ## Layered Dielectric Sphere with PEC Core
@@ -78,6 +83,8 @@ The layered dielectric sphere has radii ``[r_1, r_2, \dots, r_{N+1}]`` and is as
 LayeredSpherePEC
 ```
 with, e.g., `radii = SVector(0.25, 0.5, 1.0)` and `filling = SVector(Medium(ε1, μ1), Medium(ε2, μ2))`.
+
+`LayeredSpherePEC` is an alias of `Sphere{<:Layered{PEC}}`: as for the [`LayeredSphere`](@ref), the outermost radius is that of the sphere, and the condition [`Layered`](@ref) carries the rest, here with a [`PEC`](@ref) core.
 
 
 ---
@@ -101,6 +108,8 @@ DielectricSphereThinImpedanceLayer
 ```
 Here `radius` and `thickness` are a Floats, `filling` and `thinlayer` are of type [`Medium`](@ref).
 
+`DielectricSphereThinImpedanceLayer` is an alias of `Sphere{<:ThinImpedanceLayer}`: the coating, being thin, is modelled as an effective condition on the surface of the sphere, see [`ThinImpedanceLayer`](@ref), which carries the `thickness`, the `thinlayer`, and the `filling`.
+
 
 ---
 ## [Sound-Hard/Soft Sphere](@id acScattererAPI)
@@ -113,6 +122,8 @@ The acoustic counterparts of the PEC sphere have radius ``r`` and are assumed to
 HardSphere
 SoftSphere
 ```
+
+Both are aliases: a sound-hard sphere is a `Sphere{SoundHard}`, that is, a sphere carrying the boundary condition [`SoundHard`](@ref) as its type parameter. Every scatterer is a [`Scatterer`](@ref) parametrized by the condition on its surface, which allows to address, e.g., all acoustic scatterers at once as `Scatterer{<:AcousticBoundary}`.
 
 !!! note
     These two are the only acoustic scatterers with a closed surface of revolution for which the cheap spherical series applies. The oblate spheroid and the disc are documented separately, together with the accuracy of their solution, under [Spheroid and Disc](@ref ACspheroidAPI).

@@ -82,6 +82,10 @@ end
 
 abstract type Excitation end
 
+# the excitations are split by physics, mirroring the boundary conditions of the scatterers, so that a
+# scatterer and an excitation of different physics can be rejected by dispatch
+abstract type ElectromagneticExcitation <: Excitation end
+
 # the acoustic excitations share the series for the scattered field, which differs only in the axis of
 # rotational symmetry and in the coefficients of the incident expansion
 abstract type AcousticExcitation <: Excitation end

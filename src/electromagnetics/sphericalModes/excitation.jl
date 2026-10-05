@@ -1,5 +1,5 @@
 
-abstract type SphericalMode <: Excitation end
+abstract type SphericalMode <: ElectromagneticExcitation end
 
 struct SphericalModeTE{T,R,C,In<:Integer} <: SphericalMode
     embedding::Medium{C}

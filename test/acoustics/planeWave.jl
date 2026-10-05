@@ -406,7 +406,9 @@
 
         @testset "Unsupported spheres" begin
 
-            err = ErrorException("Acoustic scattering is only implemented for sound-hard and sound-soft spheres (so far).")
+            err = ErrorException(
+                "An acoustic excitation requires a scatterer with an acoustic boundary condition, such as a `HardSphere`, a `SoftSphere` or a `Spheroid`.",
+            )
 
             @test_throws err scatteredfield(PECSphere(; radius=spRadius), ex, PressureTrace(points_cartFF))
             @test_throws err scatteredfield(PECSphere(; radius=spRadius), ex, PressureNormalGradient(points_cartFF))
@@ -424,7 +426,9 @@
 
     @testset "Unsupported spheres" begin
 
-        err = ErrorException("Acoustic scattering is only implemented for sound-hard and sound-soft spheres (so far).")
+        err = ErrorException(
+            "An acoustic excitation requires a scatterer with an acoustic boundary condition, such as a `HardSphere`, a `SoftSphere` or a `Spheroid`.",
+        )
 
         @test_throws err scatteredfield(PECSphere(; radius=spRadius), ex, Pressure(points_cartNF))
         @test_throws err scatteredfield(PECSphere(; radius=spRadius), ex, FarField(points_cartFF))

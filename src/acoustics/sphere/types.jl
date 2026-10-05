@@ -1,36 +1,33 @@
 
-struct HardSphere{R} <: Sphere
-    radius::R
-end
+# `HardSphere` and `SoftSphere` are aliases, so that they can be dispatched on as well. Their docstrings are
+# attached to the constructors rather than to the aliases, as for the other scatterers: a docstring of the
+# binding itself would be included twice in the documentation, by its `@docs` block and by the API reference
+
+const HardSphere = Sphere{SoundHard}
 
 """
     HardSphere(
         radius = error("missing argument `radius`")
     )
 
-Constructor for a sound-hard sphere.
+Constructor for a sound-hard sphere, that is, for a [`Sphere`](@ref) with the boundary condition
+[`SoundHard`](@ref).
+
+`HardSphere` is an alias of `Sphere{SoundHard}`, so that it can be dispatched on as well.
 """
-HardSphere(; radius=error("missing argument `radius`")) = HardSphere(radius)
+HardSphere(; radius=error("missing argument `radius`")) = Sphere(radius, SoundHard())
 
 
-
-struct SoftSphere{R} <: Sphere
-    radius::R
-end
+const SoftSphere = Sphere{SoundSoft}
 
 """
     SoftSphere(
         radius = error("missing argument `radius`")
     )
 
-Constructor for a sound-soft sphere.
-"""
-SoftSphere(; radius=error("missing argument `radius`")) = SoftSphere(radius)
+Constructor for a sound-soft sphere, that is, for a [`Sphere`](@ref) with the boundary condition
+[`SoundSoft`](@ref).
 
-
+`SoftSphere` is an alias of `Sphere{SoundSoft}`, so that it can be dispatched on as well.
 """
-    isinside(scatterer::Union{HardSphere,SoftSphere}, point)
-
-Returns whether the point lies inside the sphere, see [`isinside`](@ref).
-"""
-isinside(scatterer::Union{HardSphere,SoftSphere}, point) = norm(point) < scatterer.radius
+SoftSphere(; radius=error("missing argument `radius`")) = Sphere(radius, SoundSoft())

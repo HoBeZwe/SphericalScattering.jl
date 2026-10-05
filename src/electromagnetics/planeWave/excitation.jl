@@ -1,5 +1,5 @@
 
-struct PlaneWave{T,R,C} <: Excitation
+struct PlaneWave{T,R,C} <: ElectromagneticExcitation
     embedding::Medium{C}
     frequency::R
     amplitude::T

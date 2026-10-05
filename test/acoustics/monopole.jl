@@ -238,7 +238,9 @@
             @test_throws errInside scatteredfield(spHard, exInside, Pressure(points_cartNF))
             @test_throws errInside scatteredfield(spHard, exInside, PressureNormalGradient(points_cartFF))
 
-            errSphere = ErrorException("Acoustic scattering is only implemented for sound-hard and sound-soft spheres (so far).")
+            errSphere = ErrorException(
+                "An acoustic excitation requires a scatterer with an acoustic boundary condition, such as a `HardSphere`, a `SoftSphere` or a `Spheroid`.",
+            )
 
             @test_throws errSphere scatteredfield(PECSphere(; radius=spRadius), ex, Pressure(points_cartNF))
             @test_throws errSphere scatteredfield(PECSphere(; radius=spRadius), ex, PressureNormalGradient(points_cartFF))

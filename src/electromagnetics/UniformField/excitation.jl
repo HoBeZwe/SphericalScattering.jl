@@ -1,5 +1,5 @@
 
-struct UniformField{C,T,R} <: Excitation
+struct UniformField{C,T,R} <: ElectromagneticExcitation
     embedding::Medium{C}
     amplitude::T
     direction::SVector{3,R}

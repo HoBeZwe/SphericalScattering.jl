@@ -1,12 +1,13 @@
 """
-    scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity::AcousticQuantity; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:AcousticBoundary}, excitation::AcousticExcitation, quantity::AcousticQuantity; parameter::Parameter=Parameter())
 
 Compute the pressure, the far field, or the Dirichlet trace scattered by a sound-hard or sound-soft sphere, for
 an incident acoustic excitation.
 """
-function scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity::AcousticQuantity; parameter::Parameter=Parameter())
+function scatteredfield(
+    sphere::Sphere{<:AcousticBoundary}, excitation::AcousticExcitation, quantity::AcousticQuantity; parameter::Parameter=Parameter()
+)
 
-    checkScatterer(sphere)
     checkExcitation(sphere, excitation)
 
     T = typeof(excitation.frequency)
@@ -29,16 +30,18 @@ end
 
 
 """
-    scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity::PressureNormalGradient; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:AcousticBoundary}, excitation::AcousticExcitation, quantity::PressureNormalGradient; parameter::Parameter=Parameter())
 
 Compute the Neumann trace of the pressure scattered by a sound-hard or sound-soft sphere, for an incident
 acoustic excitation, employing the normals of `quantity`.
 """
 function scatteredfield(
-    sphere::Sphere, excitation::AcousticExcitation, quantity::PressureNormalGradient; parameter::Parameter=Parameter()
+    sphere::Sphere{<:AcousticBoundary},
+    excitation::AcousticExcitation,
+    quantity::PressureNormalGradient;
+    parameter::Parameter=Parameter(),
 )
 
-    checkScatterer(sphere)
     checkExcitation(sphere, excitation)
 
     T = typeof(excitation.frequency)
@@ -58,7 +61,7 @@ end
 
 
 """
-    scatteredfield(sphere::Union{HardSphere,SoftSphere}, excitation::AcousticExcitation, point, quantity::AcousticQuantity; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:AcousticBoundary}, excitation::AcousticExcitation, point, quantity::AcousticQuantity; parameter::Parameter=Parameter())
 
 Compute the pressure, the far field, or the Dirichlet trace scattered by a sound-hard or sound-soft sphere, for
 an incident acoustic excitation.
@@ -87,7 +90,7 @@ of a surface mesh, which do not lie exactly on the sphere.
 The point is in Cartesian coordinates.
 """
 function scatteredfield(
-    sphere::Union{HardSphere,SoftSphere},
+    sphere::Sphere{<:AcousticBoundary},
     excitation::AcousticExcitation,
     point,
     quantity::AcousticQuantity;
@@ -154,7 +157,7 @@ end
 
 
 """
-    scatteredfield(sphere::Union{HardSphere,SoftSphere}, excitation::AcousticExcitation, point, normal, quantity::PressureNormalGradient; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:AcousticBoundary}, excitation::AcousticExcitation, point, normal, quantity::PressureNormalGradient; parameter::Parameter=Parameter())
 
 Compute the Neumann trace ``γ_1 p_\\mathrm{s} = \\hat{n} ⋅ ∇ p_\\mathrm{s}`` of the pressure scattered by a
 sound-hard or sound-soft sphere for the given `normal`.
@@ -185,7 +188,7 @@ The trace is evaluated on the surface of the sphere: only the direction of the p
 point and the normal are in Cartesian coordinates, the latter being a unit vector.
 """
 function scatteredfield(
-    sphere::Union{HardSphere,SoftSphere},
+    sphere::Sphere{<:AcousticBoundary},
     excitation::AcousticExcitation,
     point,
     normal,
@@ -260,32 +263,6 @@ end
 
 
 """
-    scatteredfield(sphere::Sphere, excitation::AcousticExcitation, point, quantity::AcousticQuantity; parameter::Parameter=Parameter())
-
-Descriptive error for the field scattered by spheres for which no acoustic solution is implemented.
-"""
-function scatteredfield(
-    sphere::Sphere, excitation::AcousticExcitation, point, quantity::AcousticQuantity; parameter::Parameter=Parameter()
-)
-
-    return error("Acoustic scattering is only implemented for sound-hard and sound-soft spheres (so far).")
-end
-
-
-"""
-    scatteredfield(sphere::Sphere, excitation::AcousticExcitation, point, normal, quantity::PressureNormalGradient; parameter::Parameter=Parameter())
-
-Descriptive error for the trace scattered by spheres for which no acoustic solution is implemented.
-"""
-function scatteredfield(
-    sphere::Sphere, excitation::AcousticExcitation, point, normal, quantity::PressureNormalGradient; parameter::Parameter=Parameter()
-)
-
-    return error("Acoustic scattering is only implemented for sound-hard and sound-soft spheres (so far).")
-end
-
-
-"""
     expansion(excitation::AcousticExcitation, quantity::Union{Pressure,PressureTrace}, kr, n::Int)
 
 Compute the radial dependence ``h_n^{(2)}(kr)`` of the n-th term of the series for the scattered pressure.
@@ -318,14 +295,14 @@ end
 
 
 """
-    scatterCoeff(sphere::HardSphere, excitation::AcousticExcitation, n::Int)
+    scatterCoeff(sphere::Sphere{SoundHard}, excitation::AcousticExcitation, n::Int)
 
 Compute the expansion coefficient ``b_n`` of the field scattered by a sound-hard sphere.
 
 The normal velocity, and hence the radial derivative of the total pressure, vanishes on the surface, so that
 ``j_n'(ka) + b_n h_n^{(2)\\prime}(ka) = 0``. The coefficient is independent of the excitation.
 """
-function scatterCoeff(sphere::HardSphere, excitation::AcousticExcitation, n::Int)
+function scatterCoeff(sphere::Sphere{SoundHard}, excitation::AcousticExcitation, n::Int)
 
     T = typeof(excitation.frequency)
 
@@ -347,14 +324,14 @@ end
 
 
 """
-    scatterCoeff(sphere::SoftSphere, excitation::AcousticExcitation, n::Int)
+    scatterCoeff(sphere::Sphere{SoundSoft}, excitation::AcousticExcitation, n::Int)
 
 Compute the expansion coefficient ``b_n`` of the field scattered by a sound-soft sphere.
 
 The total pressure vanishes on the surface, so that ``j_n(ka) + b_n h_n^{(2)}(ka) = 0``. The coefficient is
 independent of the excitation.
 """
-function scatterCoeff(sphere::SoftSphere, excitation::AcousticExcitation, n::Int)
+function scatterCoeff(sphere::Sphere{SoundSoft}, excitation::AcousticExcitation, n::Int)
 
     T = typeof(excitation.frequency)
 

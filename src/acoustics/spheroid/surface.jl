@@ -1,34 +1,5 @@
 
 """
-    outwardNormal(sphere::Spheroid, point)
-
-Compute the outward unit normal of the spheroid at the surface point having the direction of `point`.
-
-The normal is ``\\hat{e}_ξ`` of the oblate spheroidal coordinates, which is not parallel to the position vector
-unless the scatterer is a sphere: for a disc it is ``\\pm \\hat{e}_z``, the sign following the face. The point and
-the returned normal are in Cartesian coordinates of the global frame.
-"""
-function outwardNormal(sphere::Spheroid, point)
-
-    R = frame(sphere)
-
-    ξ, η, φ = cart2obl(R' * point, sphere.semifocal)
-
-    êξ, ~, ~ = oblateBasis(SVector(sphere.ξ₀, η, φ), sphere.semifocal)
-
-    return R * êξ
-end
-
-
-"""
-    outwardNormals(sphere::Spheroid, locations)
-
-Compute the outward unit normals of the spheroid at all `locations`, see [`outwardNormal`](@ref).
-"""
-outwardNormals(sphere::Spheroid, locations) = map(point -> outwardNormal(sphere, point), locations)
-
-
-"""
     PressureNormalGradient(sphere::Spheroid, locations)
 
 Construct the Neumann trace for the outward normals of the spheroid at `locations`.
@@ -52,14 +23,19 @@ frame. It follows from the partial derivatives via
 derivative with respect to ``φ`` amounts to a factor ``\\mathrm{j}m``.
 
 Only the direction of `point` is taken into account, the radial coordinate being replaced by that of the surface.
+
+On the axis, ``η = ±1``, the basis vectors ``\\hat{e}_η`` and ``\\hat{e}_φ`` are not determined; the tangential
+part of the gradient is obtained as a limit there instead, see [`axialGradient`](@ref).
 """
 function surfaceseries(sphere::Spheroid, md::SpheroidalModes{T}, point, coefficients) where {T}
 
     R = frame(sphere)
 
-    ~, η, φ = cart2obl(R' * point, sphere.semifocal)
+    ~, η, φ = spheroidalCoordinates(sphere, R' * point)
 
     ξ₀ = sphere.ξ₀
+
+    onAxis = isone(abs(η))
 
     u = Complex{T}(0.0)   # the value and the three partial derivatives
     uξ = Complex{T}(0.0)
@@ -70,8 +46,8 @@ function surfaceseries(sphere::Spheroid, md::SpheroidalModes{T}, point, coeffici
 
         mAbs = abs(m)
 
-        S = smn(mAbs, mAbs:(md.N), md.c, [η]; spheroid=:oblate, normalize=false)
-        Rr = rmn(mAbs, mAbs:(md.N), md.c, [ξ₀]; spheroid=:oblate, kind=oblateOutgoingKind)
+        S = smn(mAbs, mAbs:(md.N), md.c, [η]; spheroid=shape(sphere), normalize=false)
+        Rr = rmn(mAbs, mAbs:(md.N), md.c, [ξ₀]; spheroid=shape(sphere), kind=outgoingKind)
 
         phase = cis(m * φ)
 
@@ -80,21 +56,67 @@ function surfaceseries(sphere::Spheroid, md::SpheroidalModes{T}, point, coeffici
 
             u += C * Rr.value[1, k] * S.value[1, k]
             uξ += C * Rr.derivative[1, k] * S.value[1, k]
+
+            onAxis && continue # the angular derivatives of order one diverge there, see `axialGradient`
+
             uη += C * Rr.value[1, k] * S.derivative[1, k]
             uφ += C * Rr.value[1, k] * S.value[1, k] * im * m
         end
     end
 
-    h = oblateMetric(SVector(ξ₀, η, φ), sphere.semifocal)
-    êξ, êη, êφ = oblateBasis(SVector(ξ₀, η, φ), sphere.semifocal)
+    h = spheroidalMetric(sphere, SVector(ξ₀, η, φ))
+    êξ, êη, êφ = spheroidalBasis(sphere, SVector(ξ₀, η, φ))
 
-    # on the axis the azimuthal direction is not determined; the derivative vanishes there, as the
-    # angular functions of non-vanishing order do
-    ∂φ = 1 - η^2 > 1e-12 ? uφ / h[3] : Complex{T}(0.0)
+    tangential = onAxis ? axialGradient(sphere, md, η, coefficients) : uη / h[2] * êη + uφ / h[3] * êφ
 
-    gradient = R * (uξ / h[1] * êξ + uη / h[2] * êη + ∂φ * êφ)
+    gradient = R * (uξ / h[1] * êξ + tangential)
 
     return (value=u, gradient=gradient)
+end
+
+
+"""
+    axialGradient(sphere::Spheroid, md::SpheroidalModes, η, coefficients)
+
+Compute the tangential part of the gradient of the series on the axis of the spheroid, ``η = ±1``, in Cartesian
+coordinates of its frame.
+
+There ``h_η`` diverges and ``h_φ`` vanishes, while the basis vectors ``\\hat{e}_η`` and ``\\hat{e}_φ`` are not
+determined. The tangential gradient is nevertheless finite, as the surface is smooth, and is carried by the
+orders ``m = ±1`` alone: their angular functions vanish like ``\\sqrt{1 - η^2}``, those of ``|m| ≥ 2`` faster, and
+the order zero has no tangential gradient on the axis. Writing ``S_{1n} = \\sqrt{1 - η^2} \\, g_n``, the two
+terms of order ``m`` combine into
+
+```math
+\\cfrac{1}{a} \\, C_{mn} \\, R_{1n}(c, ξ_0) \\, g_n(±1) \\, (1, \\mathrm{j}m, 0) \\,,
+```
+
+where ``a`` denotes the equatorial radius: the dependence on ``φ`` cancels, as it has to on the axis. The limits ``g_n(±1)`` are extrapolated from two evaluations close to the pole (Richardson), the error being
+of the order of the square of their distance from it.
+"""
+function axialGradient(sphere::Spheroid, md::SpheroidalModes{T}, η, coefficients) where {T}
+
+    G = zero(SVector{3,Complex{T}})
+
+    (md.M < 1 || md.N < 1) && return G # only the order zero is excited, e.g., by an axial plane wave
+
+    δ = T(2)^-26 # 1 - η and 1 + η are exact at the points of the extrapolation
+
+    S(d) = vec(smn(1, 1:(md.N), md.c, [sign(η) * (1 - d)]; spheroid=shape(sphere), normalize=false).value)
+    g(d) = S(d) ./ sqrt(d * (2 - d))
+
+    gₙ = 2 .* g(δ) .- g(2δ) # the error of first order in δ cancels
+
+    Rr = rmn(1, 1:(md.N), md.c, [sphere.ξ₀]; spheroid=shape(sphere), kind=outgoingKind).value
+
+    for (k, n) in enumerate(1:(md.N))
+        Cp = coefficients[md.M + 2, n + 1] # m = +1
+        Cm = coefficients[md.M, n + 1]     # m = -1
+
+        G += Rr[1, k] * gₙ[k] * (Cp * SVector{3,Complex{T}}(1, im, 0) + Cm * SVector{3,Complex{T}}(1, -im, 0))
+    end
+
+    return G / equatorialRadius(sphere)
 end
 
 
@@ -213,10 +235,6 @@ end
 
 Compute a surface trace of the pressure scattered by an oblate spheroid, determining the modal coefficients
 automatically, see [`modes`](@ref).
-
-The two trace types are dispatched on separately, rather than on their supertype, so that these methods stay
-more specific than the ones of the spherical scatterers, which accept the Dirichlet trace among the quantities
-obtained from their series.
 """
 function scatteredfield(sphere::Spheroid, excitation::AcousticExcitation, quantity::PressureTrace; parameter::Parameter=Parameter())
 
@@ -270,8 +288,11 @@ end
 """
     checkDisc(sphere::Spheroid)
 
-Ensure that the scatterer is a disc, across which alone a jump is defined; see [`checkScatterer`](@ref) for why
-the check belongs before the loop over the locations.
+Ensure that the scatterer is a disc, across which alone a jump is defined.
+
+The check belongs before the loop over the locations: an error thrown inside the parallel loop is wrapped in a
+`TaskFailedException` as soon as more than one thread is available, which would make the failure depend on the
+number of threads.
 """
 checkDisc(sphere::Spheroid) =
     isdisc(sphere) || error("The jump of the pressure is defined across an open surface, that is, across a disc.")
@@ -312,7 +333,7 @@ function scatteredfield(
 
     coefficients = md.A .* md.b
 
-    ~, η, φ = cart2obl(frame(sphere)' * point, sphere.semifocal)
+    ~, η, φ = spheroidalCoordinates(sphere, frame(sphere)' * point)
 
     u = Complex{T}(0.0)
 
@@ -320,8 +341,8 @@ function scatteredfield(
 
         mAbs = abs(m)
 
-        S = smn(mAbs, mAbs:(md.N), md.c, [η]; spheroid=:oblate, normalize=false).value
-        Rr = rmn(mAbs, mAbs:(md.N), md.c, [sphere.ξ₀]; spheroid=:oblate, kind=oblateOutgoingKind).value
+        S = smn(mAbs, mAbs:(md.N), md.c, [η]; spheroid=shape(sphere), normalize=false).value
+        Rr = rmn(mAbs, mAbs:(md.N), md.c, [sphere.ξ₀]; spheroid=shape(sphere), kind=outgoingKind).value
 
         phase = cis(m * φ)
 
@@ -371,11 +392,13 @@ end
 
 
 """
-    scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity::PressureJump; parameter::Parameter=Parameter())
+    scatteredfield(sphere::Sphere{<:AcousticBoundary}, excitation::AcousticExcitation, quantity::PressureJump; parameter::Parameter=Parameter())
 
 Descriptive error for the jump of the pressure across a closed surface.
 """
-function scatteredfield(sphere::Sphere, excitation::AcousticExcitation, quantity::PressureJump; parameter::Parameter=Parameter())
+function scatteredfield(
+    sphere::Sphere{<:AcousticBoundary}, excitation::AcousticExcitation, quantity::PressureJump; parameter::Parameter=Parameter()
+)
 
     return error("The jump of the pressure is defined across an open surface, that is, across a disc.")
 end
