@@ -1,16 +1,22 @@
 
 # SphericalScattering.jl
 
-This package provides semi-analytical solutions to the scattering of time harmonic and static electromagnetic fields from spherical objects (amongst others known as Mie solutions or Mie scattering). 
+This package provides semi-analytical solutions to the scattering of time-harmonic and static electromagnetic fields as well as time-harmonic acoustic fields from spherical objects (amongst others known as Mie solutions or Mie scattering). 
 To this end, series expansions are evaluated. Special care is taken to obtain accurate solutions down to the static limit.
 
 !!! note
     A time convention of ``\mathrm{e}^{\,\mathrm{j}\omega t}`` and SI units are used everywhere.
 
+!!! note
+    If you use this software, please cite our [JOSS article](https://doi.org/10.21105/joss.05820):
+
+    B. Hofmann, P. Respondek, and S. B. Adrian, *Sphericalscattering: a Julia package for electromagnetic scattering from spherical objects*, Journal of Open Source Software, vol. 8, no. 91, Nov. 2023, doi: 10.21105/joss.05820.
+
 
 ---
 ## Installation
 
+To install julia, you can follow [these instructions](https://docs.julialang.org/en/v1/manual/getting-started/).
 Installing SphericalScattering is done by entering the package manager (enter `]` at the julia REPL) and issuing:
 
 ```
@@ -19,62 +25,108 @@ pkg> add SphericalScattering
 
 
 ---
-## Overview
+## Feature Overview
 
 The following aspects are implemented (✔) and planned (⌛):
 
-##### Available incident fields:
-- ✔ Plane wave
-- ✔ Field of electric/magnetic ring current
-- ✔ Field of electric/magnetic dipole
-- ✔ TE/TM spherical vector waves
-- ✔ Uniform static electric field
-- ⌛ Static charge(s)
+```@raw html
+<style>
+  #documenter .content table.feature-table {
+    display: table; /* Documenter makes tables blocks, whose borders would span the whole page */
+    width: auto;
+    border-collapse: collapse;
+    border-top: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+  }
+  #documenter .content table.feature-table th,
+  #documenter .content table.feature-table td { vertical-align: middle; padding: 0.35em 0.6em; }
+  #documenter .content table.feature-table thead th { text-align: center; }
+  #documenter .content table.feature-table thead th.ft-left { text-align: left; }
+  #documenter .content table.feature-table tr.ft-group th {
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    background: rgba(127, 127, 127, 0.12);
+    border-top: 2px solid rgba(127, 127, 127, 0.35);
+  }
+  #documenter .content table.feature-table td.ft-object { padding-left: 1.1em; }
+  #documenter .content table.feature-table td.ft-check { text-align: center; }
+  #documenter .content table.feature-table .ft-note { opacity: 0.7; font-size: 0.85em; }
+</style>
+<div style="overflow-x: auto;">
+<table class="feature-table">
+  <thead>
+    <tr>
+      <th class="ft-left" rowspan="2">object</th>
+      <th class="ft-left" rowspan="2">boundary</th>
+      <th colspan="8">electromagnetic excitation</th>
+    </tr>
+    <tr>
+      <th>plane wave</th>
+      <th>el. ring current</th>
+      <th>mag. ring current</th>
+      <th>el. dipole</th>
+      <th>mag. dipole</th>
+      <th>TE/TM modes</th>
+      <th>uniform static field</th>
+      <th>static charge(s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="ft-group"><th colspan="10">Spheres</th></tr>
+    <tr><td class="ft-object" rowspan="6"> </td><td>PEC</td><td class="ft-check">✔</td><td class="ft-check">✔</td><td class="ft-check">✔</td><td class="ft-check">✔</td><td class="ft-check">✔</td><td class="ft-check">✔</td><td class="ft-check">✔</td><td class="ft-check">⌛</td></tr>
+    <tr><td>PMC</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td></tr>
+    <tr><td>dielectric</td><td class="ft-check">✔</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">✔</td><td class="ft-check">⌛</td></tr>
+    <tr><td>multilayer dielectric</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">✔</td><td class="ft-check">⌛</td></tr>
+    <tr><td>multilayer dielectric with PEC core</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">✔</td><td class="ft-check">⌛</td></tr>
+    <tr><td>dielectric with thin impedance layer</td><td class="ft-check">➖</td><td class="ft-check">➖</td><td class="ft-check">➖</td><td class="ft-check">➖</td><td class="ft-check">➖</td><td class="ft-check">➖</td><td class="ft-check">✔</td><td class="ft-check">➖</td></tr>
 
-##### Available scattering objects:
-- ✔ PEC sphere
-- ⌛ PMC sphere
-- ⌛ Dielectric sphere 
-- ⌛ Multilayer dielectric sphere 
-- ⌛ Multilayer dielectric sphere with PEC core 
-- ✔ Dielectric sphere with thin impedance layer
+    <tr class="ft-group"><th colspan="10">Spheroids</th></tr>
+    <tr><td class="ft-object" rowspan="2">prolate</td><td>PEC</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td></tr>
+    <tr><td>PMC</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td></tr>
+    <tr><td class="ft-object" rowspan="2">oblate</td><td>PEC</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td></tr>
+    <tr><td>PMC</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td></tr>
+    <tr><td class="ft-object" rowspan="2">disc<br/><span class="ft-note">flat oblate spheroid</span></td><td>PEC</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td></tr>
+    <tr><td>PMC</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td><td class="ft-check">⌛</td></tr>
+  </tbody>
+</table>
+</div>
+```
+---
 
-##### Available quantities (where applicable):
-- ✔ Far-fields
-- ✔ Near-fields (electric & magnetic)
-- ✔ Radar cross section (RCS)
-- ⌛ Surface currents
-- ✔ Scalar potentials 
-- ✔ Displacement fields 
-- ✔ Scalar potential jump 
+```@raw html
+<div style="overflow-x: auto;">
+<table class="feature-table">
+  <thead>
+    <tr>
+      <th class="ft-left" rowspan="2">object</th>
+      <th class="ft-left" rowspan="2">boundary</th>
+      <th colspan="2">acoustic excitation</th>
+    </tr>
+    <tr>
+      <th>plane wave</th>
+      <th>monopole</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="ft-group"><th colspan="4">Spheres</th></tr>
+    <tr><td class="ft-object" rowspan="2"> </td><td>sound-hard</td><td class="ft-check">✔</td><td class="ft-check">✔</td></tr>
+    <tr><td>sound-soft</td><td class="ft-check">✔</td><td class="ft-check">✔</td></tr>
+
+    <tr class="ft-group"><th colspan="4">Spheroids</th></tr>
+    <tr><td class="ft-object" rowspan="2">prolate </td><td>sound-hard</td><td class="ft-check">✔</td><td class="ft-check">✔</td></tr>
+    <tr><td>sound-soft</td><td class="ft-check">✔</td><td class="ft-check">✔</td></tr>
+    <tr><td class="ft-object" rowspan="2">oblate </td><td>sound-hard</td><td class="ft-check">✔</td><td class="ft-check">✔</td></tr>
+    <tr><td>sound-soft</td><td class="ft-check">✔</td><td class="ft-check">✔</td></tr>
+    <tr><td class="ft-object" rowspan="2">disc<br/><span class="ft-note">flat oblate spheroid</span></td><td>sound-hard</td><td class="ft-check">✔</td><td class="ft-check">✔</td></tr>
+    <tr><td>sound-soft</td><td class="ft-check">✔</td><td class="ft-check">✔</td></tr>
+  </tbody>
+</table>
+</div>
+```
+
 
 ---
-##### Detailed implementation status:
+##### Available quantities
 
-| spheres                              | plane wave | el. ring current | mag. ring current | el. dipole | mag. dipole | TE/TM modes | uniform static field | static charge(s) |
-|--------------------------------------|------------|------------------|-------------------|------------|-------------|-------------|----------------------|------------------|
-| PEC                                  |      ✔     |        ✔         |         ✔         |      ✔     |       ✔     |      ✔      |           ✔          |        ⌛         |
-| PMC                                  |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ⌛          |        ⌛        |
-| Dielectric                           |      ✔     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
-| Multilayer dielectric                |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
-| Multilayer dielectric with PEC core  |      ⌛     |        ⌛         |         ⌛         |      ⌛     |       ⌛     |      ⌛      |           ✔          |        ⌛        |
-| Dielectric with thin impedance layer |      ➖     |        ➖         |         ➖         |      ➖     |       ➖    |      ➖      |           ✔          |        ➖        |
-
-
-
-
----
-## [References](@id refs)
-
-The implementation is based on
-- [1] J.-M. Jin, *Theory and Computation of Electromagnetic Fields*, Second edition. Hoboken, New Jersey: John Wiley & Sons, Inc, 2015.
-- [2] G. T. Ruck, D. E. Barrick, W. D. Stuart, C. K. Krichbaum, *Radar Cross Section Handbook*, Volume 1, New York: Plenum Press, 1970.
-- [3] Sihvola, Ari & Lindell, Ismo., *Transmission Line Analogy for Calculating the Effective Permittivity of Mixtures with Spherical Multilayer Scatterers*, Journal of Electromagnetic Waves and Applications, Volume 2, Pages 741-756, 1988.
-- [4] J. D. Jackson, *Classical Electrodynamics*, New York: Wiley, 3rd ed., 1999.
-- [5] J. E. Hansen, ed., *Spherical Near-field Antenna Measurements*, The Institution of Engineering and Technology, Michael Faraday House, Six Hills Way, Stevenage SG1 2AY, UK: IET, 1988.
-- [6] T. B. Jones, Ed., *Models for layered spherical particles*, in Electromechanics of Particles, Cambridge: Cambridge University Press, 1995, pp. 227–235. doi: 10.1017/CBO9780511574498.012.
-
-!!! note
-    If you use this software, please cite our [JOSS article](https://doi.org/10.21105/joss.05820):
-
-    B. Hofmann, P. Respondek, and S. B. Adrian, *Sphericalscattering: a Julia package for electromagnetic scattering from spherical objects*, Journal of Open Source Software, vol. 8, no. 91, Nov. 2023, doi: 10.21105/joss.05820.
+The quantities which can be computed for these setups, among them near fields, far fields, potentials, and surface traces, are listed under [Quantities](@ref quantitiesConcept). The surface currents of the electromagnetic scatterers are planned (⌛).

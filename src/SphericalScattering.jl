@@ -18,6 +18,8 @@ const ε0 = 8.8541878176e-12  # default permittivity
 
 # -------- used packages
 using SpecialFunctions, LegendrePolynomials
+using SpheroidalWaves
+using FastGaussQuadrature
 using LinearAlgebra
 using StaticArrays
 using OhMyThreads
@@ -37,13 +39,25 @@ export ScalarPotential, ScalarPotentialJump
 export Medium, Parameter
 export μ0, ε0
 
+export Acoustic
+export AcousticPlaneWave, AcousticMonopole
+export Pressure
+export PressureTrace, PressureNormalGradient, PressureJump
+
 # functions
 export electricRingCurrent, magneticRingCurrent
 export HertzianDipole, FitzgeraldDipole
 export planeWave
 export SphericalMode, SphericalModeTE, SphericalModeTM
+export Scatterer # `Sphere` is not exported, lest it clash with the spheres of geometry packages
+export ElectromagneticBoundary, PEC, Dielectric, Layered, ThinImpedanceLayer
+export AcousticBoundary, SoundHard, SoundSoft
 export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export DielectricSphereThinImpedanceLayer
+export HardSphere, SoftSphere
+export Spheroid, OblateSpheroid, ProlateSpheroid, Disc
+export outwardNormal, outwardNormals
+export equatorialRadius, polarRadius, isdisc
 export field, scatteredfield
 export rcs
 export sphericalGridPoints, phiCutPoints, thetaCutPoints
@@ -62,30 +76,55 @@ export plotff, plotnf, plotffcut, plotnfcut
 
 # -------- included files
 include("dataHandling.jl")
-include("sphere.jl")
+include("medium.jl")
 
-include("ringCurrent/excitation.jl")
-include("ringCurrent/incident.jl")
-include("ringCurrent/scattered.jl")
+# the geometry, shared by both physics, and the conditions on the surfaces, which are not
+include("geometry/scatterer.jl")
+include("electromagnetics/boundaries.jl")
+include("acoustics/boundaries.jl")
+include("geometry/spheroid.jl")
+include("geometry/spheroidalWaveFunctions.jl")
 
-include("dipoles/excitation.jl")
-include("dipoles/incident.jl")
-include("dipoles/scattered.jl")
+include("electromagnetics/sphere.jl")
 
-include("planeWave/excitation.jl")
-include("planeWave/incident.jl")
-include("planeWave/scattered.jl")
+include("electromagnetics/ringCurrent/excitation.jl")
+include("electromagnetics/ringCurrent/incident.jl")
+include("electromagnetics/ringCurrent/scattered.jl")
 
-include("sphericalModes/excitation.jl")
-include("sphericalModes/incident.jl")
-include("sphericalModes/scattered.jl")
+include("electromagnetics/dipoles/excitation.jl")
+include("electromagnetics/dipoles/incident.jl")
+include("electromagnetics/dipoles/scattered.jl")
 
-include("UniformField/excitation.jl")
-include("UniformField/incident.jl")
-include("UniformField/scattered.jl")
+include("electromagnetics/planeWave/excitation.jl")
+include("electromagnetics/planeWave/incident.jl")
+include("electromagnetics/planeWave/scattered.jl")
+
+include("electromagnetics/sphericalModes/excitation.jl")
+include("electromagnetics/sphericalModes/incident.jl")
+include("electromagnetics/sphericalModes/scattered.jl")
+
+include("electromagnetics/UniformField/excitation.jl")
+include("electromagnetics/UniformField/incident.jl")
+include("electromagnetics/UniformField/scattered.jl")
+
+
+include("acoustics/sphere/types.jl")
+
+include("acoustics/quantities.jl")
+
+include("acoustics/excitations/planeWave.jl")
+include("acoustics/excitations/monopole.jl")
+
+include("acoustics/sphere/series.jl")
+
+include("acoustics/spheroid/coefficients.jl")
+include("acoustics/spheroid/series.jl")
+include("acoustics/spheroid/surface.jl")
+
+include("acoustics/Acoustic.jl") # the single `Acoustic` submodule holding the user-facing constructors
 
 include("totalFields.jl")
-include("coordinateTransforms.jl")
+include("geometry/coordinateTransforms.jl") # after the excitations, as it defines their rotations
 include("utils.jl")
 include("rcs.jl")
 
