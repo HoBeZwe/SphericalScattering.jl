@@ -45,7 +45,7 @@ The following aspects are implemented (✔) and planned (⌛):
 
 - Acoustic
     - ✔ Sound-hard/soft sphere
-    - ⌛ Sound-hard/soft prolate spheroid
+    - ✔ Sound-hard/soft prolate spheroid
     - ✔ Sound-hard/soft oblate spheroid
     - ✔ Sound-hard/soft disc
 

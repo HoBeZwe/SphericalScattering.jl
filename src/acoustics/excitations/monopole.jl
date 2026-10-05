@@ -205,3 +205,47 @@ function checkExcitation(scatterer::Scatterer{<:AcousticBoundary}, excitation::A
 
     return nothing
 end
+
+
+
+"""
+    incidentCoefficients(sphere::Spheroid, excitation::AcousticMonopole, N::Int)
+
+Compute the coefficients of the expansion of the field of the monopole in the spheroidal wave functions, see
+[`incidentCoefficients`](@ref). With the position ``(ξ_s, η_s, φ_s)`` of the monopole in the frame of the
+spheroid, the addition theorem of the free-space Green's function (Flammer, 1957) yields
+
+```math
+A_{mn} = -\\cfrac{\\mathrm{j} k a}{2π} \\, \\cfrac{S_{|m|n}(c, η_s) \\, R^{(\\mathrm{out})}_{|m|n}(c, ξ_s)}{N_{|m|n}}
+         \\, \\mathrm{e}^{-\\mathrm{j}mφ_s} \\,,
+```
+
+valid for ``ξ < ξ_s``, which includes the surface of the scatterer, as the monopole lies outside. It is the
+counterpart of ``-\\mathrm{j}k / (4π) \\, (2n+1) \\, h_n^{(2)}(k r_0)`` for a sphere.
+"""
+function incidentCoefficients(sphere::Spheroid, excitation::AcousticMonopole, N::Int)
+
+    T = typeof(excitation.frequency)
+
+    c = spheroidalParameter(sphere, excitation)
+    k = wavenumber(excitation)
+
+    # --- the position of the monopole in the spheroidal coordinates
+    ξ, η, φ = spheroidalCoordinates(sphere, frame(sphere)' * excitation.position)
+
+    A = zeros(Complex{T}, 2 * N + 1, N + 1)
+
+    for mAbs in 0:N
+        S = smn(mAbs, mAbs:N, c, [η]; spheroid=shape(sphere), normalize=false).value
+
+        all(iszero, S) && continue # a monopole on the axis excites the order zero alone
+
+        Rₒ = rmn(mAbs, mAbs:N, c, [ξ]; spheroid=shape(sphere), kind=outgoingKind).value
+
+        for (kₙ, n) in enumerate(mAbs:N), m in (iszero(mAbs) ? (0,) : (mAbs, -mAbs))
+            A[m + N + 1, n + 1] = -im * k * excitation.amplitude / (2π) * S[1, kₙ] * Rₒ[1, kₙ] / angularNorm(mAbs, n) * cis(-m * φ)
+        end
+    end
+
+    return A
+end

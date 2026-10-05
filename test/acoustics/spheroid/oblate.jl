@@ -145,14 +145,14 @@ end
         sp = Spheroid{SoundHard}(; equatorialRadius=sqrt(1.25), polarRadius=0.5)   # semifocal 1, ξ₀ = 0.5
         points = [SVector(0.3, -0.4, 1.6), SVector(0.0, 0.0, 2.5), SVector(1.1, 0.0, 0.0)]
 
-        # --- projecting the incident field onto the angular functions and reconstructing it elsewhere
-        #     converges with the truncation: this validates the expansion without any closed-form
-        #     coefficients, and hence independently of the normalization of the angular functions
+        # --- the expansion with the analytic coefficients reproduces the incident field away from the scatterer,
+        #     converging with the truncation; the coefficients themselves are checked against the projection of
+        #     the field in `machinery.jl`
         ex = SphericalScattering.Acoustic.planeWave(; frequency=freq(2.0), direction=normalize(SVector(0.4, 0.3, 1.0)))
 
         errors = map(
             ((M, N),) -> begin
-                md = SphericalScattering.modes(sp, ex; M=M, N=N, ξ=3.0)
+                md = SphericalScattering.modes(sp, ex; M=M, N=N)
                 maximum(
                     abs(SphericalScattering.seriesvalue(sp, md, point, md.A, false) - field(ex, point, quantity)) /
                     abs(field(ex, point, quantity)) for point in points
@@ -164,7 +164,7 @@ end
         @test errors[2] < errors[1] / 100   # the error drops steeply with the truncation
         @test errors[2] < 1e-6
 
-        # --- a monopole is expanded just as well, the projection surface lying inside the source
+        # --- a monopole is expanded just as well, between the scatterer and its source
         exMono = SphericalScattering.Acoustic.monopole(; position=SVector(0.5, -0.3, 4.0), frequency=freq(2.0))
         md = SphericalScattering.modes(sp, exMono; M=8, N=20)
 
@@ -174,7 +174,7 @@ end
 
         # --- an arbitrarily oriented spheroid is handled by transforming into its frame
         spTilted = Spheroid{SoundHard}(; equatorialRadius=sqrt(1.25), polarRadius=0.5, axis=normalize(SVector(1.0, 1.0, 1.0)))
-        mdTilted = SphericalScattering.modes(spTilted, ex; M=8, N=20, ξ=3.0)
+        mdTilted = SphericalScattering.modes(spTilted, ex; M=8, N=20)
 
         for point in points
             @test SphericalScattering.seriesvalue(spTilted, mdTilted, point, mdTilted.A, false) ≈ field(ex, point, quantity) rtol =

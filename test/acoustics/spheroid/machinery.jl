@@ -179,15 +179,11 @@ end
 
     @testset "Source close to the scatterer" begin
 
-        # The expansion of the incident field holds between the scatterer and its source only, hence the
-        # surface of the projection has to lie there. For a monopole closer to a disc than the default surface
-        # ξ = 0.5 this requires to move the surface; the degree has to be raised as well, as the check of the
-        # truncation reports
+        # The expansion of the field of a monopole holds between the scatterer and the monopole; the closer the
+        # monopole, the more slowly it converges, so that a source closer to a disc than its radius requires
+        # more degrees than the size of the disc suggests
         d = Disc(SoundSoft; radius=1.0)
         ex = SphericalScattering.Acoustic.monopole(; frequency=freq(1.5), position=SVector(0.2, 0.1, 0.3))
-
-        ξs = SphericalScattering.sourceCoordinate(d, ex)
-        @test ξs < SphericalScattering.projectionCoordinate(d)
 
         md = quiet(() -> SphericalScattering.modes(d, ex; N=50))
 
@@ -196,10 +192,89 @@ end
 
         @test maximum(abs.(incident .+ scatteredfield(d, ex, md, PressureTrace(surface)))) / maximum(abs.(incident)) < 1e-6
 
-        # a given surface reaching the source is rejected
-        @test_throws ErrorException SphericalScattering.modes(d, ex; ξ=1.2 * ξs)
-
         # a plane wave has no source at a finite distance
         @test SphericalScattering.sourceCoordinate(d, SphericalScattering.Acoustic.planeWave(; frequency=freq(1.5))) == Inf
+    end
+
+    @testset "Projection between the scatterer and the source" begin
+
+        # the projection, the fallback for excitations without an analytic expansion, has to place its surface
+        # between the scatterer and the source: for a monopole closer to a disc than the default surface ξ = 0.5
+        # the surface is moved, and a given surface reaching the source is rejected
+        d = Disc(SoundSoft; radius=1.0)
+        ex = SphericalScattering.Acoustic.monopole(; frequency=freq(1.5), position=SVector(0.2, 0.1, 0.3))
+
+        ξs = SphericalScattering.sourceCoordinate(d, ex)
+
+        @test ξs < SphericalScattering.projectionCoordinate(d)
+        @test_throws ErrorException SphericalScattering.projectedCoefficients(d, ex, 20; ξ=1.2 * ξs)
+    end
+end
+
+
+@testitem "Analytic and projected incident coefficients" setup = [Setup] begin
+
+    SS = SphericalScattering
+
+    freq(k) = k * c / (2π)
+
+    # The analytic coefficients rest on the conventions of the spheroidal wave functions: their normalization, the
+    # Condon-Shortley phase, and the normalization of the radial functions. The projection of the incident field
+    # requires none of these, which makes it an independent check. Its coefficients are accurate only as far as
+    # they matter on the surface of the projection, so the modes are compared by their size there.
+    function deviation(sp, ex, N; quadrature...)
+        ξp = min(SS.projectionCoordinate(sp), (sp.ξ₀ + SS.sourceCoordinate(sp, ex)) / 2)
+        c = SS.spheroidalParameter(sp, ex)
+
+        analytic = SS.incidentCoefficients(sp, ex, N)
+        projected = SS.projectedCoefficients(sp, ex, N; quadrature...)
+
+        weight = zeros(2N + 1, N + 1)
+        for m in (-N):N
+            R₁ = SS.rmn(abs(m), abs(m):N, c, [ξp]; spheroid=SS.shape(sp), kind=1).value
+            for (k, n) in enumerate(abs(m):N)
+                weight[m + N + 1, n + 1] = abs(R₁[1, k]) * sqrt(SS.angularNorm(abs(m), n))
+            end
+        end
+
+        return maximum(abs.(analytic .- projected) .* weight) / maximum(abs.(analytic) .* weight)
+    end
+
+    scatterers = (
+        Spheroid{SoundSoft}(; equatorialRadius=1.2, polarRadius=0.7, axis=SVector(0.3, -0.4, 1.0)),
+        Spheroid{SoundHard}(; equatorialRadius=0.6, polarRadius=1.0, axis=SVector(0.2, -0.3, 1.0)),
+        Disc(SoundSoft; radius=1.0),
+    )
+    excitations = (
+        SS.Acoustic.planeWave(; frequency=freq(2.0), direction=normalize(SVector(0.4, 0.3, 1.0))),
+        SS.Acoustic.monopole(; frequency=freq(1.5), position=SVector(0.5, -1.0, 2.5)),
+    )
+
+    for sp in scatterers, ex in excitations
+        @test deviation(sp, ex, 18) < 1e-12
+    end
+
+    # --- a monopole close to a disc, the projection surface lying between the two. The field varies rapidly on
+    #     that surface, so that the default quadrature of the projection limits the agreement to about 1e-10;
+    #     refined, it is exact, which the analytic coefficients are regardless
+    exClose = SS.Acoustic.monopole(; frequency=freq(1.5), position=SVector(0.2, 0.1, 0.3))
+    N = 30
+
+    @test deviation(Disc(SoundSoft; radius=1.0), exClose, N) < 1e-9
+    @test deviation(Disc(SoundSoft; radius=1.0), exClose, N; nη=4N + 32, nφ=8N + 16) < 1e-14
+
+    # --- the closed form of the norm, and the scattering coefficients of the batched path against those of a single mode
+    sp, ex = scatterers[1], excitations[1]
+    c = SS.spheroidalParameter(sp, ex)
+    η, w = SS.gausslegendre(60)
+
+    for m in 0:4
+        S = SS.smn(m, m:12, c, η; spheroid=SS.shape(sp), normalize=false).value
+        @test [sum(w .* view(S, :, k) .^ 2) for k in 1:(13 - m)] ≈ [SS.angularNorm(m, n) for n in m:12] rtol = 1e-13
+    end
+
+    md = SS.modes(sp, ex)
+    for m in (-md.M):(md.M), n in abs(m):(md.N)
+        @test md.b[m + md.M + 1, n + 1] ≈ SS.scatterCoeff(sp, ex, abs(m), n) rtol = 1e-13 # batched and single calls agree to the last digit
     end
 end

@@ -144,3 +144,44 @@ It follows from ``\\mathrm{e}^{-\\mathrm{j} k \\hat{d} ⋅ \\mathbf{r}}
 measured from the direction of incidence ``\\hat{d}``.
 """
 incidentCoeff(excitation::AcousticPlaneWave, n::Int) = (-im)^n
+
+
+
+"""
+    incidentCoefficients(sphere::Spheroid, excitation::AcousticPlaneWave, N::Int)
+
+Compute the coefficients of the expansion of the plane wave in the spheroidal wave functions, see
+[`incidentCoefficients`](@ref). With the direction of incidence ``(η_d, φ_d)`` in the frame of the spheroid,
+
+```math
+A_{mn} = 2 a \\, (-\\mathrm{j})^n \\, \\cfrac{S_{|m|n}(c, η_d)}{N_{|m|n}} \\, \\mathrm{e}^{-\\mathrm{j}mφ_d}
+```
+
+holds (Flammer, 1957), the counterpart of ``(2n+1)(-\\mathrm{j})^n`` for a sphere, to which it reduces as ``c → 0``.
+The normalization of the angular functions cancels, as they enter squared, see [`angularNorm`](@ref).
+"""
+function incidentCoefficients(sphere::Spheroid, excitation::AcousticPlaneWave, N::Int)
+
+    T = typeof(excitation.frequency)
+
+    c = spheroidalParameter(sphere, excitation)
+
+    # --- the direction of incidence in the frame of the spheroid
+    d = frame(sphere)' * excitation.direction
+    η = clamp(d[3], -one(T), one(T))
+    φ = atan(d[2], d[1])
+
+    A = zeros(Complex{T}, 2 * N + 1, N + 1)
+
+    for mAbs in 0:N
+        S = smn(mAbs, mAbs:N, c, [η]; spheroid=shape(sphere), normalize=false).value
+
+        all(iszero, S) && continue # an axial incidence excites the order zero alone
+
+        for (k, n) in enumerate(mAbs:N), m in (iszero(mAbs) ? (0,) : (mAbs, -mAbs))
+            A[m + N + 1, n + 1] = 2 * excitation.amplitude * (-im)^n * S[1, k] / angularNorm(mAbs, n) * cis(-m * φ)
+        end
+    end
+
+    return A
+end

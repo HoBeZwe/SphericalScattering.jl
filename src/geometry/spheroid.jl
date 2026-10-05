@@ -201,8 +201,8 @@ normalizedCircumradius(sphere::OblateSpheroid) = sqrt(1 + sphere.ξ₀^2)
 """
     projectionCoordinate(sphere::Spheroid)
 
-Returns the default radial coordinate of the surface on which the incident field is projected, see
-[`modes`](@ref).
+Returns the default radial coordinate of the surface on which the incident field is projected for an excitation
+without a known expansion, see [`projectedCoefficients`](@ref).
 
 For an oblate spheroid it is the surface of the scatterer, or ``ξ = 0.5`` for a scatterer flatter than that: at
 the degenerate surface ``ξ = 0`` the regular radial functions of odd ``n - m`` vanish, by which the projection

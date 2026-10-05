@@ -54,3 +54,24 @@ Returns the spheroidal parameter ``c = k f``, the product of the wavenumber and 
 takes the role of ``ka`` for a sphere.
 """
 spheroidalParameter(sphere::Spheroid, excitation::Excitation) = wavenumber(excitation) * sphere.semifocal
+
+
+"""
+    angularNorm(m::Int, n::Int)
+
+Returns the norm ``N_{mn} = \\int_{-1}^{1} S_{mn}^2(c, η) \\, \\mathrm{d}η = \\cfrac{2}{2n + 1} \\cfrac{(n + m)!}{(n - m)!}``
+of the angular functions in the Meixner-Schäfke normalization.
+
+It does not depend on ``c``: the normalization is defined such that the norm is that of the associated Legendre
+functions, to which the angular functions reduce as ``c → 0``. The ratio of the factorials is formed as a product,
+which is exact up to ``2m`` roundings.
+"""
+function angularNorm(m::Int, n::Int)
+
+    ratio = 1.0
+    for k in (n - m + 1):(n + m)
+        ratio *= k
+    end
+
+    return 2 / (2n + 1) * ratio
+end

@@ -19,71 +19,36 @@ end
 
 
 """
-    modes(sphere::Spheroid, excitation::AcousticExcitation; M::Int, N::Int, ξ=nothing, nφ=nothing, nη=nothing)
+    modes(sphere::Spheroid, excitation::AcousticExcitation; M=nothing, N=nothing, parameter::Parameter=Parameter())
 
 Compute the modal coefficients of the scattering problem, see [`SpheroidalModes`](@ref).
 
-The coefficients ``A_{mn}`` of the incident expansion
-``p_\\mathrm{i} = \\sum_{mn} A_{mn} R^{(1)}_{mn}(c, ξ) S_{mn}(c, η) \\mathrm{e}^{\\mathrm{j}mφ}``
-are obtained by projecting the incident field, which is known in closed form, onto the angular functions on a
-surface ``ξ = \\mathrm{const}``. The angular functions of equal order are orthogonal there with unit weight,
-and the exponentials are orthogonal in ``φ``, so that
-
-```math
-A_{mn} = \\cfrac{1}{R^{(1)}_{mn}(c, ξ) \\, N_{mn}} \\int_{-1}^{1} \\left[ \\cfrac{1}{2π} \\int_0^{2π}
-         p_\\mathrm{i} \\, \\mathrm{e}^{-\\mathrm{j}mφ} \\, \\mathrm{d}φ \\right] S_{mn}(c, η) \\, \\mathrm{d}η
-```
-
-holds with ``N_{mn} = \\int_{-1}^{1} S_{mn}^2 \\, \\mathrm{d}η``. The projection makes no assumption about the
-excitation and is independent of the normalization of the angular functions, since the same normalization enters
-the numerator and ``N_{mn}``.
-
-The surface of the projection has to lie between the scatterer and the source of the incident field: beyond the
-source, see [`sourceCoordinate`](@ref), the expansion in the regular wave functions does not hold. By default it
-is placed at [`projectionCoordinate`](@ref), or halfway between the scatterer and the source if that is closer; a
-given `ξ` reaching the source is rejected.
+The incident field is expanded as
+``p_\\mathrm{i} = \\sum_{mn} A_{mn} R^{(1)}_{mn}(c, ξ) S_{mn}(c, η) \\mathrm{e}^{\\mathrm{j}mφ}``, the coefficients
+``A_{mn}`` being known analytically for the plane wave and the monopole, see [`incidentCoefficients`](@ref). Since
+the surface ``ξ = ξ_0`` is a coordinate surface, the boundary condition decouples the modes, each being scattered
+with the coefficient ``b_{mn}`` of [`scatterCoeff`](@ref).
 
 The truncations are determined automatically unless they are given. Since the scattering coefficients decay
 once a mode is cut off at the surface, the degree is bounded by the size of the scatterer, so that
 ``N = \\lceil c \\, ρ \\rceil + 15`` is taken initially, where ``ρ`` is the radius of the circumscribing sphere in
 units of the semifocal distance, see [`normalizedCircumradius`](@ref); ``c ρ`` is the counterpart of ``ka``. The
-order `M` is not estimated but measured: the azimuthal spectrum of the incident field on the surface of the
-projection is evaluated, and the orders are retained as long as they contribute more than the relative accuracy.
-This matters, as every order costs a pair of calls to the spheroidal wave functions, and a nearly axial
-excitation needs far fewer orders than a grazing one.
+order `M` is not estimated but measured, see [`modesForDegree`](@ref): a nearly axial excitation needs far fewer
+orders than a grazing one, which matters, as every order costs calls to the spheroidal wave functions.
 
 The truncation is verified rather than trusted, on the surface of the scatterer: the size of a mode of the
 scattered pressure there bounds its contribution everywhere, as the outgoing radial functions decrease outward.
-The modes of the last degrees have to be negligible, see [`projectedModes`](@ref). A source close to the
-scatterer requires more degrees than its size suggests, as the expansion of the incident field converges the more
-slowly the closer the source is. If the degree has been determined automatically, it is therefore raised by half
-until the omitted modes are negligible, up to four times its initial value and as long as the projection keeps
-improving: for a source very close to the scatterer the regular radial functions on the surface of the
-projection become tiny, which limits the attainable accuracy. A message is printed if the relative accuracy is
-not attained. A given `N`, or a `nmax` of [`Parameter`](@ref), is used as it is.
-
-!!! note
-    The degree bounds the scattered field at every radial coordinate, not only near the scatterer, since the
-    scattering coefficients and the outgoing radial functions both decay with the degree. Reconstructing the
-    *incident* field from the coefficients `A` is a different matter: evaluating it at a radial coordinate much
-    larger than `ξ` amplifies the error of the projection, because the regular radial functions grow steeply
-    with ``ξ`` at a fixed degree. For that purpose, and only for it, `ξ` should be chosen comparable to the
-    largest radial coordinate of interest, and `N` large enough that ``N ≳ c ξ``.
+The modes of the last degrees have to be negligible. A source close to the scatterer requires more degrees than
+its size suggests, as the expansion of its field converges the more slowly the closer the source is. If the
+degree has been determined automatically, it is therefore raised by half until the omitted modes are negligible,
+up to four times its initial value and as long as the result keeps improving: for a source very close to the
+scatterer the radial functions of high degree eventually exceed the range of the floating-point numbers, which
+limits the attainable accuracy. A message is printed if the relative accuracy is not attained. A given `N`, or a
+`nmax` of [`Parameter`](@ref), is used as it is.
 """
-function modes(
-    sphere::Spheroid,
-    excitation::AcousticExcitation;
-    M=nothing,
-    N=nothing,
-    ξ=nothing,
-    nφ=nothing,
-    nη=nothing,
-    parameter::Parameter=Parameter(),
-)
+function modes(sphere::Spheroid, excitation::AcousticExcitation; M=nothing, N=nothing, parameter::Parameter=Parameter())
 
     checkExcitation(sphere, excitation)
-
-    T = typeof(excitation.frequency)
 
     c = spheroidalParameter(sphere, excitation)
 
@@ -93,29 +58,24 @@ function modes(
     adaptive = isnothing(N) && parameter.nmax < 0
     N₀ = isnothing(N) ? (parameter.nmax >= 0 ? parameter.nmax : ceil(Int, c * normalizedCircumradius(sphere)) + 15) : N
 
-    # --- the surface of the projection, which has to lie between the scatterer and the source of the incident
-    #     field: beyond the source the expansion in the regular wave functions does not hold
-    ξs = sourceCoordinate(sphere, excitation)
-    ξp = isnothing(ξ) ? T(min(projectionCoordinate(sphere), (sphere.ξ₀ + ξs) / 2)) : T(ξ)
+    md, tail = modesForDegree(sphere, excitation, N₀, M, eps)
 
-    ξp < ξs || error(
-        "The surface of the projection, ξ = $ξp, has to lie closer to the scatterer than the source of the incident field at ξ = $ξs.",
+    isnothing(md) && error(
+        "The modal coefficients up to the degree N=$N₀ exceed the range of the floating-point numbers, as the wave functions of high degree and order do, in particular for a source close to the scatterer: choose a smaller degree.",
     )
 
-    md, tail = projectedModes(sphere, excitation, N₀, M, ξp, nη, nφ, eps)
-
     # --- a source close to the scatterer requires more degrees than its size suggests: unless it is given, the
-    #     degree is raised until the omitted modes are negligible, as long as the projection keeps improving.
-    #     It ceases to as the regular radial functions on the surface of the projection become tiny
+    #     degree is raised until the omitted modes are negligible, as long as the result keeps improving. It
+    #     ceases to as the wave functions of high degree exceed the range of the floating-point numbers
     saturated = false
 
     if adaptive
         Nlimit = 4 * N₀
 
         while tail > eps && md.N < Nlimit
-            next, nextTail = projectedModes(sphere, excitation, min(ceil(Int, 3 * md.N / 2), Nlimit), M, ξp, nη, nφ, eps)
+            next, nextTail = modesForDegree(sphere, excitation, min(ceil(Int, 3 * md.N / 2), Nlimit), M, eps)
 
-            if !(all(isfinite, next.A) && all(isfinite, next.b) && nextTail < tail)
+            if isnothing(next) || !(nextTail < tail)
                 saturated = true
                 break
             end
@@ -125,7 +85,7 @@ function modes(
     end
 
     remedy = if saturated
-        "more degrees do not improve the projection, the source being too close to the scatterer"
+        "more degrees do not improve the result, the wave functions of high degree exceeding the range of the floating-point numbers"
     else
         "a larger `N` may be passed explicitly"
     end
@@ -138,98 +98,89 @@ end
 
 
 """
-    projectedModes(sphere::Spheroid, excitation::AcousticExcitation, Nmax::Int, M, ξp, nη, nφ, eps)
+    modesForDegree(sphere::Spheroid, excitation::AcousticExcitation, Nmax::Int, M, eps)
 
-Compute the modal coefficients for the degree `Nmax` by the projection on the surface `ξp`, see [`modes`](@ref).
+Compute the modal coefficients for the degree `Nmax`, see [`modes`](@ref).
+
+The incident coefficients and the scattering coefficients are computed order by order, the radial functions
+batched over the degree and shared by the orders ``±m``; orders the excitation does not excite, such as all but the
+order zero for an axial excitation, are skipped. Unless `M` is given, the orders are computed in increasing ``|m|``
+until two consecutive ones are negligible, measured by the size of their modes on the surface of the scatterer as
+below, and truncated at the last one that is not. The azimuthal content of the incident field decays beyond its
+angular bandwidth, so that the orders of high ``|m|`` are not computed at all: this saves their cost, and it keeps
+clear of the wave functions of high order, which exceed the range of the floating-point numbers once ``n + m``
+approaches about 170.
 
 Returned are the [`SpheroidalModes`](@ref) and the size of the omitted modes: the L² norm of each mode of the
 scattered pressure on the surface of the scatterer, ``|A_{mn} b_{mn} R^{(\\mathrm{out})}_{mn}(c, ξ_0)| \\sqrt{N_{mn}}``,
 the largest among the last two degrees relative to the largest overall. Two degrees are taken, as on a disc only
 modes of one parity of ``n - m`` scatter, so that the last degree alone may vanish for an axial excitation.
+
+If any of the retained coefficients is not finite, as the wave functions of high degree exceed the range of the
+floating-point numbers for a source very close to the scatterer, `(nothing, Inf)` is returned instead.
 """
-function projectedModes(sphere::Spheroid, excitation::AcousticExcitation, Nmax::Int, M, ξp, nη, nφ, eps)
+function modesForDegree(sphere::Spheroid, excitation::AcousticExcitation, Nmax::Int, M, eps)
 
     T = typeof(excitation.frequency)
 
     c = spheroidalParameter(sphere, excitation)
 
-    nη = isnothing(nη) ? 2 * Nmax + 16 : nη
-    nφ = isnothing(nφ) ? 4 * Nmax + 8 : nφ               # independent of M, so that M can be measured
+    isnothing(M) || M <= Nmax || error("The truncation `M` of the order must not be larger than the truncation `N` of the degree.")
 
-    ηNodes, ηWeights = gausslegendre(nη)
-    φNodes = T(2π) .* (0:(nφ - 1)) ./ nφ
+    Aall = incidentCoefficients(sphere, excitation, Nmax)
 
-    R = frame(sphere)
+    ball = zeros(Complex{T}, 2 * Nmax + 1, Nmax + 1)
+    sizeAll = zeros(T, 2 * Nmax + 1, Nmax + 1) # the L² norm of each mode of the scattered pressure on the surface
 
-    # --- the incident field on the surface of the projection, in the global frame
-    quantity = Pressure(nothing) # the single-point methods take the quantity for dispatch only
+    orderSize = zeros(T, Nmax + 1) # the size of the largest mode of each order, indexed by |m| + 1
+    negligible = 0
 
-    pᵢ = zeros(Complex{T}, nη, nφ)
-    for (i, η) in enumerate(ηNodes), (j, φ) in enumerate(φNodes)
-        pᵢ[i, j] = field(excitation, R * cartesianCoordinates(sphere, SVector(ξp, η, φ)), quantity)
-    end
+    for mAbs in 0:(isnothing(M) ? Nmax : M)
 
-    # --- the azimuthal projections, from which the order truncation is measured
-    g = [(pᵢ * cis.(-m .* φNodes)) ./ nφ for m in (-Nmax):Nmax]
-    amplitude = [maximum(abs, gₘ) for gₘ in g]
+        rows = iszero(mAbs) ? (Nmax + 1,) : (Nmax + 1 + mAbs, Nmax + 1 - mAbs)
 
-    Mmax = if isnothing(M)
-        significant = findall(>(eps * maximum(amplitude)), amplitude)
-        maximum(abs(ind - Nmax - 1) for ind in significant)
-    else
-        M
-    end
+        if !all(row -> all(iszero, view(Aall, row, :)), rows) # skip an order the excitation does not excite
 
-    Mmax <= Nmax || error("The truncation `M` of the order must not be larger than the truncation `N` of the degree.")
+            # --- the radial functions on the surface, batched over the degree and shared by the orders ±m
+            R₁ = rmn(mAbs, mAbs:Nmax, c, [sphere.ξ₀]; spheroid=shape(sphere), kind=regularKind)
+            Rₒ = rmn(mAbs, mAbs:Nmax, c, [sphere.ξ₀]; spheroid=shape(sphere), kind=outgoingKind)
 
-    A = zeros(Complex{T}, 2 * Mmax + 1, Nmax + 1)
-    b = zeros(Complex{T}, 2 * Mmax + 1, Nmax + 1)
+            for (k, n) in enumerate(mAbs:Nmax)
+                bₙ = boundaryRatio(sphere, R₁.value[1, k], R₁.derivative[1, k], Rₒ.value[1, k], Rₒ.derivative[1, k])
 
-    surfaceNorm = zeros(T, 2 * Mmax + 1, Nmax + 1) # the L² norm of each mode of the scattered pressure on the surface
+                for row in rows
+                    ball[row, n + 1] = bₙ
+                    sizeAll[row, n + 1] = abs(Aall[row, n + 1] * bₙ * Rₒ.value[1, k]) * sqrt(angularNorm(mAbs, n))
+                end
+            end
 
-    M, N = Mmax, Nmax
+            orderSize[mAbs + 1] = maximum(row -> maximum(view(sizeAll, row, :)), rows)
 
-    for m in (-M):M
-
-        mAbs = abs(m)
-
-        gₘ = g[m + Nmax + 1]
-
-        # --- the angular and radial functions of this order, batched over the degree
-        S = smn(mAbs, mAbs:N, c, ηNodes; spheroid=shape(sphere), normalize=false).value
-        R₁ = rmn(mAbs, mAbs:N, c, [ξp]; spheroid=shape(sphere), kind=regularKind).value
-        Rₒ = rmn(mAbs, mAbs:N, c, [sphere.ξ₀]; spheroid=shape(sphere), kind=outgoingKind).value
-
-        for (k, n) in enumerate(mAbs:N)
-            Sₙ = view(S, :, k)
-
-            Nₘₙ = sum(ηWeights .* Sₙ .^ 2)
-
-            A[m + M + 1, n + 1] = sum(ηWeights .* gₘ .* Sₙ) / (R₁[1, k] * Nₘₙ)
-            b[m + M + 1, n + 1] = scatterCoeff(sphere, excitation, mAbs, n)
-
-            surfaceNorm[m + M + 1, n + 1] = abs(A[m + M + 1, n + 1] * b[m + M + 1, n + 1] * Rₒ[1, k]) * sqrt(Nₘₙ)
+            # a coefficient beyond the range of the floating-point numbers, or one formed from such values
+            all(row -> all(isfinite, view(Aall, row, :)) && all(isfinite, view(ball, row, :)), rows) &&
+            isfinite(orderSize[mAbs + 1]) || return nothing, T(Inf)
         end
+
+        # --- the orders are measured: once two consecutive ones are negligible, the azimuthal content has decayed
+        isnothing(M) || continue
+        negligible = orderSize[mAbs + 1] > eps * maximum(orderSize) ? 0 : negligible + 1
+        negligible == 2 && break
     end
+
+    Mmax = isnothing(M) ? something(findlast(>(eps * maximum(orderSize)), orderSize), 1) - 1 : M
+
+    orders = (Nmax + 1 - Mmax):(Nmax + 1 + Mmax)
+
+    A = Aall[orders, :]
+    b = ball[orders, :]
+    surfaceSize = sizeAll[orders, :]
 
     # --- the truncation is verified rather than trusted, on the surface of the scatterer: the outgoing radial
     #     functions decrease outward, so that the size of a mode there bounds its contribution everywhere
-    tail = maximum(view(surfaceNorm, :, max(N, 1):(N + 1))) / maximum(surfaceNorm)
+    tail = maximum(view(surfaceSize, :, max(Nmax, 1):(Nmax + 1))) / maximum(surfaceSize)
 
-    return SpheroidalModes{T}(c, M, N, A, b), tail
+    return SpheroidalModes{T}(c, Mmax, Nmax, A, b), tail
 end
-
-
-"""
-    sourceCoordinate(sphere::Spheroid, excitation::AcousticExcitation)
-
-Returns the radial coordinate of the source of the incident field, beyond which its expansion in the regular
-spheroidal wave functions does not hold: that of the position of a monopole, and infinity for a plane wave.
-"""
-sourceCoordinate(sphere::Spheroid, excitation::AcousticPlaneWave) = Inf
-
-sourceCoordinate(sphere::Spheroid, excitation::AcousticMonopole) =
-    spheroidalCoordinates(sphere, frame(sphere)' * excitation.position)[1]
 
 
 """

@@ -65,16 +65,26 @@ The oblate and prolate spheroidal wave functions are provided by [SpheroidalWave
 
 #### The Coefficients of the Incident Expansion
 
-In contrast to the spherical case, no closed-form expansion coefficients are employed. Instead the incident field, which is known in closed form for every excitation, is **projected** onto the angular functions on a surface ``\xi = \mathrm{const}``. The angular functions of equal order are orthogonal there with unit weight, and the exponentials are orthogonal in ``\varphi``, hence
+As for the sphere, the coefficients of the incident expansion are known in closed form [flammerSpheroidalWaveFunctions1957](@cite). For a plane wave of amplitude ``a`` whose direction of incidence has the spheroidal angles ``(\eta_d, \varphi_d)`` in the frame of the scatterer,
+```math
+A_{mn} = 2 a \, (-\mathrm{j})^n \, \cfrac{S_{|m|n}(c, \eta_d)}{N_{|m|n}} \, \mathrm{e}^{-\mathrm{j} m \varphi_d} \,,
+```
+and for a monopole of amplitude ``a`` at the spheroidal position ``(\xi_s, \eta_s, \varphi_s)``, by the addition theorem of the free-space Green's function,
+```math
+A_{mn} = -\cfrac{\mathrm{j} k a}{2 \pi} \, \cfrac{S_{|m|n}(c, \eta_s) \, R^{(\mathrm{out})}_{|m|n}(c, \xi_s)}{N_{|m|n}} \, \mathrm{e}^{-\mathrm{j} m \varphi_s} \,,
+```
+valid for ``\xi < \xi_s``, which includes the surface of the scatterer. Here ``N_{mn} = \int_{-1}^{1} S_{mn}^2 \, \mathrm{d}\eta = \frac{2}{2n+1} \frac{(n+m)!}{(n-m)!}`` is the norm of the angular functions in the Meixner-Schäfke normalization, which does not depend on ``c``. As ``c \rightarrow 0`` the two reduce to ``(2n+1)(-\mathrm{j})^n`` and ``-\mathrm{j}k / (4\pi) \, (2n+1) \, h_n^{(2)}(k r_0)`` of the [plane wave](@ref ACpwAPI) and the [monopole](@ref ACpointAPI) scattered by a sphere.
+
+!!! note
+    The angular functions enter these coefficients squared, ``S(\eta_d) \, S(\eta)`` once the expansion is formed, so that their normalization and the Condon-Shortley phase cancel; only the norm ``N_{mn}`` and the normalization of the radial functions, which is the standard one, have to match.
+
+For any other excitation, whose expansion is not known, the incident field is **projected** onto the angular functions on a surface ``\xi = \mathrm{const}``: the angular functions of equal order are orthogonal there with unit weight, and the exponentials in ``\varphi``, so that
 ```math
 A_{mn} = \cfrac{1}{R^{(1)}_{mn}(c, \xi) \, N_{mn}} \int_{-1}^{1} g_m(\eta) \, S_{mn}(c, \eta) \, \mathrm{d}\eta \,,
 \qquad
-g_m(\eta) = \cfrac{1}{2\pi} \int_0^{2\pi} p_\mathrm{i} \, \mathrm{e}^{-\mathrm{j} m \varphi} \, \mathrm{d}\varphi
+g_m(\eta) = \cfrac{1}{2\pi} \int_0^{2\pi} p_\mathrm{i} \, \mathrm{e}^{-\mathrm{j} m \varphi} \, \mathrm{d}\varphi \,.
 ```
-with the norm ``N_{mn} = \int_{-1}^{1} S_{mn}^2 \, \mathrm{d}\eta``.
-
-!!! note
-    The projection is deliberately agnostic: it makes no assumption about the excitation beyond its field being regular in the region of the projection surface, and it is independent of the normalization of the angular functions, since the same normalization factor enters the integral and ``N_{mn}``. A new acoustic excitation therefore requires nothing but its incident field in order to be scattered by a spheroid.
+The projection requires nothing but the incident field, and it does not depend on any convention of the wave functions, as the same normalization enters the integral and ``N_{mn}``, which it evaluates by the same quadrature. This makes it the fallback for new excitations, and an independent check of the closed forms above: for the plane wave and the monopole the two agree to machine precision, see [How the Implementation Is Validated](@ref ACspheroidValidation).
 
 #### Reusing the Modal Coefficients
 
@@ -92,7 +102,7 @@ SphericalScattering.modes
 What is stored is the spheroidal parameter ``c``, the two truncations, and the two coefficient tables ``A_{mn}`` and ``b_{mn}``, indexed as `[m + M + 1, n + 1]`; see [`SpheroidalModes`](@ref SphericalScattering.SpheroidalModes).
 
 !!! tip
-    The convenience signatures without `md` determine the coefficients internally and discard them afterwards. Whenever more than one quantity is of interest for the same scatterer and excitation, passing `md` explicitly avoids recomputing by far the most expensive part.
+    The convenience signatures without `md` determine the coefficients internally and discard them afterwards. Whenever more than one quantity is of interest for the same scatterer and excitation, passing `md` explicitly avoids recomputing them.
 
 
 ---
@@ -170,7 +180,7 @@ A spheroidal solution is a good deal more delicate than a spherical one, and mos
 There are three, and they are independent of one another:
 
 1. **The spheroidal wave functions.** They are evaluated by [SpheroidalWaves.jl](https://github.com/Chemelli94/SpheroidalWaves.jl), whose accuracy sets a floor that this package cannot improve upon. The scattering coefficients ``b_{mn}`` are exact ratios of those functions, so their accuracy is entirely that of this layer.
-2. **The projection that yields the coefficients ``A_{mn}``.** This contributes a quadrature error and, more importantly, is subject to the conditioning of the projection surface discussed below.
+2. **The coefficients ``A_{mn}`` of the incident expansion.** For the plane wave and the monopole they are closed forms of the wave functions and add no error of their own. Only for an excitation without a known expansion does the projection contribute the error of its quadrature, see [The Projection](@ref ACspheroidProjection).
 3. **The truncation of the double series** at the order ``M`` and the degree ``N``.
 
 The boundary condition, by contrast, contributes no error of its own: it is satisfied term by term, exactly, by construction of ``b_{mn}``.
@@ -179,13 +189,13 @@ The boundary condition, by contrast, contributes no error of its own: it is sati
 
 The degree and the order are treated differently, because they are limited by different things.
 
-The **degree** is bounded by the size of the scatterer, as the scattering coefficients decay once a mode is cut off at the surface. The counterpart of ``k a`` is ``c \sqrt{1 + \xi_0^2}``, the radicand being the equatorial radius in units of the semifocal distance, so that
+The **degree** is bounded by the size of the scatterer, as the scattering coefficients decay once a mode is cut off at the surface. The counterpart of ``k a`` is ``c \rho``, where ``\rho`` is the radius of the circumscribing sphere in units of the semifocal distance, ``\sqrt{1 + \xi_0^2}`` for an oblate and ``\xi_0`` for a prolate spheroid, so that
 ```math
-N = \left\lceil c \sqrt{1 + \xi_0^2} \right\rceil + 15
+N = \left\lceil c \rho \right\rceil + 15
 ```
 is taken initially. The margin of 15 is a safety factor: in contrast to the spherical series, which simply adds terms until they stop contributing, the truncation has to be fixed before any field is evaluated, because the coefficients are tabulated once and reused for every evaluation point.
 
-The **order** is not estimated but *measured*. The azimuthal spectrum ``g_m`` of the incident field on the projection surface is evaluated for all ``|m| \le N``, and the orders are retained as long as they contribute more than the relative accuracy of [`Parameter`](@ref). This matters in practice, since every order costs a pair of calls to the spheroidal wave functions: an axial excitation is rotationally symmetric and needs ``M = 0``, whereas a grazing one needs ``M`` comparable to ``N``.
+The **order** is not estimated but *measured*. The orders are computed in increasing ``|m|``, the size of their modes on the surface of the scatterer being measured as described below, until two consecutive ones contribute less than the relative accuracy of [`Parameter`](@ref); the last one that does is the truncation. Orders the excitation does not excite are skipped altogether: an axial excitation is rotationally symmetric and costs the order zero alone, whereas a grazing one needs ``M`` comparable to ``N``. Stopping early also keeps clear of the wave functions of high order, which exceed the range of the floating-point numbers once ``n + m`` approaches about 170.
 
 Finally, the truncation is **verified rather than trusted**, and on the surface of the scatterer, where it matters most. The size of a mode of the scattered pressure there is its ``L^2`` norm,
 ```math
@@ -196,40 +206,35 @@ which bounds its contribution everywhere outside, as the outgoing radial functio
 !!! note
     The product ``A_{mn} b_{mn}`` alone would measure the far field only, where all outgoing radial functions are of the same size. On the surface the outgoing functions of high degree are large, and a mode with a negligible far field may contribute markedly there: for a monopole close to a disc, ``A_{mn} b_{mn}`` had decayed to ``10^{-26}`` at the cutoff while the boundary condition was violated by ``10^{-3}``.
 
-If the omitted modes are not negligible and the degree has been determined automatically, it is **raised** by half and the coefficients are recomputed, until they are negligible, up to four times the initial degree and as long as the projection keeps improving. This is what a source close to the scatterer requires, see below; for every other excitation the initial degree suffices and nothing is recomputed. A message is printed if the relative accuracy is not attained, saying whether a larger degree may help.
+If the omitted modes are not negligible and the degree has been determined automatically, it is **raised** by half and the coefficients are recomputed, until they are negligible, up to four times the initial degree and as long as the result keeps improving. This is what a source close to the scatterer requires, see below; for every other excitation the initial degree suffices and nothing is recomputed. A message is printed if the relative accuracy is not attained, saying whether a larger degree may help.
 
 !!! tip
     Both truncations can be overridden. The `nmax` of [`Parameter`](@ref) fixes the degree, and the keyword arguments `M` and `N` of [`modes`](@ref SphericalScattering.modes) fix both; a given degree is used as it is, without being raised. The automatic settings have been checked against a deliberately generous truncation and agree to a relative error below ``10^{-9}``.
 
-#### The Projection Surface
+#### Sources Close to the Scatterer
 
-The surface on which the incident field is projected has to lie between the scatterer and the source of that field: beyond the source, a monopole, its expansion in the regular wave functions does not hold, and a projection there yields coefficients that are simply wrong. By default the surface is that of the scatterer itself, or ``\xi = 0.5`` for an oblate scatterer flatter than that; for a prolate one the surface itself always serves, even for a thin one close to the line segment, the boundary conditions holding to better than ``10^{-10}`` for ``a / b = 0.05``. If a monopole is closer, the surface is moved halfway between the scatterer and the monopole, and a surface given by the keyword `ξ` that reaches the source is rejected with an error.
+The expansion of the field of a monopole converges the more slowly the closer the monopole is to the scatterer, so that a nearby source requires more degrees than the size of the scatterer suggests; the degree is raised automatically, see above. For a monopole above a disc of radius ``a`` and ``ka = 1.5``, for instance, the automatic degree of 17 is raised as follows:
 
-!!! note
-    A source close to the scatterer also requires more degrees than the size of the scatterer suggests, as the expansion of its field converges the more slowly the closer the source is; the degree is raised automatically, see above. For a monopole above a disc of radius ``a`` and ``ka = 1.5``, for instance, the automatic degree of 17 is raised as follows:
-
-    | height of the monopole | degree | residual of the boundary condition |
-    |:---------------------- |:------ |:---------------------------------- |
-    | ``0.6 \, a`` | 59 | ``10^{-15}`` |
-    | ``0.3 \, a`` | 68, the limit | ``10^{-10}``, from ``10^{-3}``; ``N = 89`` given explicitly attains ``10^{-12}`` |
-    | ``0.15 \, a`` | 68, the limit | ``10^{-6}``, from ``10^{-2}`` |
-
-    The attainable accuracy is limited for a source very close to the scatterer: the projection surface lies between the two, and there the regular radial functions of high degree become tiny, so that the projection ceases to improve. For the closest monopole above, more degrees reduce the residual to about ``3 \cdot 10^{-7}`` at most.
+| height of the monopole | degree | residual of the boundary condition |
+|:---------------------- |:------ |:---------------------------------- |
+| ``0.6 \, a`` | 59 | ``10^{-12}``, from ``10^{-5}`` |
+| ``0.3 \, a`` | 68, the limit | ``10^{-10}``, from ``10^{-3}``; ``N = 89`` given explicitly attains ``2 \cdot 10^{-12}`` |
+| ``0.15 \, a`` | 68, the limit | ``2 \cdot 10^{-6}``, from ``2 \cdot 10^{-2}`` |
 
 !!! note
-    A disc cannot be projected on its own surface. At ``\xi = 0`` the regular radial functions of odd ``n - m`` vanish, and the projection divides by ``R^{(1)}_{mn}(c, \xi)``; the surface is therefore moved off the degenerate one. This is also why the default is a maximum rather than simply ``\xi_0``.
+    The attainable accuracy is limited for a source very close to the scatterer. For the closest monopole above, the residual stalls at about ``3 \cdot 10^{-7}`` whatever the truncation, with the analytic and with the projected coefficients alike. It is not caused by cancellation in the series, whose largest term is of the size of its sum; the most likely cause is the accuracy of the wave functions for these arguments, which has not been confirmed, though. Beyond ``N \approx 130`` the wave functions exceed the range of the floating-point numbers, which [`modes`](@ref SphericalScattering.modes) reports as an error rather than returning coefficients that are not finite.
 
-!!! warning
-    The conditioning of the projection concerns the **incident re-expansion alone**, not the scattered field. Reconstructing ``p_\mathrm{i}`` from the coefficients ``A_{mn}`` at a radial coordinate much larger than the projection surface amplifies the error, because the regular radial functions grow steeply with ``\xi`` at a fixed degree. For that purpose — and only for it — the keyword `ξ` should be chosen comparable to the largest radial coordinate of interest, and `N` large enough that ``N \gtrsim c \xi``. The scattered field is not affected: there the outgoing radial functions and the scattering coefficients both decay with the degree, so that a truncation sufficient near the scatterer is sufficient everywhere.
+#### [The Projection](@id ACspheroidProjection)
 
-#### Quadrature
+For an excitation without a known expansion, the coefficients are obtained by projecting its field, see [`projectedCoefficients`](@ref SphericalScattering.projectedCoefficients). The surface of the projection has to lie between the scatterer and the source of the field: beyond the source the expansion in the regular wave functions does not hold, and a projection there yields coefficients that are simply wrong. By default the surface is that of the scatterer itself, or ``\xi = 0.5`` for an oblate scatterer flatter than that, and it is moved halfway between the scatterer and the source if that is closer; a given surface that reaches the source is rejected with an error. For a prolate spheroid the surface itself always serves, even for a thin one close to the line segment.
 
-The two integrals of the projection are discretized to be essentially exact for the retained modes:
+!!! note
+    A disc cannot be projected on its own surface. At ``\xi = 0`` the regular radial functions of odd ``n - m`` vanish, and the projection divides by ``R^{(1)}_{mn}(c, \xi)``; the surface is therefore moved off the degenerate one.
 
-- in ``\eta`` by Gauss-Legendre quadrature with ``2N + 16`` nodes, provided by [FastGaussQuadrature.jl](https://github.com/JuliaApproximation/FastGaussQuadrature.jl). The weight is unity, the angular functions being orthogonal on ``[-1, 1]`` as they stand.
-- in ``\varphi`` by ``4N + 8`` equispaced nodes, which for a periodic integrand is spectrally accurate. The number is deliberately independent of ``M``, so that ``M`` can be measured from the resulting spectrum rather than having to be assumed before it.
+The two integrals are discretized in ``\eta`` by Gauss-Legendre quadrature with ``2N + 16`` nodes, provided by [FastGaussQuadrature.jl](https://github.com/JuliaApproximation/FastGaussQuadrature.jl), and in ``\varphi`` by ``4N + 8`` equispaced nodes, which for a periodic integrand is spectrally accurate. The norm ``N_{mn}`` is computed by the same quadrature as the integral it divides, which makes the result independent of the normalization of the angular functions.
 
-The norm ``N_{mn}`` is computed by the same ``\eta`` quadrature as the integral it divides, which is what makes the result independent of the normalization of the angular functions.
+!!! note
+    The projected coefficients of high degree are accurate only as far as they matter on the surface of the projection: the error of the quadrature is amplified by ``1 / R^{(1)}_{mn}(c, \xi)``, which is large for degrees beyond ``c \xi``, whereas the field there involves the product ``A_{mn} R^{(1)}_{mn}``. Compared by the size of the modes on that surface, the projected coefficients of the plane wave and the monopole agree with the closed forms to machine precision; for a monopole close to the scatterer, whose field varies rapidly on the surface of the projection, the default quadrature limits the agreement to about ``10^{-10}``, a refined one restoring it.
 
 #### The Outgoing Radial Function
 
@@ -250,13 +255,14 @@ The spheroidal coordinates are not regular everywhere, and the places where they
 - **The axis.** At ``|\eta| = 1`` the basis vectors ``\hat{\bm e}_\eta`` and ``\hat{\bm e}_\varphi`` are undetermined, while ``h_\eta`` diverges and ``h_\varphi`` vanishes. The surface is smooth there nevertheless, and so is the field: the tangential gradient is finite and is carried by the orders ``m = \pm 1`` alone, whose angular functions vanish like ``\sqrt{1 - \eta^2}``, just as ``h_\varphi`` does. On the axis the Neumann trace is therefore evaluated as this limit, in which the dependence on ``\varphi`` cancels. This matters in practice, as a surface mesh of a spheroid usually has its vertices at the poles.
 - **The faces of a disc.** They share their Cartesian coordinates, so the face cannot be recovered from a location. The one with ``\eta > 0`` is returned, and the other follows from the parity table above.
 
-#### How the Implementation Is Validated
+#### [How the Implementation Is Validated](@id ACspheroidValidation)
 
-The boundary conditions are a necessary check, but on their own they are a weak one, for the reason given above: ``b_{mn}`` is *defined* by the boundary condition, so the residual reduces to the error of the incident re-expansion on the surface. Three further checks close that gap, each independent of the series under test, so that four altogether are in place:
+The boundary conditions are a necessary check, but on their own they are a weak one, for the reason given above: ``b_{mn}`` is *defined* by the boundary condition, so the residual reduces to the error of the incident re-expansion on the surface. The further checks close that gap, each being independent of the series under test:
 
 | check | what it would catch |
 |:----- |:------------------- |
-| **Boundary conditions.** ``\gamma_0 p`` on a sound-soft and ``\gamma_1 p`` on a sound-hard scatterer, with no truncation specified. | an error in the projection, the quadrature or the automatic truncation |
+| **Boundary conditions.** ``\gamma_0 p`` on a sound-soft and ``\gamma_1 p`` on a sound-hard scatterer, with no truncation specified. | an error in the incident coefficients or the automatic truncation |
+| **Analytic against projected coefficients.** The closed forms of the plane wave and the monopole against the projection of their fields, which relies on no convention of the wave functions; compared by the size of each mode on the surface of the projection, they agree to machine precision for both shapes, the disc, and a monopole close to it. | a wrong normalization or phase of the wave functions, or a wrong closed form |
 | **Sphere bridge.** As the eccentricity vanishes at fixed ``c \xi_0 = k a``, the spheroid degenerates into a sphere. The deviation from the independently validated spherical series is of the order of the eccentricity and drops by two decades when it does. | a wrong scattering coefficient, a wrong normalization, a wrong geometric parametrization |
 | **Radiation condition.** ``r \, \mathrm{e}^{\mathrm{j} k r} p^\mathrm{sc}`` approaches a constant over a range of radii for the outgoing radial function, and is rejected by a wide margin for the regular one. | kind 3 in place of kind 4, that is, an incoming scattered wave |
 | **Reference truncation.** The automatic settings against a deliberately generous one. | an insufficient automatic truncation |
