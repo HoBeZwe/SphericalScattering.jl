@@ -57,6 +57,49 @@ end
 
 
 """
+    ProlateSpheroid{BC,R} <: Spheroid{BC}
+
+Prolate spheroid centered in the origin: the surface ``ξ = ξ_0 > 1`` of the prolate spheroidal coordinates with
+the semifocal distance `semifocal`, rotationally symmetric about `axis`, on which the condition `boundary` holds.
+
+The degenerate surface ``ξ_0 = 1``, the segment of the axis between the foci, is excluded.
+"""
+struct ProlateSpheroid{BC<:AcousticBoundary,R} <: Spheroid{BC}
+    semifocal::R
+    ξ₀::R
+    axis::SVector{3,R}
+    boundary::BC
+end
+
+"""
+    ProlateSpheroid{BC}(
+        equatorialRadius = error("missing argument `equatorialRadius`"),
+        polarRadius      = error("missing argument `polarRadius`"),
+        axis             = SVector(0.0, 0.0, 1.0)
+    )
+
+Constructor for a prolate spheroid, ``b > a > 0``, see [`Spheroid`](@ref).
+"""
+function ProlateSpheroid{BC}(;
+    equatorialRadius=error("missing argument `equatorialRadius`"),
+    polarRadius=error("missing argument `polarRadius`"),
+    axis=SVector(0.0, 0.0, 1.0),
+) where {BC<:AcousticBoundary}
+
+    a, b = promote(equatorialRadius, polarRadius)
+
+    a > 0 || error("The equatorial radius must be positive: a prolate spheroid degenerating into a line segment is not supported.")
+    b > a || error("The polar radius must be larger than the equatorial radius: a prolate spheroid is required.")
+
+    f = sqrt((b - a) * (b + a))
+
+    axisNormalized = normalize(SVector{3}(promote(axis...)))
+
+    return ProlateSpheroid{BC,typeof(f)}(f, b / f, axisNormalized, BC())
+end
+
+
+"""
     Spheroid{BC}(
         equatorialRadius = error("missing argument `equatorialRadius`"),
         polarRadius      = error("missing argument `polarRadius`"),
@@ -65,18 +108,32 @@ end
 
 Constructor for a spheroid centered in the origin, where `BC` is [`SoundHard`](@ref) or [`SoundSoft`](@ref).
 
-The spheroid is specified by its `equatorialRadius` ``a`` and its `polarRadius` ``b``, from which the semifocal
-distance ``f = \\sqrt{a^2 - b^2}`` and the radial coordinate ``ξ_0 = b / f`` of the surface are determined. The
-`axis` is the axis of revolution and is normalized. So far the oblate spheroid is implemented, see
-[`OblateSpheroid`](@ref).
+The spheroid is specified by its `equatorialRadius` ``a`` and its `polarRadius` ``b``, the latter being measured
+along the `axis` of revolution, which is normalized. The shape follows from the radii: for ``a > b`` an
+[`OblateSpheroid`](@ref) is returned, with the semifocal distance ``f = \\sqrt{a^2 - b^2}`` and the radial
+coordinate ``ξ_0 = b / f`` of the surface; for ``b > a`` a [`ProlateSpheroid`](@ref), with
+``f = \\sqrt{b^2 - a^2}`` and again ``ξ_0 = b / f``.
 
-For `polarRadius = 0` the spheroid degenerates into a disc of radius ``a``, see [`Disc`](@ref).
+For `polarRadius = 0` the oblate spheroid degenerates into a disc of radius ``a``, see [`Disc`](@ref). The
+prolate spheroid degenerating into a line segment, `equatorialRadius = 0`, is not supported.
 
 !!! note
-    Strictly ``a > b`` is required: the oblate spheroidal coordinates degenerate for a sphere, as ``f → 0`` and
-    ``ξ_0 → ∞`` in that limit. Use [`HardSphere`](@ref) or [`SoftSphere`](@ref) for a sphere.
+    ``a ≠ b`` is required: the spheroidal coordinates degenerate for a sphere, as ``f → 0`` and ``ξ_0 → ∞`` in
+    that limit. Use [`HardSphere`](@ref) or [`SoftSphere`](@ref) for a sphere.
 """
-Spheroid{BC}(; kwargs...) where {BC<:AcousticBoundary} = OblateSpheroid{BC}(; kwargs...)
+function Spheroid{BC}(;
+    equatorialRadius=error("missing argument `equatorialRadius`"),
+    polarRadius=error("missing argument `polarRadius`"),
+    axis=SVector(0.0, 0.0, 1.0),
+) where {BC<:AcousticBoundary}
+
+    equatorialRadius == polarRadius &&
+        error("Equal radii describe a sphere, for which the spheroidal coordinates degenerate: use a `HardSphere` or a `SoftSphere`.")
+
+    Shape = equatorialRadius > polarRadius ? OblateSpheroid : ProlateSpheroid
+
+    return Shape{BC}(; equatorialRadius=equatorialRadius, polarRadius=polarRadius, axis=axis)
+end
 
 
 """
@@ -136,8 +193,8 @@ shape(sphere::OblateSpheroid) = :oblate
     normalizedCircumradius(sphere::Spheroid)
 
 Returns the radius of the sphere circumscribing the spheroid in units of the semifocal distance, the larger of the
-two semi-axes: ``\\sqrt{1 + ξ_0^2}`` for an oblate spheroid. Multiplied by the spheroidal parameter ``c = kf`` it is
-the counterpart of ``ka`` for a sphere, which bounds the degree, see [`modes`](@ref).
+two semi-axes: ``\\sqrt{1 + ξ_0^2}`` for an oblate and ``ξ_0`` for a prolate spheroid. Multiplied by the spheroidal
+parameter ``c = kf`` it is the counterpart of ``ka`` for a sphere, which bounds the degree, see [`modes`](@ref).
 """
 normalizedCircumradius(sphere::OblateSpheroid) = sqrt(1 + sphere.ξ₀^2)
 
@@ -149,18 +206,41 @@ Returns the default radial coordinate of the surface on which the incident field
 
 For an oblate spheroid it is the surface of the scatterer, or ``ξ = 0.5`` for a scatterer flatter than that: at
 the degenerate surface ``ξ = 0`` the regular radial functions of odd ``n - m`` vanish, by which the projection
-divides, so that a disc has to be projected off its surface.
+divides, so that a disc has to be projected off its surface. For a prolate spheroid it is the surface itself,
+which never degenerates, as ``ξ_0 > 1``; even a thin one close to the excluded line segment is projected there
+without loss of accuracy.
 """
 projectionCoordinate(sphere::OblateSpheroid) = max(sphere.ξ₀, oftype(sphere.ξ₀, 0.5))
+
+
+
+# --- the geometry of the prolate spheroid
+
+spheroidalCoordinates(sphere::ProlateSpheroid, point) = cart2prol(point, sphere.semifocal)
+
+cartesianCoordinates(sphere::ProlateSpheroid, coordinates) = prol2cart(coordinates, sphere.semifocal)
+
+spheroidalMetric(sphere::ProlateSpheroid, coordinates) = prolateMetric(coordinates, sphere.semifocal)
+
+spheroidalBasis(sphere::ProlateSpheroid, coordinates) = prolateBasis(coordinates, sphere.semifocal)
+
+shape(sphere::ProlateSpheroid) = :prolate
+
+normalizedCircumradius(sphere::ProlateSpheroid) = sphere.ξ₀ # the polar semi-axis is the larger one
+
+projectionCoordinate(sphere::ProlateSpheroid) = sphere.ξ₀
 
 
 
 """
     equatorialRadius(sp::Spheroid)
 
-Returns the equatorial radius of the spheroid, ``f \\sqrt{1 + ξ_0^2}`` for an oblate one.
+Returns the equatorial radius of the spheroid, ``f \\sqrt{1 + ξ_0^2}`` for an oblate and ``f \\sqrt{ξ_0^2 - 1}`` for
+a prolate one.
 """
 equatorialRadius(sp::OblateSpheroid) = sp.semifocal * sqrt(1 + sp.ξ₀^2)
+
+equatorialRadius(sp::ProlateSpheroid) = sp.semifocal * sqrt((sp.ξ₀ - 1) * (sp.ξ₀ + 1))
 
 
 """

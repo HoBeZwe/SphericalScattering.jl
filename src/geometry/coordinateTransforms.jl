@@ -353,3 +353,131 @@ function oblateBasis(vec, semifocal)
 
     return êξ, êη, êφ
 end
+
+
+
+"""
+    prol2cart(vec, semifocal)
+
+Convert a 3D (3 entry) point from prolate spheroidal to Cartesian coordinates.
+
+The prolate spheroidal coordinates ``(ξ, η, φ)`` with ``ξ ≥ 1`` and ``η ∈ [-1, 1]`` are defined by
+``x = f \\sqrt{(ξ^2 - 1)(1 - η^2)} \\cos φ``, ``y = f \\sqrt{(ξ^2 - 1)(1 - η^2)} \\sin φ`` and ``z = f ξ η``,
+where ``f`` denotes the semifocal distance. The surface ``ξ = ξ_0`` is a prolate spheroid with equatorial radius
+``f \\sqrt{ξ_0^2 - 1}`` and polar radius ``f ξ_0``; the degenerate surface ``ξ = 1`` is the segment of the axis
+between the foci.
+"""
+function prol2cart(vec, semifocal)
+
+    ξ = vec[1]
+    η = vec[2]
+    φ = vec[3]
+
+    T = typeof(ξ)
+
+    # the differences are formed as products, which do not cancel close to the axis
+    ρ = semifocal * sqrt((ξ - 1) * (ξ + 1) * (1 - η) * (1 + η))
+
+    return SVector{3,T}(ρ * cos(φ), ρ * sin(φ), semifocal * ξ * η)
+end
+
+
+"""
+    cart2prol(vec, semifocal)
+
+Convert a 3D (3 entry) point from Cartesian to prolate spheroidal coordinates ``(ξ, η, φ)``.
+
+Inverting the definition in [`prol2cart`](@ref) leads to the quadratic ``u^2 - (1 + A + B) u + B = 0`` for
+``u = ξ^2``, where ``A = (x^2 + y^2) / f^2`` and ``B = z^2 / f^2``, of which the larger root is taken, as
+``u ≥ 1``. Its discriminant is written as ``(1 - B)^2 + A (A + 2 + 2B)``, a sum of non-negative terms.
+
+On the axis, ``x = y = 0``, the sign of ``η`` is that of ``z``; for ``z = 0`` the positive one is returned, as
+for [`cart2obl`](@ref).
+"""
+function cart2prol(vec, semifocal)
+
+    x = vec[1]
+    y = vec[2]
+    z = vec[3]
+
+    T = eltype(x)
+
+    A = (x^2 + y^2) / semifocal^2
+    B = z^2 / semifocal^2
+
+    u = ((1 + A + B) + sqrt((1 - B)^2 + A * (A + 2 + 2 * B))) / 2
+
+    # --- η² follows either from B = u η² or from A = (u - 1)(1 - η²). The former involves no subtraction but is
+    #     not exact on the axis, where the latter yields η² = 1 exactly; the latter cancels for η² → 0, though,
+    #     and degenerates on the segment between the foci, u = 1. Hence each is taken where the other is worse
+    v = clamp(B / u, T(0.0), T(1.0))
+    v > T(0.5) && u - 1 > eps(T) && (v = clamp(1 - A / (u - 1), T(0.0), T(1.0)))
+
+    ξ = sqrt(u)
+    η = z < 0 ? -sqrt(v) : sqrt(v)
+    φ = atan(y, x)
+
+    return SVector{3,T}(ξ, η, φ)
+end
+
+
+"""
+    prolateMetric(vec, semifocal)
+
+Compute the metric coefficients ``(h_ξ, h_η, h_φ)`` of the prolate spheroidal coordinates at the point `vec`,
+which is given in prolate spheroidal coordinates.
+
+They read ``h_ξ = f \\sqrt{(ξ^2 - η^2) / (ξ^2 - 1)}``, ``h_η = f \\sqrt{(ξ^2 - η^2) / (1 - η^2)}`` and
+``h_φ = f \\sqrt{(ξ^2 - 1)(1 - η^2)}``, the outward normal of the surface ``ξ = ξ_0`` being
+``\\hat{e}_ξ = h_ξ^{-1} ∂\\bm{r} / ∂ξ``. As for [`oblateMetric`](@ref), the differences are formed as products.
+"""
+function prolateMetric(vec, semifocal)
+
+    ξ = vec[1]
+    η = vec[2]
+
+    T = typeof(ξ)
+
+    sξ² = (ξ - 1) * (ξ + 1)
+    sη² = (1 - η) * (1 + η)
+    d² = (ξ - η) * (ξ + η)
+
+    hξ = semifocal * sqrt(d² / sξ²)
+    hη = semifocal * sqrt(d² / sη²)
+    hφ = semifocal * sqrt(sξ² * sη²)
+
+    return SVector{3,T}(hξ, hη, hφ)
+end
+
+
+"""
+    prolateBasis(vec, semifocal)
+
+Compute the unit vectors ``(\\hat{e}_ξ, \\hat{e}_η, \\hat{e}_φ)`` of the prolate spheroidal coordinates at the
+point `vec`, which is given in prolate spheroidal coordinates, see [`oblateBasis`](@ref).
+
+!!! note
+    The basis degenerates on the axis, ``|η| = 1``, where ``\\hat{e}_φ`` is not determined: at the poles of the
+    scatterer.
+"""
+function prolateBasis(vec, semifocal)
+
+    ξ = vec[1]
+    η = vec[2]
+    φ = vec[3]
+
+    T = typeof(ξ)
+
+    f = semifocal
+
+    sξ = sqrt((ξ - 1) * (ξ + 1))
+    sη = sqrt((1 - η) * (1 + η))
+
+    h = prolateMetric(vec, semifocal)
+
+    êξ = SVector{3,T}(f * ξ * sη / sξ * cos(φ), f * ξ * sη / sξ * sin(φ), f * η) / h[1]
+    êη = SVector{3,T}(-f * η * sξ / sη * cos(φ), -f * η * sξ / sη * sin(φ), f * ξ) / h[2]
+    êφ = SVector{3,T}(-sin(φ), cos(φ), T(0.0))
+
+    return êξ, êη, êφ
+end

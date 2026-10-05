@@ -55,7 +55,7 @@ export AcousticBoundary, SoundHard, SoundSoft
 export PECSphere, DielectricSphere, LayeredSphere, LayeredSpherePEC
 export DielectricSphereThinImpedanceLayer
 export HardSphere, SoftSphere
-export Spheroid, OblateSpheroid, Disc
+export Spheroid, OblateSpheroid, ProlateSpheroid, Disc
 export outwardNormal, outwardNormals
 export equatorialRadius, polarRadius, isdisc
 export field, scatteredfield

@@ -3,7 +3,8 @@
 # R⁽¹⁾ and R⁽²⁾, whereas kind 3 and 4 are their complex combinations R⁽¹⁾ ± j R⁽²⁾. This package employs
 # the time convention e^{jωt}, for which the outgoing solution is the analogue of hₙ⁽²⁾ = jₙ - j yₙ, that
 # is, kind 4. Note that the spheroidal literature calls the outgoing function R⁽³⁾, which corresponds to
-# the opposite time convention: picking kind 3 would yield an incoming wave.
+# the opposite time convention: picking kind 3 would yield an incoming wave. The convention concerns the
+# time dependence alone and holds for both shapes, as their radiation conditions confirm.
 const regularKind = 1
 const outgoingKind = 4
 

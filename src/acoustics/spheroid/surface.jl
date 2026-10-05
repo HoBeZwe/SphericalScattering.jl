@@ -91,7 +91,8 @@ terms of order ``m`` combine into
 \\cfrac{1}{a} \\, C_{mn} \\, R_{1n}(c, ξ_0) \\, g_n(±1) \\, (1, \\mathrm{j}m, 0) \\,,
 ```
 
-where ``a`` denotes the equatorial radius: the dependence on ``φ`` cancels, as it has to on the axis. The limits ``g_n(±1)`` are extrapolated from two evaluations close to the pole (Richardson), the error being
+for both shapes, where ``a`` denotes the equatorial radius: the dependence on ``φ`` cancels, as it has to on the
+axis. The limits ``g_n(±1)`` are extrapolated from two evaluations close to the pole (Richardson), the error being
 of the order of the square of their distance from it.
 """
 function axialGradient(sphere::Spheroid, md::SpheroidalModes{T}, η, coefficients) where {T}

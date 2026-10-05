@@ -1,19 +1,22 @@
 # Spheroid and Disc
 
-In contrast to the other pages of this section, this one is organized by scatterer rather than by excitation: the oblate spheroid and its degenerate case, the disc, are solved by a series in the oblate spheroidal wave functions, which is shared by every acoustic excitation. Both the [plane wave](@ref ACpwAPI) and the [monopole](@ref ACpointAPI) are supported, at an arbitrary direction of incidence or position, and the scatterer may have an arbitrary orientation.
+In contrast to the other pages of this section, this one is organized by scatterer rather than by excitation: the oblate and the prolate spheroid, as well as the disc, a degenerate oblate spheroid, are solved by a series in the spheroidal wave functions of their shape, which is shared by every acoustic excitation. Both the [plane wave](@ref ACpwAPI) and the [monopole](@ref ACpointAPI) are supported, at an arbitrary direction of incidence or position, and the scatterer may have an arbitrary orientation.
 
 
 ---
 ## Geometry
 
-The scatterer is a surface ``\xi = \xi_0`` of the oblate spheroidal coordinates ``(\xi, \eta, \varphi)``, see the [coordinate system](@ref oblateCoords). It is specified by its equatorial radius ``a`` and its polar radius ``b < a``, from which
-```math
-f = \sqrt{a^2 - b^2} \qquad \text{and} \qquad \xi_0 = \cfrac{b}{f}
-```
-follow, the semifocal distance ``f`` and the radial coordinate of the surface. The special case ``b = 0``, that is, ``\xi_0 = 0``, is the disc of radius ``a = f``, whose two faces are distinguished by the sign of ``\eta``.
+The scatterer is a surface ``\xi = \xi_0`` of spheroidal coordinates ``(\xi, \eta, \varphi)``. It is specified by its equatorial radius ``a`` and its polar radius ``b``, the latter measured along the axis of revolution, and the shape follows from them:
+
+| | radii | semifocal distance ``f`` | surface | coordinates |
+|:-- |:-- |:-- |:-- |:-- |
+| [`OblateSpheroid`](@ref) | ``a > b`` | ``\sqrt{a^2 - b^2}`` | ``\xi_0 = b / f \ge 0`` | [oblate](@ref oblateCoords) |
+| [`ProlateSpheroid`](@ref) | ``b > a`` | ``\sqrt{b^2 - a^2}`` | ``\xi_0 = b / f > 1`` | [prolate](@ref prolateCoords) |
+
+The special case ``b = 0`` of the oblate spheroid, that is, ``\xi_0 = 0``, is the disc of radius ``a = f``, whose two faces are distinguished by the sign of ``\eta``. The corresponding degeneration of the prolate spheroid, ``a = 0`` or ``\xi_0 = 1``, is the segment of the axis between the foci, which is not supported.
 
 !!! note
-    Strictly ``a > b`` is required: the oblate spheroidal coordinates degenerate for a sphere, where ``f \rightarrow 0`` and ``\xi_0 \rightarrow \infty``. A sphere is a [`HardSphere`](@ref) or a [`SoftSphere`](@ref), for which the considerably cheaper spherical series is evaluated.
+    ``a \neq b`` is required: the spheroidal coordinates degenerate for a sphere, where ``f \rightarrow 0`` and ``\xi_0 \rightarrow \infty``. A sphere is a [`HardSphere`](@ref) or a [`SoftSphere`](@ref), for which the considerably cheaper spherical series is evaluated.
 
 The boundary condition is carried as a type parameter, as it is orthogonal to the geometry:
 
@@ -42,7 +45,7 @@ isdisc
 ---
 ## [Solution Approach](@id ACspheroidSeries)
 
-With the spheroidal parameter ``c = k f``, which takes the role of ``k a`` for a sphere, the incident pressure is expanded in the regular oblate spheroidal wave functions about the center of the scatterer,
+With the spheroidal parameter ``c = k f``, which takes the role of ``k a`` for a sphere, the incident pressure is expanded in the regular spheroidal wave functions of the shape about the center of the scatterer,
 ```math
 p_\mathrm{i}(\bm r) = \sum_{m=-M}^{M} \sum_{n=|m|}^{N} A_{mn} R^{(1)}_{mn}(c, \xi) \, S_{mn}(c, \eta) \, \mathrm{e}^{\mathrm{j} m \varphi} \,,
 ```
@@ -58,7 +61,7 @@ b_{mn} = -\cfrac{R^{(1)}_{mn}(c, \xi_0)}{R^{(\mathrm{out})}_{mn}(c, \xi_0)}
 ```
 for a sound-hard and a sound-soft spheroid, respectively, the prime denoting the derivative with respect to ``\xi`` [bowmanElectromagneticAcousticScattering1970](@cite). As for a sphere, the scattering coefficients do not depend on the excitation: only the coefficients ``A_{mn}`` of the incident expansion do.
 
-The oblate spheroidal wave functions are provided by [SpheroidalWaves.jl](https://github.com/Chemelli94/SpheroidalWaves.jl); for their theory see [flammerSpheroidalWaveFunctions1957](@cite). The Meixner-Schäfke normalization is employed, for which ``S_{mn}(c, \eta) \rightarrow P_n^m(\eta)`` as ``c \rightarrow 0``, so that the limit of a sphere connects directly to the series of the spherical scatterers.
+The oblate and prolate spheroidal wave functions are provided by [SpheroidalWaves.jl](https://github.com/Chemelli94/SpheroidalWaves.jl); for their theory see [flammerSpheroidalWaveFunctions1957](@cite). The Meixner-Schäfke normalization is employed, for which ``S_{mn}(c, \eta) \rightarrow P_n^m(\eta)`` as ``c \rightarrow 0``, so that the limit of a sphere connects directly to the series of the spherical scatterers.
 
 #### The Coefficients of the Incident Expansion
 
@@ -75,7 +78,7 @@ with the norm ``N_{mn} = \int_{-1}^{1} S_{mn}^2 \, \mathrm{d}\eta``.
 
 #### Reusing the Modal Coefficients
 
-The oblate spheroidal wave functions are expensive compared to the spherical ones. The coefficients are therefore computed once for a given scatterer and excitation and are reused for every evaluation point. They are also accessible directly, in order to be reused across several calls:
+The spheroidal wave functions are expensive compared to the spherical ones. The coefficients are therefore computed once for a given scatterer and excitation and are reused for every evaluation point. They are also accessible directly, in order to be reused across several calls:
 ```julia
 md = SphericalScattering.modes(sp, ex)                 # the expensive part
 
@@ -166,7 +169,7 @@ A spheroidal solution is a good deal more delicate than a spherical one, and mos
 
 There are three, and they are independent of one another:
 
-1. **The oblate spheroidal wave functions.** They are evaluated by [SpheroidalWaves.jl](https://github.com/Chemelli94/SpheroidalWaves.jl), whose accuracy sets a floor that this package cannot improve upon. The scattering coefficients ``b_{mn}`` are exact ratios of those functions, so their accuracy is entirely that of this layer.
+1. **The spheroidal wave functions.** They are evaluated by [SpheroidalWaves.jl](https://github.com/Chemelli94/SpheroidalWaves.jl), whose accuracy sets a floor that this package cannot improve upon. The scattering coefficients ``b_{mn}`` are exact ratios of those functions, so their accuracy is entirely that of this layer.
 2. **The projection that yields the coefficients ``A_{mn}``.** This contributes a quadrature error and, more importantly, is subject to the conditioning of the projection surface discussed below.
 3. **The truncation of the double series** at the order ``M`` and the degree ``N``.
 
@@ -200,7 +203,7 @@ If the omitted modes are not negligible and the degree has been determined autom
 
 #### The Projection Surface
 
-The surface on which the incident field is projected has to lie between the scatterer and the source of that field: beyond the source, a monopole, its expansion in the regular wave functions does not hold, and a projection there yields coefficients that are simply wrong. By default the surface is that of the scatterer itself, or ``\xi = 0.5`` for a scatterer flatter than that; if a monopole is closer, the surface is moved halfway between the scatterer and the monopole, and a surface given by the keyword `ξ` that reaches the source is rejected with an error.
+The surface on which the incident field is projected has to lie between the scatterer and the source of that field: beyond the source, a monopole, its expansion in the regular wave functions does not hold, and a projection there yields coefficients that are simply wrong. By default the surface is that of the scatterer itself, or ``\xi = 0.5`` for an oblate scatterer flatter than that; for a prolate one the surface itself always serves, even for a thin one close to the line segment, the boundary conditions holding to better than ``10^{-10}`` for ``a / b = 0.05``. If a monopole is closer, the surface is moved halfway between the scatterer and the monopole, and a surface given by the keyword `ξ` that reaches the source is rejected with an error.
 
 !!! note
     A source close to the scatterer also requires more degrees than the size of the scatterer suggests, as the expansion of its field converges the more slowly the closer the source is; the degree is raised automatically, see above. For a monopole above a disc of radius ``a`` and ``ka = 1.5``, for instance, the automatic degree of 17 is raised as follows:
@@ -239,7 +242,7 @@ This is not a cosmetic point. An incoming wave satisfies the boundary conditions
 
 #### Degenerate Points of the Coordinates
 
-The oblate spheroidal coordinates are not regular everywhere, and the places where they fail are precisely the geometric features of interest.
+The spheroidal coordinates are not regular everywhere, and the places where they fail are precisely the geometric features of interest: the rim and the faces of a disc, and the axis, which meets every spheroid at its poles, the tips of a prolate one.
 
 - **The rim of a disc.** The metric coefficient ``h_\xi = f |\eta|`` vanishes at ``\xi = 0``, ``\eta = 0``, so that the normal derivative ``\partial / \partial n = h_\xi^{-1} \partial / \partial \xi`` is singular there. This is the edge singularity of a disc, a property of the solution and not an artifact: the Neumann trace is genuinely unbounded at the rim, and a trace evaluated exactly at the rim is meaningless.
 
@@ -259,14 +262,16 @@ The boundary conditions are a necessary check, but on their own they are a weak 
 | **Reference truncation.** The automatic settings against a deliberately generous one. | an insufficient automatic truncation |
 | **The axis.** The Neumann trace on the axis against the average over two antipodal points next to it, which approaches the axis quadratically in their distance. | a wrong limit of the tangential gradient |
 
-Underneath, the wave-function layer is checked on its own terms: the Wronskian ``R^{(1)} R^{(2)\prime} - R^{(2)} R^{(1)\prime} = 1 / (c (\xi^2 + 1))``, the limit ``S_{mn}(c, \eta) \rightarrow P_n^m(\eta)`` as ``c \rightarrow 0``, the asymptotics of the outgoing function, and the parity split of the scattering coefficients on a disc.
+Underneath, the wave-function layer is checked on its own terms: the Wronskian ``R^{(1)} R^{(2)\prime} - R^{(2)} R^{(1)\prime} = 1 / (c (\xi^2 \pm 1))``, the upper sign for the oblate and the lower for the prolate shape, the limit ``S_{mn}(c, \eta) \rightarrow P_n^m(\eta)`` as ``c \rightarrow 0``, the asymptotics of the outgoing function, and the parity split of the scattering coefficients on a disc.
+
+All of these checks are carried out for both shapes, the prolate spheroid being tested in addition close to its excluded degeneration, for ``a / b = 0.05``, and at its tips, where the curvature is largest.
 
 
 ---
 ## Limitations
 
 !!! note
-    - Only the **oblate** spheroid is implemented. The modal machinery is written for any [`Spheroid`](@ref) and accesses the geometry through a handful of functions per shape, so that the prolate spheroid, for which `SpheroidalWaves.jl` is equally capable, requires its geometry alone.
-    - A sphere is not a limiting case that can be evaluated: the coordinates degenerate, hence ``a > b`` is enforced. Use [`HardSphere`](@ref) or [`SoftSphere`](@ref).
+    - A sphere is not a limiting case that can be evaluated: the coordinates degenerate, hence ``a \neq b`` is enforced. Use [`HardSphere`](@ref) or [`SoftSphere`](@ref).
+    - The prolate spheroid degenerating into a line segment, ``a = 0``, is not supported; a thin one close to it is, and is as accurate as any other.
     - The jump of the **normal derivative** across a disc, the natural unknown of the sound-soft case, is not implemented.
     - A monopole has to lie outside the scatterer, as the expansion of its field assumes. This is checked, an error being thrown otherwise.
