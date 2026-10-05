@@ -3,7 +3,7 @@
 ```@raw html
 <figure>
   <img
-    src="../assets/PECsphere.svg"
+    src="../../assets/PECsphere.svg"
     alt="Setup"
     width="300" />
 
@@ -65,10 +65,7 @@ H  = field(ex, MagneticField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation follows [jinTheoryComputationElectromagnetic2015; pp. 347ff](@cite). 
-
-!!! note
-    Internal details of the computations: Following [jinTheoryComputationElectromagnetic2015; pp. 347ff](@cite) the plane wave is initially assumed to travel in positive ``z``-axis direction and to have a polarization along the positive ``x``-axis. Arbitrary directions and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails). 
+The scattered field computation follows [jinTheoryComputationElectromagnetic2015; pp. 347ff](@cite). The series and their evaluation are described under [Electromagnetic Spheres](@ref emSphereSeries).
 
 #### API
 
@@ -98,18 +95,6 @@ H  = field(sp, ex, MagneticField(point_cart))
 
 
 ---
-## [Radar Cross Section](@id rcsPW)
+## Radar Cross Section
 
-To compute the bistatic radar cross section (RCS) [jinTheoryComputationElectromagnetic2015; pp. 350ff](@cite)
-```math
-\sigma (\vartheta, \varphi) = \lim_{r\rightarrow \infty} \left( 4 \pi r^2 \frac{{|e^\mathrm{sc}|}^2}{{|e^\mathrm{inc}|}^2} \right)
-```
-the function
-```julia
-σ = rcs(sp, ex, points_cart)
-```
-is provided. For the monostatic RCS, the function
-```julia
-σ = rcs(sp, ex)
-```
-is provided.
+For the plane wave, the [radar cross section](@ref rcsPW) can be computed as well.

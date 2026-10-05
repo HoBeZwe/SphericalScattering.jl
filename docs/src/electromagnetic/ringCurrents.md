@@ -4,7 +4,7 @@
 ```@raw html
 <figure>
   <img
-    src="../assets/Fig_SphereRC.svg"
+    src="../../assets/Fig_SphereRC.svg"
     alt="Setup"
     width="300" />
 
@@ -76,7 +76,7 @@ FF = field(ex, FarField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation follows [jinTheoryComputationElectromagnetic2015; pp. 368ff](@cite). For the magnetic ring current [duality relations](@ref dualityRelations) are employed. 
+The scattered field computation follows [jinTheoryComputationElectromagnetic2015; pp. 368ff](@cite). For the magnetic ring current [duality relations](@ref dualityRelations) are employed. The series and their evaluation are described under [Electromagnetic Spheres](@ref emSphereSeries).
 
 !!! tip
     For the scattered field computation the orientation of the ring current is restricted: the orientation vector has to be perpendicular to the surface of the sphere. 
@@ -89,9 +89,6 @@ The scattered field computation follows [jinTheoryComputationElectromagnetic2015
     ```julia
     center = 2.0 * orientation
     ```
-
-!!! note
-    Internal details of the computations: Following [jinTheoryComputationElectromagnetic2015; pp. 368ff](@cite) the orientation vectors of the ring currents are initially assumed to be aligned with the ``z``-axis. Arbitrary centers and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails).
 
 #### API
 

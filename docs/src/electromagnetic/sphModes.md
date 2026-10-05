@@ -4,7 +4,7 @@
 ```@raw html
 <figure>
   <img
-    src="../assets/PECsphere.svg"
+    src="../../assets/PECsphere.svg"
     alt="Setup"
     width="300" />
 
@@ -20,7 +20,7 @@
 
 
 ---
-## Definition
+## [Definition](@id modesDefinition)
 
 The spherical modes are defined following the conventions of [hansenSphericalNearfieldAntenna1988](@cite), however adapted to the time convention ``\mathrm{e}^{\,\mathrm{j}\omega t}``.
 
@@ -108,24 +108,7 @@ FF = field(ex, FarField(point_cart))
 ---
 ## Scattered Field
 
-Matching incoming and outcoming waves to fulfull the boundary condition ``\bm e_\mathrm{tan} = \bm 0`` yields the scattering coefficients
-```math
-\xi_\mathrm{TE} = -\cfrac{\mathrm{H}^{(2)}_{n + 0.5}(k a)}{\mathrm{H}^{(1)}_{n + 0.5}(k a)}
-```
-and
-```math
-\xi_\mathrm{TM} = -\cfrac{\mathrm{H}'^{(2)}_{n + 0.5}(k a)}{\mathrm{H}'^{(1)}_{n + 0.5}(k a)}
-```
-where ``\mathrm{H}^{(\nu)}_{n}(x)`` denotes the Hankel function of ``\nu``-th kind and ``n``-th order.
-
-The scattered fields ``\bm e^\mathrm{sc}`` are then given by
-```math
-\bm e_\mathrm{TE}^\mathrm{sc} = \xi_\mathrm{TE} k \sqrt{Z_\mathrm{F}} \bm{f}_{1mn}^{(2)}
-```
-and
-```math
-\bm e_\mathrm{TM}^\mathrm{sc} = \xi_\mathrm{TM} k \sqrt{Z_\mathrm{F}} \bm{f}_{2mn}^{(2)} \,.
-```
+The scattering of a spherical mode by a PEC sphere is described under [Electromagnetic Spheres](@ref emSphereSeries).
 
 #### API
 

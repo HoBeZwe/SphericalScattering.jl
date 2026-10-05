@@ -70,34 +70,7 @@ See [`PressureNormalGradient`](@ref) for details.
 ---
 ## Scattered Field
 
-The scattered field computation follows [bowmanElectromagneticAcousticScattering1970](@cite). It is obtained by a modal series, as for the electromagnetic excitations: expanding the incident pressure in the spherical waves about the center of the sphere,
-```math
-p_\mathrm{PW}(\bm r) = a \sum_{n=0}^\infty (2n+1) (-\mathrm{j})^n j_n(k r) P_n(\cos \vartheta) \,,
-```
-where ``\vartheta`` is measured from the direction of incidence ``\hat{\bm d}`` and ``P_n`` denotes the Legendre polynomials, the scattered pressure follows as
-```math
-p^\mathrm{sc}(\bm r) = a \sum_{n=0}^\infty (2n+1) (-\mathrm{j})^n b_n h_n^{(2)}(k r) P_n(\cos \vartheta) \,.
-```
-Applying the boundary condition term by term yields the scattering coefficients
-```math
-b_n = -\cfrac{j_n^\prime(k r_\mathrm{s})}{h_n^{(2)\prime}(k r_\mathrm{s})}
-\qquad \text{and} \qquad
-b_n = -\cfrac{j_n(k r_\mathrm{s})}{h_n^{(2)}(k r_\mathrm{s})}
-```
-for a sound-hard and a sound-soft sphere of radius ``r_\mathrm{s}``, respectively: on a sound-hard surface the normal velocity, and hence the radial derivative of the total pressure, vanishes, whereas on a sound-soft (pressure release) surface the total pressure vanishes [bowmanElectromagneticAcousticScattering1970](@cite).
-
-!!! note
-    In contrast to the electromagnetic case the series starts at ``n=0``: the monopole term contributes and dominates the low-frequency limit.
-
-!!! note
-    No rotation of the coordinate system is required for an arbitrary direction of incidence. The scattered pressure is a scalar and rotationally symmetric about ``\hat{\bm d}``, so that it depends on the observation point only via ``r`` and ``\cos \vartheta = \hat{\bm d} \cdot \hat{\bm r}``.
-
-The far field is defined as
-```math
-p^\mathrm{sc}_\infty(\hat{\bm r}) = \lim_{r \rightarrow \infty} r \, \mathrm{e}^{\mathrm{j} k r} p^\mathrm{sc}(\bm r)
-                                  = \cfrac{\mathrm{j} a}{k} \sum_{n=0}^\infty (2n+1) b_n P_n(\cos \vartheta) \,,
-```
-that is, the factor ``\mathrm{e}^{-\mathrm{j} k r} / r`` is omitted, as for the electromagnetic excitations. Note that the order-dependent factors cancel, since ``(-\mathrm{j})^n \mathrm{j}^{n+1} = \mathrm{j}`` holds for every ``n``.
+The scattered field computation follows [bowmanElectromagneticAcousticScattering1970](@cite). For the sound-hard and the sound-soft sphere it is obtained by a series in the spherical wave functions, see [Acoustic Spheres](@ref acSphereSeries); for the spheroids and the disc by a series in the spheroidal wave functions, see [Spheroidal Solution](@ref ACspheroidSolution).
 
 #### API
 
@@ -111,21 +84,13 @@ FF = scatteredfield(sp, ex, FarField(point_cart))
 
 γ₁ = scatteredfield(sp, ex, PressureNormalGradient(point_cart))
 ```
-where `sp` is a [`HardSphere`](@ref) or a [`SoftSphere`](@ref). A [`Spheroid`](@ref) or a [`Disc`](@ref) is scattered from as well, by a series in the oblate spheroidal wave functions instead; see [Spheroid and Disc](@ref ACspheroidAPI).
+where `sp` is a [`HardSphere`](@ref), a [`SoftSphere`](@ref), a [`Spheroid`](@ref), or a [`Disc`](@ref). The traces and the far field are described under [Quantities](@ref quantitiesConcept).
+
+!!! warning
+    For a spheroid, the outward normals have to be provided, `PressureNormalGradient(sp, point_cart)`, see [Surface Traces](@ref).
 
 !!! note
-    The traces are evaluated on the surface of the sphere: only the direction of each location is taken into account, the radial coordinate being replaced by the radius of the sphere. Hence, the locations may also be given by the points of a faceted surface mesh, which do not lie exactly on the sphere.
-
-!!! tip
-    For a normal ``\hat{\bm n} \neq \hat{\bm r}`` the Neumann trace of the scattered field picks up the tangential part of the gradient as well:
-    ```math
-    \hat{\bm n} \cdot \nabla p^\mathrm{sc} = (\hat{\bm n} \cdot \hat{\bm r}) \cfrac{\partial p^\mathrm{sc}}{\partial r}
-        + (\hat{\bm n} \cdot \hat{\bm \vartheta}) \cfrac{1}{r} \cfrac{\partial p^\mathrm{sc}}{\partial \vartheta} \,.
-    ```
-    Both contributions are included, so that providing normals is supported here as well.
-
-!!! note
-    The pressure vanishes inside the sphere, whereas the far field is determined by the direction of observation alone and is, therefore, not suppressed for locations inside the sphere.
+    The pressure vanishes inside the scatterer, whereas the far field is determined by the direction of observation alone and is, therefore, not suppressed for locations inside the scatterer.
 
 
 ---

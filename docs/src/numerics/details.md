@@ -1,5 +1,5 @@
 
-# Further Details
+# Units, Duality, and Rotations
 
 ---
 ## Units

@@ -4,7 +4,7 @@
 ```@raw html
 <figure>
   <img
-    src="../assets/Fig_SphereDP.svg"
+    src="../../assets/Fig_SphereDP.svg"
     alt="Setup"
     width="300" />
 
@@ -81,7 +81,7 @@ FF = field(ex, FarField(point_cart))
 ---
 ## Scattered Field
 
-The scattered field computation is a generalization of the analysis in [jinTheoryComputationElectromagnetic2015; pp. 374ff](@cite). For the magnetic dipole [duality relations](@ref dualityRelations) are employed.
+The scattered field computation is a generalization of the analysis in [jinTheoryComputationElectromagnetic2015; pp. 374ff](@cite). For the magnetic dipole [duality relations](@ref dualityRelations) are employed. The series and their evaluation are described under [Electromagnetic Spheres](@ref emSphereSeries).
 
 !!! tip
     For the scattered field computation the orientation of the dipole is restricted: the dipole has to be perpendicular to the surface of the sphere. 
@@ -94,9 +94,6 @@ The scattered field computation is a generalization of the analysis in [jinTheor
     ```julia
     position = 2.0 * orientation
     ```
-
-!!! note
-    Internal details of the computations: Following [jinTheoryComputationElectromagnetic2015; pp. 347ff](@cite) the dipoles are initially assumed to be aligned with the ``z``-axis. Arbitrary positions and orientations (forming a valid pair) are obtained via [rotations](@ref rotationDetails).
 
 #### API
 

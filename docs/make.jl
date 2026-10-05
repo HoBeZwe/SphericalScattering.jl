@@ -20,23 +20,30 @@ makedocs(;
     plugins=[bib],
     pages=[
         "Introduction" => "index.md",
-        "Manual" => Any["General Usage" => "manual.md", "Application Examples" => "application.md"],
-        "Geometry" => Any["Coordinate System" => "coordinateSys.md", "Sphere Dimensions" => "scatterer.md"],
-        "Excitations" => Any[
-            "Electromagnetic" => Any[
+        "Getting Started" =>
+            Any["General Usage" => "manual.md", "Scatterers and Boundaries" => "scatterers.md", "Quantities" => "quantities.md"],
+        "Electromagnetics" => Any[
+            "Scatterers" => Any["Spheres" => "electromagnetic/spheres.md"],
+            "Excitations" => Any[
                 "Plane Wave" => "electromagnetic/planeWave.md",
                 "Dipoles" => "electromagnetic/dipoles.md",
                 "Ring Currents" => "electromagnetic/ringCurrents.md",
                 "Spherical Modes" => "electromagnetic/sphModes.md",
                 "Uniform Static Field" => "electromagnetic/uniformStatic.md",
             ],
-            "Acoustic" => Any[
-                "Plane Wave" => "acoustic/planeWave.md",
-                "Monopole" => "acoustic/monopole.md",
-                "Spheroid and Disc" => "acoustic/spheroid.md",
-            ],
+            "Radar Cross Section" => "electromagnetic/rcs.md",
         ],
-        "Further Details" => "details.md",
+        "Acoustics" => Any[
+            "Scatterers" => Any["Sphere" => "acoustic/sphere.md", "Spheroid and Disc" => "acoustic/spheroid.md"],
+            "Excitations" => Any["Plane Wave" => "acoustic/planeWave.md", "Monopole" => "acoustic/monopole.md"],
+        ],
+        "Numerical Details" => Any[
+            "Coordinate Systems" => "numerics/coordinateSys.md",
+            "Series for Spheres" => "numerics/sphereSeries.md",
+            "Spheroidal Solution" => "numerics/spheroidSeries.md",
+            "Units, Duality, and Rotations" => "numerics/details.md",
+        ],
+        "Examples" => Any["Code Verification" => "examples/verification.md", "Visualization of Fields" => "examples/visualization.md"],
         "Contributing" => "contributing.md",
         "References" => "references.md",
         "API Reference" => "apiref.md",

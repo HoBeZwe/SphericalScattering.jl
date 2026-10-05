@@ -1,5 +1,5 @@
 
-# Sphere Dimensions
+# Spheres
 
 !!! note
     In all of the following setups the sphere is embedded in a homogeneous background medium with permeability ``\mu`` and permittivity ``\varepsilon``.
@@ -12,7 +12,7 @@
 The perfectly electrically conducting (PEC) or perfectly magnetically conducting (PMC) sphere has radius ``r`` and is assumed to be located in the origin. It is defined by [`PECSphere`](@ref).
 ```@raw html
 <div align="center">
-<img src="../assets/PECsphere.svg" width="300"/>
+<img src="../../assets/PECsphere.svg" width="300"/>
 </div>
 <br/>
 ```
@@ -31,7 +31,7 @@ PECSphere
 The dielectric sphere has radius ``r`` and is assumed to be located in the origin. It is defined by [`DielectricSphere`](@ref), where the filling [`Medium(εᵢ, μᵢ)`](@ref) with permeability ``\mu_\mathrm{i}`` and permittivity ``\varepsilon_\mathrm{i}`` has to be defined. 
 ```@raw html
 <div align="center">
-<img src="../assets/DielectricSphere.svg" width="300"/>
+<img src="../../assets/DielectricSphere.svg" width="300"/>
 </div>
 <br/>
 ```
@@ -52,7 +52,7 @@ Here `radius` is a Float and `filling` is of type [`Medium(εᵢ, μᵢ)`](@ref)
 The layered dielectric sphere has radii ``[r_1, r_2, \dots, r_N]`` and is assumed to be located in the origin. It is defined by [`LayeredSphere`](@ref), where the vector of fillings [[`Medium(ε₁, μ₁)`](@ref), [`Medium(ε₂, μ₂)`](@ref), ..., [`Medium(εN, μN)`](@ref)] with permeability ``\mu_n`` and permittivity ``\varepsilon_n`` has to be defined.
 ```@raw html
 <div align="center">
-<img src="../assets/LayeredSphere.svg" width="300"/>
+<img src="../../assets/LayeredSphere.svg" width="300"/>
 </div>
 <br/>
 ```
@@ -73,7 +73,7 @@ with, e.g., `radii = SVector(0.25, 0.5, 1.0)` and `filling = SVector(Medium(ε1,
 The layered dielectric sphere has radii ``[r_1, r_2, \dots, r_{N+1}]`` and is assumed to be located in the origin. It is defined by [`LayeredSpherePEC`](@ref), where the vector of fillings [[`Medium(ε₁, μ₁)`](@ref), [`Medium(ε₂, μ₂)`](@ref), ..., [`Medium(εN, μN)`](@ref)] with permeability ``\mu_n`` and permittivity ``\varepsilon_n`` has to be defined.
 ```@raw html
 <div align="center">
-<img src="../assets/LayeredSpherePEC.svg" width="300"/>
+<img src="../../assets/LayeredSpherePEC.svg" width="300"/>
 </div>
 ```
 
@@ -93,7 +93,7 @@ with, e.g., `radii = SVector(0.25, 0.5, 1.0)` and `filling = SVector(Medium(ε1,
 The dielectric sphere with a thin impedance layer of thickness ``t`` has radius ``r`` and is assumed to be located in the origin. It is defined by [`DielectricSphereThinImpedanceLayer`](@ref). Unlike the LayeredSphere model, the solution is obtained by using an approximation: it is assumed that the impedance is so high that the displacement field is purely radial (see [jonesElectromechanicsParticles1995; pp. 230ff](@cite)). This leads to a potential drop across the thin layer, while the displacement field is constant in radial direction. In addition to the filling [`Medium(εᵢ, μᵢ)`](@ref), the impedance layer must be specified, both the [`Medium(εₜ, μₜ)`](@ref) and its `thickness`.  
 ```@raw html
 <div align="center">
-<img src="../assets/ImpedanceLayer.svg" width="300"/>
+<img src="../../assets/ImpedanceLayer.svg" width="300"/>
 </div>
 <br/>
 ```
@@ -109,21 +109,3 @@ DielectricSphereThinImpedanceLayer
 Here `radius` and `thickness` are a Floats, `filling` and `thinlayer` are of type [`Medium`](@ref).
 
 `DielectricSphereThinImpedanceLayer` is an alias of `Sphere{<:ThinImpedanceLayer}`: the coating, being thin, is modelled as an effective condition on the surface of the sphere, see [`ThinImpedanceLayer`](@ref), which carries the `thickness`, the `thinlayer`, and the `filling`.
-
-
----
-## [Sound-Hard/Soft Sphere](@id acScattererAPI)
-
-The acoustic counterparts of the PEC sphere have radius ``r`` and are assumed to be located in the origin. On a sound-hard surface the normal velocity, and hence the normal derivative of the total pressure, vanishes; on a sound-soft (pressure release) surface the total pressure vanishes.
-
-#### API
-
-```@docs
-HardSphere
-SoftSphere
-```
-
-Both are aliases: a sound-hard sphere is a `Sphere{SoundHard}`, that is, a sphere carrying the boundary condition [`SoundHard`](@ref) as its type parameter. Every scatterer is a [`Scatterer`](@ref) parametrized by the condition on its surface, which allows to address, e.g., all acoustic scatterers at once as `Scatterer{<:AcousticBoundary}`.
-
-!!! note
-    These two are the only acoustic scatterers with a closed surface of revolution for which the cheap spherical series applies. The oblate spheroid and the disc are documented separately, together with the accuracy of their solution, under [Spheroid and Disc](@ref ACspheroidAPI).

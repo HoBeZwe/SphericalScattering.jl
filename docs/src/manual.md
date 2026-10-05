@@ -1,12 +1,13 @@
 
 # General Usage
 
-The basic building blocks are introduced in the following simple example; more details are provided afterwards:
+Every computation combines three building blocks: an excitation, a scatterer, and a quantity to be evaluated at given locations. They are introduced by two simple examples, one for each physics; more details are provided afterwards.
+
 
 ---
-## Introductory Example: Plane Wave
+## Introductory Examples
 
-
+#### Electromagnetic: Plane Wave and PEC Sphere
 
 ```@example introductory
 using SphericalScattering, StaticArrays
@@ -26,6 +27,31 @@ H  = scatteredfield(sp, ex, MagneticField(point_cart))
 FF = scatteredfield(sp, ex, FarField(point_cart))
 nothing # hide
 ```
+
+#### Acoustic: Plane Wave and Sound-Hard Sphere
+
+```@example introductory
+# define the medium: air, with compressibility 1 / (ρc²) and mass density ρ
+air = Medium(1 / (1.2 * 343.0^2), 1.2)
+
+# define excitation: plane wave travelling in positive z-direction
+ex = Acoustic.planeWave(frequency=1e3, embedding=air) # Hz
+
+# define scatterer: sound-hard sphere
+sp = HardSphere(radius = 0.1)
+
+# define an observation point
+point_cart = [SVector(0.2, 0.2, 0.3)]
+
+# compute scattered pressure
+p  = scatteredfield(sp, ex, Pressure(point_cart))
+FF = scatteredfield(sp, ex, FarField(point_cart))
+nothing # hide
+```
+
+!!! note
+    The background medium is defined by the excitation as a [`Medium(ε, μ)`](@ref), for both physics. For acoustics, the two parameters are read as the compressibility ``\varepsilon \rightarrow 1 / (\rho c^2)`` and the mass density ``\mu \rightarrow \rho``, see the [acoustic plane wave](@ref ACpwAPI). Since the default is free space, a medium matching the fluid of interest should be provided.
+
 
 ---
 ## Defining Observation Points
@@ -49,123 +75,81 @@ nothing # hide
 ---
 ## Defining an Excitation
 
-For all available excitations a simple constructor with keyword arguments and default values is available. For more details see the APIs of the 
+For all available excitations a simple constructor with keyword arguments and default values is available:
 
-- [Plane wave](@ref pwAPI)
-- [Dipoles](@ref dipolesAPI)
-- [Ring currents](@ref rcAPI)
-- [Spherical modes](@ref modesAPI)
-- [Uniform static field](@ref uniformAPI)
+| physics | excitation | constructor | details |
+|:------- |:---------- |:----------- |:------- |
+| electromagnetic | plane wave | `planeWave` | [plane wave](@ref pwAPI) |
+| electromagnetic | Hertzian and Fitzgerald dipole | `HertzianDipole`, `FitzgeraldDipole` | [dipoles](@ref dipolesAPI) |
+| electromagnetic | electric and magnetic ring current | `electricRingCurrent`, `magneticRingCurrent` | [ring currents](@ref rcAPI) |
+| electromagnetic | TE and TM spherical modes | `SphericalModeTE`, `SphericalModeTM` | [spherical modes](@ref modesAPI) |
+| electromagnetic | uniform static field | `UniformField` | [uniform static field](@ref uniformAPI) |
+| acoustic | plane wave | `Acoustic.planeWave` | [acoustic plane wave](@ref ACpwAPI) |
+| acoustic | monopole | `Acoustic.monopole` | [monopole](@ref ACpointAPI) |
+
+The acoustic constructors are collected in the [`Acoustic` submodule](@ref ACsubmodule), so that their names do not clash with the electromagnetic ones.
 
 
 ---
 ## Defining a Scatterer
 
-For all available scatteres a simple constructor with keyword arguments and default values is available. For more details see the APIs of the 
+For all available scatterers a constructor with keyword arguments is available, e.g.,
+```julia
+sp = PECSphere(radius=1.0)                                        # electromagnetic
+sp = DielectricSphere(radius=1.0, filling=Medium(4ε0, μ0))
 
-- [PEC sphere](@ref pecAPI)
-- [PMC sphere](@ref pecAPI)
-- [Dielectric sphere](@ref dielecAPI)
-- [Multilayer dielectric sphere](@ref mlDielecAPI)
-- [Multilayer dielectric sphere with PEC core](@ref mlDielecPecAPI)
-- [Dielectric sphere with thin impedance layer](@ref dielecimped) 
-- [Sound-hard/soft sphere](@ref acScattererAPI)
-- [Sound-hard/soft oblate spheroid and disc](@ref ACspheroidAPI)
+sp = SoftSphere(radius=1.0)                                       # acoustic
+sp = Spheroid{SoundHard}(equatorialRadius=1.0, polarRadius=0.5)   # an oblate spheroid
+sp = Disc(SoundSoft; radius=1.0)
+```
+The physics of the scatterer has to match that of the excitation. An overview of all constructors and of the type hierarchy behind them is given in [Scatterers and Boundary Conditions](@ref scatterersConcept).
 
 
 ---
 ## Computing Fields
 
-The incident, scattered, and total fields can be computed.
-```@raw html
-<br/>
-```
-
-#### Incident Fields
-
-For each excitation the far-field, the electric, and the magnetic near-field without a scatterer can be determined: 
+The incident, scattered, and total fields are computed by
 ```julia
-E  = field(ex, ElectricField(point_cart))
-
-H  = field(ex, MagneticField(point_cart))
-
-FF = field(ex, FarField(point_cart))
+F = field(ex, quantity)                # incident field: the excitation alone
+F = scatteredfield(sp, ex, quantity)   # field scattered by the scatterer
+F = field(sp, ex, quantity)            # total field: incident plus scattered
 ```
-
-For the uniform field excitation, only the electric field as well as the scalar potential can be calculated:
+where the quantity wraps the locations, e.g.,
 ```julia
-Φ = field(ex, ScalarPotential(point_cart))
-```
-```@raw html
-<br/>
-```
-
-#### Scattered Fields
-
-For each excitation the scattered fields from a given sphere can be determined as:
-
-```julia
-E  = scatteredfield(sp, ex, ElectricField(point_cart))
-
-H  = scatteredfield(sp, ex, MagneticField(point_cart))
-
+E  = field(sp, ex, ElectricField(point_cart))             # electromagnetic
+H  = field(sp, ex, MagneticField(point_cart))
+Φ  = field(sp, ex, ScalarPotential(point_cart))           # uniform static field
 FF = scatteredfield(sp, ex, FarField(point_cart))
 
+p  = field(sp, ex, Pressure(point_cart))                  # acoustic
+γ₀ = field(sp, ex, PressureTrace(point_cart))             # on the surface
+γ₁ = field(sp, ex, PressureNormalGradient(point_cart))    # on the surface
+FF = scatteredfield(sp, ex, FarField(point_cart))
 ```
-For the [uniform static field](@ref uniformAPI) excitation, only the electric field as well as the scalar potential can be calculated:
-```julia
-Φ = scatteredfield(sp, ex, ScalarPotential(point_cart))
-```
-For the [dielectric sphere with thin impedance layer](@ref dielecimped) two additional quantities are available:
-```julia
-Φ = scatteredfield(sp, ex, ScalarPotentialJump(point_cart))
+Which quantities are available for which excitation, and how the traces and far fields are defined, is described in [Quantities](@ref quantitiesConcept). All functions accept the keyword argument `parameter`, which controls the truncation of the series, see [Accuracy Settings](@ref).
 
-E = scatteredfield(sp, ex, DisplacementField(point_cart))
-```
+!!! tip
+    The locations are distributed over the available threads, for all excitations but the dipoles. Start Julia with several threads, e.g., `julia --threads=auto`, to make use of them.
 
-```@raw html
-<br/>
-```
-
-#### Total Fields
-
-For each excitation the total fields in the presence of a given sphere can be determined as:
-
-```julia
-E  = field(sp, ex, ElectricField(point_cart))
-
-H  = field(sp, ex, MagneticField(point_cart))
-
-FF = field(sp, ex, FarField(point_cart))
-```
-For the uniform field excitation, only the electric field as well as the scalar potential can be calculated:
-```julia
-Φ = field(sp, ex, ScalarPotential(point_cart))
-```
+!!! tip
+    For a spheroid, the expensive modal coefficients can be computed once and reused for several quantities, see [Reusing the Modal Coefficients](@ref).
 
 
 ---
 ## Radar Cross Section
 
-To compute the bistatic [radar cross section (RCS)](@ref rcsPW), the function
+For an electromagnetic plane wave, the bistatic and the monostatic [radar cross section](@ref rcsPW) are computed by
 ```julia
-σ = rcs(sp, ex, points_cart)
-```
-is provided. For the monostatic RCS, the function
-```julia
-σ = rcs(sp, ex)
-```
-is provided.
+σ = rcs(sp, ex, points_cart)   # bistatic
 
-!!! note
-    The RCS is (so far) only defined for a plane wave excitation.
-
+σ = rcs(sp, ex)                # monostatic
+```
 
 
 ---
 ## Conversion Between Bases
 
-Methods are provided to convert between Cartesian and spherical coordinates:
+Methods are provided to convert between Cartesian and spherical coordinates, whose convention is given under [Spherical Coordinates](@ref):
 
 ```julia
 point_cart = SphericalScattering.sph2cart.(point_sph)
@@ -203,7 +187,3 @@ plotffcut(F, points; scale="log", normalize=true, format="polar")
 
 are provided (after loading the [PlotlyJS](https://github.com/JuliaPlots/PlotlyJS.jl/tree/master) package). 
 For more details see the [visualization of fields](@ref visualize) examples.
-
-!!! warning
-    Issues have been reported with PlotlyJS if an installation via [Conda](https://docs.conda.io/en/latest/) is employed.
-    See, e.g., [this thread](https://discourse.julialang.org/t/missing-shared-library-file-when-pre-compiling/104575) for issues with Julia and Conda.
