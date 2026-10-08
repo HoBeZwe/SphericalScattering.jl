@@ -134,3 +134,183 @@
         @test H[1] == Hs[1] .+ Hi[1]
     end
 end
+
+
+@testitem "PEC boundary conditions and limits" setup = [Setup] begin
+
+    @testset "Boundary conditions" begin
+
+        # On the surface of a PEC sphere the total field has to satisfy n × E = 0 and n ⋅ H = 0.
+        # The limit from the outside is approximated at the (relative) distance δ from the surface,
+        # which leaves an error in the order of (1 + ka) * δ.
+        δ = 1e-12
+        tol = 1e-9
+
+        function boundaryErrors(sp, ex)
+
+            points_cart, ~ = getDefaultPoints(sp.radius * (1 + δ))
+            normals = normalize.(points_cart)
+
+            # ----- incident fields
+            Ei = field(ex, ElectricField(points_cart))
+            Hi = field(ex, MagneticField(points_cart))
+
+            # ----- total fields
+            E = field(sp, ex, ElectricField(points_cart))
+            H = field(sp, ex, MagneticField(points_cart))
+
+            diff_Et = norm.(cross.(normals, E)) ./ maximum(norm.(Ei))
+            diff_Hn = abs.(dot.(normals, H)) ./ maximum(norm.(Hi))
+
+            return maximum(diff_Et), maximum(diff_Hn)
+        end
+
+        function insideFields(sp, ex)
+
+            points_cart, ~ = getDefaultPoints(sp.radius / 2)
+
+            E = field(sp, ex, ElectricField(points_cart))
+            H = field(sp, ex, MagneticField(points_cart))
+
+            return E, H
+        end
+
+        # electrical sizes from ka ≈ 0.002 to ka ≈ 63
+        @testset "Electrical size: f = $f Hz, radius = $radius m" for f in (1e6, 1e8, 1e9), radius in (0.1, 1.0, 3.0)
+
+            sp = PECSphere(; radius=radius)
+            ex = planeWave(; frequency=f)
+
+            diff_Et, diff_Hn = boundaryErrors(sp, ex)
+            E₁, H₁ = insideFields(sp, ex)
+
+            @test diff_Et < tol
+            @test diff_Hn < tol
+            @test norm(E₁) == 0.0
+            @test norm(H₁) == 0.0
+        end
+
+        @testset "General orientation" begin
+
+            orientations = (
+                (SVector(0.0, 1.0, 1.0), SVector(-1.0, 0.0, 0.0)),
+                (SVector(1.0, 0.0, 0.0), SVector(0.0, 0.0, 1.0)),
+                (SVector(0.0, 0.0, -1.0), SVector(0.0, 1.0, 0.0)),
+            )
+
+            for (dir, pol) in orientations
+
+                sp = PECSphere(; radius=spRadius)
+                ex = planeWave(; frequency=f, direction=dir, polarization=pol)
+
+                diff_Et, diff_Hn = boundaryErrors(sp, ex)
+                E₁, H₁ = insideFields(sp, ex)
+
+                @test diff_Et < tol
+                @test diff_Hn < tol
+                @test norm(E₁) == 0.0
+                @test norm(H₁) == 0.0
+            end
+        end
+
+        @testset "Embedding and amplitude" begin
+
+            sp = PECSphere(; radius=spRadius)
+            ex = planeWave(; frequency=f, embedding=Medium(𝜀 * 3.0, 𝜇 * 2.0), amplitude=2.5)
+
+            diff_Et, diff_Hn = boundaryErrors(sp, ex)
+            E₁, H₁ = insideFields(sp, ex)
+
+            @test diff_Et < tol
+            @test diff_Hn < tol
+            @test norm(E₁) == 0.0
+            @test norm(H₁) == 0.0
+        end
+    end
+
+    relativeDifference(F, Fref) = maximum(norm.(F - Fref)) / maximum(norm.(Fref))
+
+    @testset "RCS limits" begin
+
+        radius = 2.0
+        sp = PECSphere(; radius=radius)
+
+        frequencyOf(ka) = ka * c / (2π * radius)
+
+        # Electrically small sphere, the monostatic RCS is 9πa² (ka)⁴
+        @testset "Rayleigh limit: ka = $ka" for ka in (0.001, 0.01, 0.05)
+            σ = rcs(sp, planeWave(; frequency=frequencyOf(ka)))
+
+            @test isapprox(σ, 9π * radius^2 * ka^4; rtol=ka^2)
+        end
+
+        # Electrically large sphere, the monostatic RCS approaches the geometrical cross section πa².
+        @testset "Optical limit: ka = $ka" for ka in (100.0, 200.0, 500.0)
+            σ = rcs(sp, planeWave(; frequency=frequencyOf(ka)))
+
+            @test isapprox(σ, π * radius^2; rtol=1e-2)
+        end
+    end
+
+    @testset "Rotation of the plane wave" begin
+
+        sp = PECSphere(; radius=spRadius)
+        ex₀ = planeWave(; frequency=f)
+
+        E₀ = field(sp, ex₀, ElectricField(points_cartNF))
+        H₀ = field(sp, ex₀, MagneticField(points_cartNF))
+        FF₀ = scatteredfield(sp, ex₀, FarField(points_cartFF))
+
+        orientations = (
+            (SVector(0.0, 1.0, 1.0), SVector(-1.0, 0.0, 0.0)),
+            (SVector(1.0, 0.0, 0.0), SVector(0.0, 0.0, 1.0)),
+            (SVector(0.0, 0.0, -1.0), SVector(0.0, 1.0, 0.0)),
+            (SVector(1.0, 2.0, 2.0), SVector(2.0, 1.0, -2.0)),
+        )
+
+        for (dir, pol) in orientations
+
+            ex = planeWave(; frequency=f, direction=dir, polarization=pol)
+
+            d = normalize(dir)
+            p = normalize(pol)
+            R = hcat(p, cross(d, p), d) # maps x̂ → p, ŷ → d × p, ẑ → d
+
+            rotated(vectors) = [R * vector for vector in vectors]
+
+            E = field(sp, ex, ElectricField(rotated(points_cartNF)))
+            H = field(sp, ex, MagneticField(rotated(points_cartNF)))
+            FF = scatteredfield(sp, ex, FarField(rotated(points_cartFF)))
+
+            @test relativeDifference(E, rotated(E₀)) < 1e-12
+            @test relativeDifference(H, rotated(H₀)) < 1e-12
+            @test relativeDifference(FF, rotated(FF₀)) < 1e-12
+            @test rcs(sp, ex) ≈ rcs(sp, ex₀)
+        end
+    end
+
+    @testset "Linearity in the amplitude" begin
+
+        # The fields scale with the amplitude of the plane wave, the RCS does not depend on it.
+        sp = PECSphere(; radius=spRadius)
+        ex₁ = planeWave(; frequency=f)
+
+        E₁ = field(sp, ex₁, ElectricField(points_cartNF))
+        H₁ = field(sp, ex₁, MagneticField(points_cartNF))
+        FF₁ = scatteredfield(sp, ex₁, FarField(points_cartFF))
+
+        for amplitude in (1e-3, 2.5, 40.0)
+
+            ex = planeWave(; frequency=f, amplitude=amplitude)
+
+            E = field(sp, ex, ElectricField(points_cartNF))
+            H = field(sp, ex, MagneticField(points_cartNF))
+            FF = scatteredfield(sp, ex, FarField(points_cartFF))
+
+            @test relativeDifference(E, amplitude * E₁) < 1e-12
+            @test relativeDifference(H, amplitude * H₁) < 1e-12
+            @test relativeDifference(FF, amplitude * FF₁) < 1e-12
+            @test rcs(sp, ex) ≈ rcs(sp, ex₁)
+        end
+    end
+end
