@@ -1,6 +1,6 @@
 name = "SphericalScattering"
 uuid = "1a9ea918-b599-4f1f-bd9a-d681e8bb5b3e"
-version = "0.8.0"
+version = "0.9.0"
 authors = ["Bernd Hofmann <Bernd.Hofmann@tum.de> and contributors"]
 
 [deps]
