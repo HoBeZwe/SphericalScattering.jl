@@ -60,18 +60,18 @@ export outwardNormal, outwardNormals
 export equatorialRadius, polarRadius, isdisc
 export field, scatteredfield
 export rcs
-export sphericalGridPoints, phiCutPoints, thetaCutPoints
+export sphericalGridPoints, phiCutPoints, thetaCutPoints, surfacePoints
 export numlayers, layer
 export permittivity, permeability, medium
 
 
 # -------- extensions
 function plotff end
-function plotnf end
 function plotffcut end
-function plotnfcut end
 
-export plotff, plotnf, plotffcut, plotnfcut
+function plotsurface end # documented in `utils.jl`, where the types of its signature are defined
+
+export plotff, plotffcut, plotsurface
 
 
 # -------- included files

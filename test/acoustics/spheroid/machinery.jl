@@ -149,6 +149,24 @@ end
 
         @test !SphericalScattering.isinside(d, SVector(0.5, 0.0, 0.0))
         @test !SphericalScattering.isinside(d, SVector(0.0, 0.0, 0.2))
+
+        # points on the surface are not inside: the rounding of their Cartesian coordinates placed about a third of
+        # them below ξ₀, where the pressure is set to zero, a point on the rim of a flat spheroid by hundreds of
+        # units in the last place
+        for (a, b) in ((1.0, 0.5), (1.0, 0.05), (0.5, 1.0), (0.05, 1.0))
+            s = Spheroid{SoundSoft}(; equatorialRadius=a, polarRadius=b, axis=normalize(SVector(0.2, 0.4, 1.0)))
+            R = SphericalScattering.frame(s)
+
+            onSurface = [
+                R * SphericalScattering.cartesianCoordinates(s, SVector(s.ξ₀, η, φ)) for
+                η in range(-1, 1; length=101), φ in range(0, 2π; length=7)
+            ]
+
+            @test !any(p -> SphericalScattering.isinside(s, p), onSurface)
+            # halfway between the axis, ξ = 0 resp. ξ = 1, and the surface lies inside
+            ξ = (s isa ProlateSpheroid ? 1 + s.ξ₀ : s.ξ₀) / 2
+            @test SphericalScattering.isinside(s, R * SphericalScattering.cartesianCoordinates(s, SVector(ξ, 0.3, 1.0)))
+        end
     end
 
     @testset "Monopole inside the scatterer" begin

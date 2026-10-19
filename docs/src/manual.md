@@ -187,3 +187,19 @@ plotffcut(F, points; scale="log", normalize=true, format="polar")
 
 are provided (after loading the [PlotlyJS](https://github.com/JuliaPlots/PlotlyJS.jl/tree/master) package). 
 For more details see the [visualization of fields](@ref visualize) examples.
+
+Surface densities, such as the traces of the pressure on an acoustic scatterer, are plotted on the surface of the scatterer itself:
+
+```@docs
+surfacePoints
+plotsurface
+```
+
+For example, the total pressure on a spheroid is computed and plotted by
+```julia
+points = surfacePoints(sp)
+p = field(sp, ex, PressureTrace(points))
+
+plotsurface(sp, p, points)
+```
+or in short by `plotsurface(sp, ex, PressureTrace)`, see the [visualization of surface densities](@ref visualizeSurface).

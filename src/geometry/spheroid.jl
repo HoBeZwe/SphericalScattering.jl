@@ -300,7 +300,33 @@ end
 Returns whether the point lies inside the spheroid, that is, whether its radial coordinate is smaller than that
 of the surface, see [`isinside`](@ref).
 """
-isinside(scatterer::Spheroid, point) = spheroidalCoordinates(scatterer, frame(scatterer)' * point)[1] < scatterer.ξ₀
+isinside(scatterer::Spheroid, point) =
+    spheroidalCoordinates(scatterer, frame(scatterer)' * point)[1] < scatterer.ξ₀ - surfaceTolerance(scatterer)
+
+
+"""
+    surfaceTolerance(sphere::Spheroid)
+
+The distance below ``ξ_0``, in the radial coordinate, within which a point is taken to lie on the surface of the
+spheroid rather than inside.
+
+The Cartesian coordinates of a point on the surface carry a rounding error of a few units in the last place, which
+places about a third of such points below ``ξ_0``. Inside, the pressure is set to zero, so that the value on the
+surface would be lost. The error translates into one of ``ξ`` by the metric coefficient ``h_ξ``, which is smallest at
+the rim of an oblate spheroid, ``h_ξ = f b / a``, and at the tips of a prolate one, ``h_ξ = f``: for a flat oblate
+spheroid, a point on its rim may lie hundreds of units in the last place of ``ξ_0`` below it. A disc has no
+interior.
+"""
+function surfaceTolerance(sphere::OblateSpheroid)
+
+    isdisc(sphere) && return zero(sphere.ξ₀)
+
+    a = equatorialRadius(sphere)
+
+    return 16 * eps(a) * a / (polarRadius(sphere) * sphere.semifocal)
+end
+
+surfaceTolerance(sphere::ProlateSpheroid) = 16 * eps(polarRadius(sphere)) / sphere.semifocal
 
 
 """

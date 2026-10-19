@@ -10,6 +10,7 @@ on:
   pull_request:
   release:
     types: [published]
+  workflow_dispatch: # rebuild the documentation of a branch or tag by hand, e.g., when a tag did not trigger a build
 
 jobs:
   build:

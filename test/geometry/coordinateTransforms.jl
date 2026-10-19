@@ -77,6 +77,15 @@ end
             end
         end
 
+        # --- close to the focal disc, ξ → 0, the textbook root of the quadratic for ξ² cancels: ξ had a large relative
+        #     error there, which entered η through η² = B / ξ², by up to 1e-2 for ξ ≈ 1e-8
+        for ξ in (1e-10, 1e-8, 3e-8, 1e-6, 1e-4), η in (-0.9, -0.4, 0.2, 0.7), φ in (0.3, 2.0)
+            ξc, ηc, ~ = SphericalScattering.cart2obl(SphericalScattering.obl2cart(SVector(ξ, η, φ), f), f)
+
+            @test ξc ≈ ξ rtol = 1e-12
+            @test ηc ≈ η atol = 1e-13
+        end
+
         # --- the rim and the center of the disc
         @test SphericalScattering.cart2obl(SVector(f, 0.0, 0.0), f)[1] ≈ 0.0 atol = 1e-14
         @test SphericalScattering.cart2obl(SVector(f, 0.0, 0.0), f)[2] ≈ 0.0 atol = 1e-7

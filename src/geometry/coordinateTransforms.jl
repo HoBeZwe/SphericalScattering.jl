@@ -266,8 +266,12 @@ function cart2obl(vec, semifocal)
     A = (x^2 + y^2) / semifocal^2
     B = z^2 / semifocal^2
 
-    # --- non-negative root of u² + (1 - A - B) u - B = 0
-    u = ((A + B - 1) + sqrt((A + B - 1)^2 + 4 * B)) / 2
+    # --- non-negative root of u² + p u - B = 0 with p = 1 - A - B. For p > 0, that is, close to the focal disc,
+    #     the two terms of the textbook formula (√(p² + 4B) - p) / 2 nearly cancel, so that u would carry a large
+    #     relative error and, through B / u below, so would η; the equivalent form 2B / (p + √(p² + 4B)) does not
+    p = 1 - A - B
+    s = sqrt(p^2 + 4 * B)
+    u = p > 0 ? 2 * B / (p + s) : (s - p) / 2
     u = max(u, T(0.0))
 
     # --- η² follows either from B = u η² or from A = (1 + u)(1 - η²). The latter cancels for η² → 0,

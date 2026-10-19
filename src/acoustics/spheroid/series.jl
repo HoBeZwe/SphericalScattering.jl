@@ -199,7 +199,7 @@ function seriesvalue(sphere::Spheroid, md::SpheroidalModes{T}, point, coefficien
     # as for the spherical scatterers, the pressure vanishes inside. The series is evaluated regardless
     # when the regular radial functions are requested, since reproducing the incident field, which is
     # regular everywhere, is the purpose of that branch
-    outgoing && ξ < sphere.ξ₀ && return Complex{T}(0.0)
+    outgoing && ξ < sphere.ξ₀ - surfaceTolerance(sphere) && return Complex{T}(0.0)
 
     u = Complex{T}(0.0)
 

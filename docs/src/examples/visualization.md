@@ -168,3 +168,45 @@ savefig(t, "plotNF2.html"); nothing # hide
 ```@raw html
 <object data="../../examples/plotNF2.html" type="text/html"  style="width:60%;height:50vh;"> </object>
 ```
+
+
+
+## [Plotting Surface Densities](@id visualizeSurface)
+
+The densities on the surface of an acoustic scatterer can be plotted on the scatterer itself, e.g., the total pressure on a tilted, sound-hard oblate spheroid in air, excited by an oblique plane wave:
+
+```@example surface
+using SphericalScattering, StaticArrays, LinearAlgebra
+using PlotlyJS
+begin # hide
+redirect_stderr(devnull) # the progress bars would clutter the output # hide
+
+air = Medium(1 / (1.2 * 343.0^2), 1.2)
+ex = Acoustic.planeWave(frequency=500.0, embedding=air, direction=normalize(SVector(1.0, 0.0, 1.0)))
+
+sp = Spheroid{SoundHard}(equatorialRadius=0.5, polarRadius=0.2, axis=normalize(SVector(0.0, 0.3, 1.0)))
+
+p = plotsurface(sp, ex, PressureTrace)
+savefig(p, "plotSurface.html"); rm("fort.40"; force=true); nothing # hide
+end # hide
+```
+
+```@raw html
+<object data="../../examples/plotSurface.html" type="text/html"  style="width:100%;height:50vh;"> </object>
+```
+
+The two faces of a disc are plotted apart. For a sound-soft disc, the Neumann trace is singular at the rim, so that the colour scale is clipped at a quantile of the magnitudes:
+
+```@example surface
+begin # hide
+redirect_stderr(devnull) # the progress bars would clutter the output # hide
+d = Disc(SoundSoft; radius=0.5)
+
+p = plotsurface(d, ex, PressureNormalGradient; type="real", clip=0.95, gap=0.1)
+savefig(p, "plotSurfaceDisc.html"); rm("fort.40"; force=true); nothing # hide
+end # hide
+```
+
+```@raw html
+<object data="../../examples/plotSurfaceDisc.html" type="text/html"  style="width:100%;height:50vh;"> </object>
+```
