@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Application Examples · SphericalScattering.jl</title><meta name="title" content="Application Examples · SphericalScattering.jl"/><meta property="og:title" content="Application Examples · SphericalScattering.jl"/><meta property="twitter:title" content="Application Examples · SphericalScattering.jl"/><meta name="description" content="Documentation for SphericalScattering.jl."/><meta property="og:description" content="Documentation for SphericalScattering.jl."/><meta property="twitter:description" content="Documentation for SphericalScattering.jl."/><meta property="og:url" content="https://HoBeZwe.github.io/SphericalScattering.jl/application/"/><meta property="twitter:url" content="https://HoBeZwe.github.io/SphericalScattering.jl/application/"/><link rel="canonical" href="https://HoBeZwe.github.io/SphericalScattering.jl/application/"/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.svg" alt="SphericalScattering.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">SphericalScattering.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../">Introduction</a></li><li><span class="tocitem">Manual</span><ul><li><a class="tocitem" href="../manual/">General Usage</a></li><li class="is-active"><a class="tocitem" href>Application Examples</a><ul class="internal"><li><a class="tocitem" href="#Code-Verification"><span>Code Verification</span></a></li><li><a class="tocitem" href="#visualize"><span>Visualization of Fields</span></a></li></ul></li></ul></li><li><span class="tocitem">Geometry</span><ul><li><a class="tocitem" href="../coordinateSys/">Coordinate System</a></li><li><a class="tocitem" href="../scatterer/">Sphere Dimensions</a></li></ul></li><li><span class="tocitem">Excitations</span><ul><li><a class="tocitem" href="../planeWave/">Plane Wave</a></li><li><a class="tocitem" href="../dipoles/">Dipoles</a></li><li><a class="tocitem" href="../ringCurrents/">Ring Currents</a></li><li><a class="tocitem" href="../sphModes/">Spherical Modes</a></li><li><a class="tocitem" href="../uniformStatic/">Uniform Static Field</a></li></ul></li><li><a class="tocitem" href="../details/">Further Details</a></li><li><a class="tocitem" href="../contributing/">Contributing</a></li><li><a class="tocitem" href="../apiref/">API Reference</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Manual</a></li><li class="is-active"><a href>Application Examples</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Application Examples</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/HoBeZwe/SphericalScattering.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/HoBeZwe/SphericalScattering.jl/blob/master/docs/src/application.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Application-Examples"><a class="docs-heading-anchor" href="#Application-Examples">Application Examples</a><a id="Application-Examples-1"></a><a class="docs-heading-anchor-permalink" href="#Application-Examples" title="Permalink"></a></h1><p>Two classical application examples are discussed below.</p><hr/><h2 id="Code-Verification"><a class="docs-heading-anchor" href="#Code-Verification">Code Verification</a><a id="Code-Verification-1"></a><a class="docs-heading-anchor-permalink" href="#Code-Verification" title="Permalink"></a></h2><p>This package is well suited to verify the correctness of more involved numerical techniques to determine the scattering behavior of real-world objects. For example, the scattering from PEC objects can be determined by solving the electric field integral equation (EFIE) by the method of moments (MoM). To this end, the packages <a href="https://github.com/krcools/BEAST.jl">BEAST</a> and <a href="https://github.com/krcools/CompScienceMeshes.jl">CompScienceMeshes</a> can be employed:</p><pre><code class="language-julia hljs">using BEAST, CompScienceMeshes
+
+# --- parameters
+f = 1e8             # frequency
+c = 2.99792458e8    # speed of light
+μ = 4π * 1e-7       # permeability
+κ = 2π * f / c      # wavenumber
+
+# --- obtain a triangulation of the sphere
+spRadius = 1.0 # radius of sphere
+Γ = meshsphere(spRadius, 0.25)
+
+# --- define basis functions on the triangulation
+RT = raviartthomas(Γ)
+
+# --- excitation by plane wave
+𝐸 = Maxwell3D.planewave(; direction=ẑ, polarization=x̂, wavenumber=κ)
+𝑒 = n × 𝐸 × n
+
+# --- integral operator
+𝑇 = Maxwell3D.singlelayer(; wavenumber=κ)
+
+# --- assemble matrix and RHS of the LSE
+e = -assemble(𝑒, RT)
+T = assemble(𝑇, RT, RT)
+
+# --- solve the LSE
+u = T \ e</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">942-element Vector{ComplexF64}:
+   -0.04107977702743268 - 0.27608593643934365im
+   -0.06928485337418612 - 0.27708976870410673im
+    0.09785418511652132 + 0.21879174094409914im
+   0.002678944452833076 + 0.015127886708172885im
+    0.03530860769979943 - 0.4319712103722361im
+   0.025758577496156242 - 0.4305876028305452im
+ -0.0018068618933935751 - 0.032413425898132196im
+    0.08414041448358665 - 0.41141589795213773im
+   0.007442035358325664 + 0.04632137249409413im
+    0.06488963152452873 + 0.20307900872734705im
+                        ⋮
+  -0.014169421871694968 - 0.034253545222115066im
+   -0.03698742650724021 + 0.16001233390877898im
+  -0.009500592345480906 + 0.10529002576023289im
+   -0.04946749622038236 - 0.07935593382383231im
+     0.1339575607968854 + 0.08279348231023383im
+    0.05905764297862507 + 0.032486775926679im
+    0.08027615813591862 - 0.17195665241152153im
+   -0.06203225022644792 + 0.06686227253332541im
+   -0.03179965597036785 - 0.07451277281293911im</code></pre><p>Now that we know the expansion coefficients for the basis functions we can compute the scattered fields:</p><pre><code class="language-julia hljs"># --- define points where the fields are computed
+using SphericalScattering # use this package to get points on a spherical grid
+points_cartFF, points_sphFF = sphericalGridPoints()
+points_cartNF, points_sphNF = sphericalGridPoints(r=5.0)
+
+# --- compute the fields
+EF_MoM = potential(MWSingleLayerField3D(𝑇), points_cartNF, u, RT)
+HF_MoM = potential(BEAST.MWDoubleLayerField3D(wavenumber=κ), points_cartNF, u, RT) / (c * μ)
+FF_MoM = -im * f / (2 * c) * potential(MWFarField3D(𝑇), points_cartFF, u, RT)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">dots out of 10: ..........
+dots out of 10: ..........
+dots out of 10: ..........</code></pre><p>The fields for the same scenario can be obtained (more accurately) by this package:</p><pre><code class="language-julia hljs">using SphericalScattering
+
+sp = PECSphere(radius=spRadius)
+ex = planeWave(frequency=f)
+
+EF = scatteredfield(sp, ex, ElectricField(points_cartNF))
+HF = scatteredfield(sp, ex, MagneticField(points_cartNF))
+FF = scatteredfield(sp, ex, FarField(points_cartFF))</code></pre><p>The agreement between the two solutions can be determined as a worst case relative error of all evaluated points:</p><pre><code class="language-julia hljs">using LinearAlgebra
+
+# --- relative worst case errors in percent
+diff_EF = round(maximum(norm.(EF - EF_MoM) ./ maximum(norm.(EF))) * 100, digits=2)
+diff_HF = round(maximum(norm.(HF - HF_MoM) ./ maximum(norm.(HF))) * 100, digits=2)
+diff_FF = round(maximum(norm.(FF - FF_MoM) ./ maximum(norm.(FF))) * 100, digits=2)
+
+print(&quot;E-field error: $diff_EF %\n&quot;)
+print(&quot;H-field error: $diff_HF %\n&quot;)
+print(&quot;Far-field error: $diff_FF %\n&quot;)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">E-field error: 1.29 %
+H-field error: 1.28 %
+Far-field error: 1.37 %</code></pre><div class="admonition is-success"><header class="admonition-header">Tip</header><div class="admonition-body"><p>When <a href="../contributing/#tests">testing this package</a>, the packages <a href="https://github.com/krcools/BEAST.jl">BEAST</a> and  <a href="https://github.com/krcools/CompScienceMeshes.jl">CompScienceMeshes</a> are used to define several functional tests.</p></div></div><hr/><h2 id="visualize"><a class="docs-heading-anchor" href="#visualize">Visualization of Fields</a><a id="visualize-1"></a><a class="docs-heading-anchor-permalink" href="#visualize" title="Permalink"></a></h2><p>This package provides several means to directly visualize quantities of the scattering setup.</p><div class="admonition is-info"><header class="admonition-header">Note</header><div class="admonition-body"><p>In order to make the plotting functionality available the package <a href="https://github.com/JuliaPlots/PlotlyJS.jl/tree/master">PlotlyJS</a> has to be loaded. (It is a <a href="https://pkgdocs.julialang.org/v1/creating-packages/#Conditional-loading-of-code-in-packages-(Extensions)">weak dependency</a>.)</p></div></div><h3 id="Plotting-Far-Field-Patterns"><a class="docs-heading-anchor" href="#Plotting-Far-Field-Patterns">Plotting Far-Field Patterns</a><a id="Plotting-Far-Field-Patterns-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Far-Field-Patterns" title="Permalink"></a></h3><p>As an example consider a Hertzian dipole that excites a PEC sphere:</p><pre><code class="language-julia hljs">using SphericalScattering
+using LinearAlgebra, StaticArrays
+
+# --- excite PEC sphere by Hertzian dipole
+orient = normalize(SVector(0.0,1.0,1.0))
+ex = HertzianDipole(frequency=1e8, orientation=orient, position=2*orient)
+
+sp = PECSphere(radius = 1.0)
+
+# --- evaluate fields at spherical grid points
+points_cart, points_sph = sphericalGridPoints()
+
+FF = scatteredfield(sp, ex, FarField(points_cart))</code></pre><p>The 3D pattern can then be evaluated as</p><pre><code class="language-julia hljs">using PlotlyJS
+plotff(FF, points_sph, scale=&quot;linear&quot;, normalize=true, type=&quot;abs&quot;)</code></pre><object data="../plotPatternHDPEC.html" type="text/html"  style="width:100%;height:50vh;"> </object><p>Alternatively, the field of the dipole itself or the total field can be plotted:</p><pre><code class="language-julia hljs">FF = field(sp, ex, FarField(points_cart)) # total field
+
+# --- plot only the φ-component in logarithmic scale
+plotff(FF, points_sph, scale=&quot;log&quot;, normalize=true, type=&quot;phi&quot;)</code></pre><object data="../plotPatternHDtot.html" type="text/html"  style="width:100%;height:50vh;"> </object><h3 id="Plotting-Far-Field-Cuts"><a class="docs-heading-anchor" href="#Plotting-Far-Field-Cuts">Plotting Far-Field Cuts</a><a id="Plotting-Far-Field-Cuts-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Far-Field-Cuts" title="Permalink"></a></h3><p>Sphercial cuts can be conveniently obtained by:</p><pre><code class="language-julia hljs">using SphericalScattering
+using LinearAlgebra, StaticArrays
+
+# --- excite PEC sphere by magnetic ring current
+orient = normalize(SVector(0.0,1.0,1.0))
+ex = magneticRingCurrent(frequency=1e8, orientation=orient, center=2*orient, radius=0.2)
+
+sp = PECSphere(radius = 1.0)
+
+# --- evaluate fields at φ = 5° cut
+points_cart, points_sph = phiCutPoints(5) # analogously, thetaCutPoints can be used
+
+FF = scatteredfield(sp, ex, FarField(points_cart))</code></pre><p>The cut can then be plotted as:</p><pre><code class="language-julia hljs">using PlotlyJS
+plotffcut(norm.(FF), points_sph, normalize=true, scale=&quot;log&quot;, format=&quot;polar&quot;)</code></pre><object data="../plotcut.html" type="text/html"  style="width:100%;height:50vh;"> </object><h3 id="Plotting-Near-Field-Cuts"><a class="docs-heading-anchor" href="#Plotting-Near-Field-Cuts">Plotting Near-Field Cuts</a><a id="Plotting-Near-Field-Cuts-1"></a><a class="docs-heading-anchor-permalink" href="#Plotting-Near-Field-Cuts" title="Permalink"></a></h3><p>The near-field of an electric ring current can, e.g., be visualized in the xz-plane as:</p><pre><code class="language-julia hljs">using SphericalScattering
+using LinearAlgebra, StaticArrays
+
+f = 1e8             # frequency
+c = 2.99792458e8    # speed of light
+λ = c / f           # wavelength
+
+ex = electricRingCurrent(frequency=1e8, center=SVector(0.,0,0), radius=3*λ)
+
+# --- define points in the xz plane
+res = λ/15
+
+points_cart = [SVector(x, 0.0, z) for z in -5λ:res:5λ, x in -5λ:res:5λ]
+points_sph = SphericalScattering.cart2sph.(points_cart)
+
+# --- evaluate the fields
+E = field(ex, ElectricField(points_cart))</code></pre><p>To plot the fields a heatmap can be employed:</p><pre><code class="language-julia hljs">using PlotlyJS
+
+# --- convert data to spherical coordinates
+Esph = SphericalScattering.convertCartesian2Spherical.(E, points_sph)
+Eφ = [Esph[i][3] for (i, j) in enumerate(Esph)] # extract φ-component
+
+# --- truncate large values (for plot)
+data = abs.(Eφ)
+data[data .&gt; 250] .= 250
+
+# --- plot heatmap
+layout = Layout(
+    yaxis=attr(title_text=&quot;y/λ&quot;),
+    xaxis=attr(title_text=&quot;x/λ&quot;)
+)
+
+plot(heatmap(x=-5:1/15:5,y=-5:1/15:5,z=data, colorscale=&quot;Jet&quot;), layout)</code></pre><object data="../plotNF.html" type="text/html"  style="width:60%;height:50vh;"> </object><p>Or instead of the magnitude a snapshot can be plotted</p><pre><code class="language-julia hljs">data = real.(Eφ)
+data[data .&gt; 250] .= 250
+
+# --- plot heatmap
+layout = Layout(
+    yaxis=attr(title_text=&quot;y/λ&quot;),
+    xaxis=attr(title_text=&quot;x/λ&quot;)
+)
+
+plot(heatmap(x=-5:1/15:5,y=-5:1/15:5,z=data, colorscale=&quot;Jet&quot;), layout)</code></pre><object data="../plotNF2.html" type="text/html"  style="width:60%;height:50vh;"> </object></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../manual/">« General Usage</a><a class="docs-footer-nextpage" href="../coordinateSys/">Coordinate System »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Monday 5 February 2024 22:43">Monday 5 February 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
