@@ -115,16 +115,13 @@ end
     # reference wave: +z-direction, x-polarization
     ex₀ = planeWave(; frequency=f, embedding=embedding, amplitude=2.0)
 
-    # rotated wave: direction R ẑ and polarization R x̂
-    α, β = 0.7, 1.9
-    Ry = SMatrix{3,3}(cos(α), 0, -sin(α), 0, 1, 0, sin(α), 0, cos(α))
-    Rz = SMatrix{3,3}(cos(β), sin(β), 0, -sin(β), cos(β), 0, 0, 0, 1)
-    R = Rz * Ry
-    ex = planeWave(;
-        frequency=f, embedding=embedding, amplitude=2.0, direction=R * SVector(0.0, 0.0, 1.0), polarization=R * SVector(1.0, 0.0, 0.0)
-    )
+    # oblique wave and its rotation matrix R
+    d = normalize(SVector(1.0, 2.0, 0.5))
+    p = normalize(SVector(-2.0, 1.0, 0.0)) # perpendicular to d
+    ex = planeWave(; frequency=f, embedding=embedding, amplitude=2.0, direction=d, polarization=p)
+    R = SphericalScattering.rotationMatrix(ex)
 
-    # rotating the excitation rotates the fields: F(R r) = R F₀(r), inside and outside the sphere
+    # F(R r) = R F₀(r), inside and outside the sphere
     for pts in (points_cartNF_inside, points_cartNF), Q in (ElectricField, MagneticField)
         F₀ = scatteredfield(sp, ex₀, Q(pts))
         F = scatteredfield(sp, ex, Q([R * p for p in pts]))

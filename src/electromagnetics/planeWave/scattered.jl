@@ -108,8 +108,8 @@ end
 function inside(sphere::Sphere{<:Dielectric}, excitation::PlaneWave{T,R,C}, point, quantity::Field; parameter) where {T,R,C}
 
     # inside the sphere the incident field has to be substracted to get only the scattered part
-    #   the point is given in the rotated frame where the wave travels in +z-direction with x-polarization,
-    #   hence the incident field of this reference wave is substracted (the result is rotated back afterwards)
+    # the point is given in the rotated frame
+    # therefore the incident field of this reference wave is substracted
     if norm(point) < sphere.radius
         ẑ₀ = SVector{3,R}(0, 0, 1)
         x̂₀ = SVector{3,R}(1, 0, 0)
