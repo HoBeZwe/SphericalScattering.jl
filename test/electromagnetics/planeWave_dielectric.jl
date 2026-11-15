@@ -105,3 +105,41 @@
     diff_FF = norm.(FF - FF_MoM) ./ maximum(norm.(FF))  # worst case error
     @test maximum(20 * log10.(abs.(diff_FF))) < -24 # dB
 end
+
+
+@testitem "Dielectric: rotated plane wave" setup = [Setup] begin
+
+    sp = DielectricSphere(; radius=spRadius, filling=Medium(𝜀 * (2.0 - 0.5im), 𝜇 * 1.5))
+    embedding = Medium(𝜀 * 1.5, 𝜇 * 1.0)
+
+    # reference wave: +z-direction, x-polarization
+    ex₀ = planeWave(; frequency=f, embedding=embedding, amplitude=2.0)
+
+    # rotated wave: direction R ẑ and polarization R x̂
+    α, β = 0.7, 1.9
+    Ry = SMatrix{3,3}(cos(α), 0, -sin(α), 0, 1, 0, sin(α), 0, cos(α))
+    Rz = SMatrix{3,3}(cos(β), sin(β), 0, -sin(β), cos(β), 0, 0, 0, 1)
+    R = Rz * Ry
+    ex = planeWave(;
+        frequency=f, embedding=embedding, amplitude=2.0, direction=R * SVector(0.0, 0.0, 1.0), polarization=R * SVector(1.0, 0.0, 0.0)
+    )
+
+    # rotating the excitation rotates the fields: F(R r) = R F₀(r), inside and outside the sphere
+    for pts in (points_cartNF_inside, points_cartNF), Q in (ElectricField, MagneticField)
+        F₀ = scatteredfield(sp, ex₀, Q(pts))
+        F = scatteredfield(sp, ex, Q([R * p for p in pts]))
+
+        @test maximum(norm.(F - [R * v for v in F₀])) / maximum(norm.(F₀)) < 1e-10
+    end
+
+    # the tangential components of the total fields are continuous at the surface
+    n̂ = [normalize(p) for p in points_cartFF]
+    δ = 1e-8
+    for Q in (ElectricField, MagneticField)
+        Fin = field(sp, ex, Q([(spRadius - δ) * p for p in n̂]))
+        Fout = field(sp, ex, Q([(spRadius + δ) * p for p in n̂]))
+
+        jump = [n × (Fo - Fi) for (n, Fi, Fo) in zip(n̂, Fin, Fout)]
+        @test maximum(norm.(jump)) / maximum(norm.(Fout)) < 1e-6
+    end
+end
