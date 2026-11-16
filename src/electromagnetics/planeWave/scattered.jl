@@ -14,11 +14,16 @@ function scatteredfield(
     # --- rotate coordinates
     points = rotate(excitation, quantity.locations; inverse=true)
 
+    # --- excitation in the rotated frame: +z-direction, x-polarization
+    ẑ = SVector{3,T}(0, 0, 1)
+    x̂ = SVector{3,T}(1, 0, 0)
+    excitation₀ = PlaneWave(excitation.embedding, excitation.frequency, excitation.amplitude, ẑ, x̂)
+
     p = progress(length(points))
 
     # --- compute field in Cartesian representation
     @tasks for ind in eachindex(points)
-        F[ind] = scatteredfield(sphere, excitation, points[ind], quantity; parameter=parameter)
+        F[ind] = scatteredfield(sphere, excitation₀, points[ind], quantity; parameter=parameter)
         next!(p)
     end
     finish!(p)
