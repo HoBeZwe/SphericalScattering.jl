@@ -69,24 +69,24 @@ function scatteredfield(
     sinϕ = sin(point_sph[3])
     cosϕ = cos(point_sph[3])
 
-    # first two values of the Associated Legendre Polynomial
-    plm = Vector{T}()
-    push!(plm, -sinϑ)
-    push!(plm, -T(3.0) * sinϑ * cosϑ)
+    # first two values of the angular function πₙ = Pₙ¹(cosϑ) / sinϑ
+    πs = Vector{T}()
+    push!(πs, -T(1.0))
+    push!(πs, -T(3.0) * cosϑ)
 
     try
         while δF > eps || n < 10
             n += 1
 
             coeffs = scatterCoeff(sphere, excitation, n)
-            expansions = expansion(sphere, excitation, quantity, r, plm, cosϑ, sinϑ, n)
+            expansions = expansion(sphere, excitation, quantity, r, πs, cosϑ, sinϑ, n)
             ΔF = Δfieldₙ(sphere, excitation, quantity, r, coeffs, expansions, sinϕ, cosϕ, n)
 
             F += ΔF
 
             δF = norm(ΔF) / norm(F) # relative change
 
-            n > 1 && push!(plm, (T(2.0) * n + 1) * cosϑ * plm[n] / n - (n + 1) * plm[n - 1] / n) # recurrence relationship for next associated Legendre polynomials
+            n > 1 && push!(πs, (T(2.0) * n + 1) * cosϑ * πs[n] / n - (n + 1) * πs[n - 1] / n) # recurrence relationship for next angular function
         end
     catch
 
@@ -335,12 +335,12 @@ end
 
 
 """
-    expansion(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, quantity::Field, r, plm, cosϑ, sinϑ, n::Int) 
+    expansion(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, quantity::Field, r, πs, cosϑ, sinϑ, n::Int)
 
 Compute functional dependencies of the Mie series for a plane wave
 travelling in +z-direction with polarization in x-direction.
 """
-function expansion(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, quantity::Field, r, plm, cosϑ, sinϑ, n::Int)
+function expansion(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::PlaneWave, quantity::Field, r, πs, cosϑ, sinϑ, n::Int)
 
     T = typeof(excitation.frequency)
 
@@ -363,42 +363,19 @@ function expansion(sphere::Scatterer{<:ElectromagneticBoundary}, excitation::Pla
         dB = B2 - n / kr * B          # derivative of Riccati-Hankel function
     end
 
-    p = plm[n]
+    # angular functions πₙ = Pₙ¹(cosϑ) / sinϑ and τₙ = dPₙ¹(cosϑ)/dϑ, valid for all ϑ including the poles
+    πₙ = πs[n]
+    πₙ₋₁ = n == 1 ? T(0.0) : πs[n - 1]
+    τₙ = n * cosϑ * πₙ - (n + 1) * πₙ₋₁
 
-    if abs(cosϑ) < 0.999999
-        if n == 1 # derivative of associated Legendre Polynomial
-            dp = cosϑ * plm[1] / sqrt(T(1.0) - cosϑ * cosϑ)
-        else
-            dp = (n * cosϑ * plm[n] - (n + 1) * plm[n - 1]) / sqrt(T(1.0) - cosϑ * cosϑ)
-        end
+    Mn_ϑ = B * πₙ
+    Mn_ϕ = B * τₙ
 
-        Mn_ϑ = B * p / sinϑ
-        Mn_ϕ = B * dp
-
-        Nn_ϑ = dB * dp
-        Nn_ϕ = dB * p / sinϑ
-
-    elseif cosϑ > 0.999999
-        aux = (n + T(1.0)) * n / T(2.0)
-
-        Mn_ϑ = -B * aux
-        Mn_ϕ = Mn_ϑ
-
-        Nn_ϑ = -dB * aux
-        Nn_ϕ = Nn_ϑ
-
-    elseif cosϑ < -0.999999
-        aux = (n + T(1.0)) * n / T(2.0) * T(-1.0)^n
-
-        Mn_ϑ = B * aux
-        Mn_ϕ = -Mn_ϑ
-
-        Nn_ϑ = -dB * aux
-        Nn_ϕ = -Nn_ϑ
-    end
+    Nn_ϑ = dB * τₙ
+    Nn_ϕ = dB * πₙ
 
     if !(quantity isa FarField)
-        Nn_r = n * (n + 1) * B * p
+        Nn_r = n * (n + 1) * B * sinϑ * πₙ # sinϑ πₙ = Pₙ¹(cosϑ)
         Nn_ϑ = im * Nn_ϑ
         Nn_ϕ = im * Nn_ϕ
     else
