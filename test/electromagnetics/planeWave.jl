@@ -314,3 +314,44 @@ end
         end
     end
 end
+
+
+@testitem "Plane wave: fields near the poles" setup = [Setup] begin
+
+    # The angular functions πₙ = Pₙ¹(cosϑ) / sinϑ and τₙ = dPₙ¹(cosϑ)/dϑ are evaluated without division by sinϑ
+    # the tests verifies that the smoothness of the fields at the poles
+    θc = acos(0.999999) # former cutoff angle
+
+    point(r, θ) = SVector(r * sin(θ) * cos(0.3), r * sin(θ) * sin(0.3), r * cos(θ))
+    relDiff(a, b) = norm(a - b) / norm(b)
+
+    spheres = (PECSphere(; radius=spRadius), DielectricSphere(; radius=spRadius, filling=Medium(4.0 * 𝜀, 𝜇)))
+
+    @testset "$(typeof(sp).name.name), ka = $ka" for sp in spheres, ka in (5.0, 40.0)
+
+        ex = planeWave(; frequency=ka * c / (2π * spRadius))
+
+        radii = sp isa PECSphere ? (2.0,) : (0.5, 2.0) # inside and outside
+
+        for r in radii, Q in (ElectricField, MagneticField), θ₀ in (0.0, π)
+            F(θ) = scatteredfield(sp, ex, Q([point(r, θ)]))[1]
+            s = θ₀ == 0.0 ? 1 : -1 # θ = θ₀ + s Δθ
+
+            # on the axis and close to it
+            @test relDiff(F(θ₀ + s * 1e-9), F(θ₀)) < 1e-7
+
+            # across the former cutoff
+            @test relDiff(F(θ₀ + s * θc * (1 - 1e-6)), F(θ₀ + s * θc * (1 + 1e-6))) < 1e-6
+            @test relDiff(F(θ₀ + s * θc), F(θ₀ + s * θc * (1 + 1e-6))) < 1e-6
+        end
+
+        # far field
+        for θ₀ in (0.0, π)
+            FF(θ) = scatteredfield(sp, ex, FarField([point(1.0, θ)]))[1]
+            s = θ₀ == 0.0 ? 1 : -1
+
+            @test relDiff(FF(θ₀ + s * 1e-9), FF(θ₀)) < 1e-7
+            @test relDiff(FF(θ₀ + s * θc * (1 - 1e-6)), FF(θ₀ + s * θc * (1 + 1e-6))) < 1e-6
+        end
+    end
+end
